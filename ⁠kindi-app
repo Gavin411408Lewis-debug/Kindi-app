@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>KANDI</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f3f5f7;
+color:#222;
+}
+.app{max-width:600px;margin:auto;padding:15px}
+header{
+background:#111827;color:white;padding:25px 20px;
+border-radius:20px;text-align:center;margin-bottom:15px
+}
+header h1{margin:0 0 8px;font-size:28px}
+header p{margin:0;opacity:.8}
+.card{
+background:white;padding:20px;border-radius:18px;
+margin-bottom:15px;box-shadow:0 4px 15px #00000010
+}
+h2{margin-top:0}
+input{
+width:100%;padding:14px;margin:6px 0;
+border:1px solid #ddd;border-radius:12px;
+font-size:16px;direction:rtl
+}
+button{
+width:100%;border:0;border-radius:12px;
+padding:14px;margin-top:10px;font-size:16px;
+font-weight:bold;background:#111827;color:white
+}
+.meal{
+display:flex;justify-content:space-between;
+gap:10px;border:1px solid #eee;padding:15px;
+border-radius:15px;margin-bottom:10px;background:#fafafa
+}
+.meal h3{margin:0 0 8px}
+.meal p{margin:5px 0;font-size:14px}
+.delete{background:#dc2626;width:auto}
+.deleteAll{background:#dc2626}
+.empty{text-align:center;color:#777;padding:20px}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+<h1>📦 KANDI</h1>
+<p>إدارة الوجبات والنتائج</p>
+</header>
+
+<section class="card">
+<h2>إضافة وجبة</h2>
+
+<input id="name" placeholder="اسم الوجبة">
+<input id="number" placeholder="رقم الوجبة">
+<input id="quantity" type="number" placeholder="كمية الوجبة">
+<input id="result" type="number" placeholder="النتيجة">
+
+<button onclick="saveMeal()">حفظ الوجبة</button>
+</section>
+
+<section class="card">
+<h2>الوجبات المحفوظة</h2>
+<div id="list"></div>
+
+<button class="deleteAll" onclick="deleteAll()">
+حذف جميع الوجبات
+</button>
+</section>
+
+</div>
+
+<script>
+const KEY="KANDI_MEALS";
+
+function meals(){
+return JSON.parse(localStorage.getItem(KEY)||"[]");
+}
+
+function saveMeal(){
+
+let name=document.getElementById("name").value.trim();
+let number=document.getElementById("number").value.trim();
+let quantity=document.getElementById("quantity").value.trim();
+let result=document.getElementById("result").value.trim();
+
+if(!name || !number){
+alert("اكتب اسم الوجبة ورقمها");
+return;
+}
+
+let data=meals();
+
+data.unshift({
+id:Date.now(),
+name,
+number,
+quantity,
+result
+});
+
+localStorage.setItem(KEY,JSON.stringify(data));
+
+document.getElementById("name").value="";
+document.getElementById("number").value="";
+document.getElementById("quantity").value="";
+document.getElementById("result").value="";
+
+show();
+}
+
+function removeMeal(id){
+
+let data=meals().filter(x=>x.id!==id);
+
+localStorage.setItem(KEY,JSON.stringify(data));
+
+show();
+}
+
+function deleteAll(){
+
+if(confirm("متأكد تريد حذف جميع الوجبات؟")){
+localStorage.removeItem(KEY);
+show();
+}
+}
+
+function show(){
+
+let list=document.getElementById("list");
+let data=meals();
+
+if(!data.length){
+list.innerHTML='<div class="empty">ماكو وجبات محفوظة</div>';
+return;
+}
+
+list.innerHTML=data.map(x=>`
+
+<div class="meal">
+
+<div>
+<h3>${safe(x.name)}</h3>
+<p>رقم الوجبة: ${safe(x.number)}</p>
+<p>الكمية: ${safe(x.quantity||"-")}</p>
+<p>النتيجة: ${safe(x.result||"-")}</p>
+</div>
+
+<button class="delete" onclick="removeMeal(${x.id})">
+حذف
+</button>
+
+</div>
+
+`).join("");
+}
+
+function safe(x){
+return String(x)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+}
+
+show();
+</script>
+
+</body>
+</html>
