@@ -1,260 +1,185 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KANDI - إدارة المواد والمستودعات</title>
-    
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="KANDI">
-    <link rel="manifest" href="manifest.json">
-
-    <style>
-        :root {
-            --primary: #007aff;
-            --danger: #ff3b30;
-            --bg: #f2f2f7;
-            --card-bg: #ffffff;
-            --text: #1c1c1e;
-            --border: #e5e5ea;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 15px;
-            direction: rtl;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 15px;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-            margin-top: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            font-size: 14px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: right;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-
-        .search-box {
-            margin-bottom: 15px;
-        }
-    </style>
+    <title>مخزن مواد التعبئة والتغليف</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1e293b">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <h2>KANDI - جرد المستودعات</h2>
+    <!-- Header -->
+    <header class="app-header">
+        <h1>مخزن مواد التعبئة والتغليف</h1>
+        <span class="status-badge" id="online-status">متصل</span>
+    </header>
 
-    <!-- إدخال المادة -->
-    <div class="card">
-        <div class="form-group">
-            <label>رمز المادة</label>
-            <input type="text" id="itemCode" placeholder="مثال: 10100001">
+    <!-- Main Content Area -->
+    <main class="container" id="main-content">
+        
+        <!-- Tab 1: Dashboard -->
+        <section id="tab-dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>إجمالي المواد</h3>
+                    <p id="stat-total-items">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>إجمالي الكميات</h3>
+                    <p id="stat-total-qty">0</p>
+                </div>
+                <div class="stat-card alert-red">
+                    <h3>وصلت حد الطلب</h3>
+                    <p id="stat-reorder-reached">0</p>
+                </div>
+                <div class="stat-card alert-orange">
+                    <h3>قريبة من حد الطلب</h3>
+                    <p id="stat-reorder-near">0</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>آخر الحركات</h2>
+                <div id="recent-transactions" class="list-group">
+                    <!-- Dynamic Rows -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 2: Items Management -->
+        <section id="tab-items" class="tab-content">
+            <div class="actions-bar">
+                <input type="text" id="search-input" placeholder="بحث برمز، وصف، أو مستحضر..." oninput="loadItems()">
+                <button class="btn btn-primary" onclick="openModal('modal-add-item')">+ إضافة مادة</button>
+            </div>
+            <div id="items-list" class="items-grid">
+                <!-- Dynamic Items -->
+            </div>
+        </section>
+
+        <!-- Tab 3: Transactions -->
+        <section id="tab-transactions" class="tab-content">
+            <div class="action-buttons-grid">
+                <button class="btn btn-success" onclick="openModal('modal-in')">إضافة للمخزون (دخول)</button>
+                <button class="btn btn-danger" onclick="openModal('modal-out')">إخراج مواد (صرف)</button>
+                <button class="btn btn-warning" onclick="openModal('modal-transfer')">تحويل موقع</button>
+            </div>
+            <div class="card margin-top">
+                <h2>سجل الحركات اليومية</h2>
+                <div id="all-transactions" class="list-group">
+                    <!-- Dynamic Transactions -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 4: Audit -->
+        <section id="tab-audit" class="tab-content">
+            <div class="card">
+                <h2>إجراء جرد فعلي</h2>
+                <form id="form-audit" onsubmit="handleAudit(event)">
+                    <div class="form-group">
+                        <label>اختر المادة:</label>
+                        <select id="audit-item-id" required class="input-field"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية الفعلية بالمخزن:</label>
+                        <input type="number" step="any" id="audit-actual-qty" required class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات الجرد:</label>
+                        <input type="text" id="audit-notes" class="input-field">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">حفظ وتعديل الجرد</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 5: More / Reports -->
+        <section id="tab-more" class="tab-content">
+            <div class="card">
+                <h2>التقارير والإعدادات</h2>
+                <div class="list-group">
+                    <button class="btn btn-outline btn-block" onclick="exportData('items')">تصدير تقرير المخزون الحالي</button>
+                    <button class="btn btn-outline btn-block" onclick="exportData('transactions')">تصدير سجل الحركات</button>
+                    <button class="btn btn-outline btn-block" onclick="exportData('reorder')">تصدير مواد حد الطلب</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Add Item -->
+    <div id="modal-add-item" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-add-item')">&times;</span>
+            <h2>إضافة مادة جديدة</h2>
+            <form onsubmit="handleAddItem(event)">
+                <input type="text" id="add-code" placeholder="رمز المادة *" required class="input-field">
+                <input type="text" id="add-desc" placeholder="وصف المادة *" required class="input-field">
+                <input type="text" id="add-product" placeholder="اسم المستحضر *" required class="input-field">
+                <input type="text" id="add-unit" placeholder="الوحدة (كغم، قطعة، متر...)" required class="input-field">
+                <input type="number" step="any" id="add-qty" placeholder="الكمية الأولية" class="input-field">
+                <input type="number" step="any" id="add-reorder" placeholder="حد الطلب" class="input-field">
+                <input type="text" id="add-location" placeholder="موقع التخزين" class="input-field">
+                <input type="text" id="add-notes" placeholder="ملاحظات" class="input-field">
+                <button type="submit" class="btn btn-primary btn-block">حفظ المادة</button>
+            </form>
         </div>
-        <div class="form-group">
-            <label>رمز الباركود</label>
-            <input type="text" id="barcode" placeholder="مثال: 1">
-        </div>
-        <div class="form-group">
-            <label>الوصف</label>
-            <input type="text" id="description" placeholder="مثال: GLYCERL GUIACOLATE">
-        </div>
-        <div class="form-group">
-            <label>وحدة المفرق</label>
-            <input type="text" id="unit" placeholder="مثال: KG أو Liter">
-        </div>
-        <div class="form-group">
-            <label>الكمية الموجودة</label>
-            <input type="number" step="any" id="quantity" placeholder="0.00">
-        </div>
-        <button class="btn btn-primary" onclick="addItem()">إضافة مادة</button>
     </div>
 
-    <!-- قائمة المواد -->
-    <div class="card">
-        <h3>جدول المواد المسجلة</h3>
-        <input type="text" id="search" class="search-box" placeholder="بحث بالرمز أو الوصف..." onkeyup="filterItems()">
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>رمز المادة</th>
-                        <th>الباركود</th>
-                        <th>الوصف</th>
-                        <th>الوحدة</th>
-                        <th>الكمية</th>
-                        <th>حذف</th>
-                    </tr>
-                </thead>
-                <tbody id="itemsList"></tbody>
-            </table>
+    <!-- Modal: In Transaction -->
+    <div id="modal-in" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-in')">&times;</span>
+            <h2>إضافة كمية للمخزون</h2>
+            <form onsubmit="handleInTransaction(event)">
+                <select id="in-item-id" required class="input-field"></select>
+                <input type="number" step="any" id="in-qty" placeholder="الكمية *" required class="input-field">
+                <input type="text" id="in-doc" placeholder="رقم المستند / الوصل *" required class="input-field">
+                <input type="text" id="in-notes" placeholder="ملاحظات" class="input-field">
+                <button type="submit" class="btn btn-success btn-block">تأكيد الإضافة</button>
+            </form>
         </div>
-        
-        <button class="btn btn-danger" onclick="clearAll()" style="margin-top: 15px;">حذف كافة البيانات</button>
     </div>
-</div>
 
-<script>
-    let items = JSON.parse(localStorage.getItem('kandi_items')) || [];
+    <!-- Modal: Out Transaction -->
+    <div id="modal-out" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-out')">&times;</span>
+            <h2>إخراج مواد من المخزون</h2>
+            <form onsubmit="handleOutTransaction(event)">
+                <select id="out-item-id" required class="input-field"></select>
+                <input type="number" step="any" id="out-qty" placeholder="الكمية المطلوبة *" required class="input-field">
+                <input type="text" id="out-product" placeholder="اسم المستحضر *" required class="input-field">
+                <input type="text" id="out-batch" placeholder="رقم الوجبة / الباج *" required class="input-field">
+                <input type="text" id="out-doc" placeholder="رقم المستند *" required class="input-field">
+                <input type="text" id="out-notes" placeholder="ملاحظات" class="input-field">
+                <button type="submit" class="btn btn-danger btn-block">تأكيد الإخراج</button>
+            </form>
+        </div>
+    </div>
 
-    function renderItems(data = items) {
-        const tbody = document.getElementById('itemsList');
-        tbody.innerHTML = '';
-        
-        data.forEach((item, index) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${item.code}</td>
-                    <td>${item.barcode}</td>
-                    <td>${item.desc}</td>
-                    <td>${item.unit}</td>
-                    <td><b>${item.qty}</b></td>
-                    <td><button onclick="deleteItem(${index})" style="color:red; border:none; background:none; cursor:pointer;">✕</button></td>
-                </tr>
-            `;
-        });
-    }
+    <!-- Bottom Navigation Bar (Mobile) -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('tab-dashboard', this)">
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-items', this)">
+            <span>المواد</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-transactions', this)">
+            <span>الحركات</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-audit', this)">
+            <span>الجرد</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-more', this)">
+            <span>المزيد</span>
+        </button>
+    </nav>
 
-    function addItem() {
-        const code = document.getElementById('itemCode').value;
-        const barcode = document.getElementById('barcode').value;
-        const desc = document.getElementById('description').value;
-        const unit = document.getElementById('unit').value;
-        const qty = document.getElementById('quantity').value;
-
-        if (!code || !desc) {
-            alert('يرجى إدخال رمز المادة والوصف على الأقل!');
-            return;
-        }
-
-        items.push({ code, barcode, desc, unit, qty });
-        localStorage.setItem('kandi_items', JSON.stringify(items));
-        renderItems();
-
-        // تفريغ الحقول
-        document.getElementById('itemCode').value = '';
-        document.getElementById('barcode').value = '';
-        document.getElementById('description').value = '';
-        document.getElementById('unit').value = '';
-        document.getElementById('quantity').value = '';
-    }
-
-    function deleteItem(index) {
-        items.splice(index, 1);
-        localStorage.setItem('kandi_items', JSON.stringify(items));
-        renderItems();
-    }
-
-    function clearAll() {
-        if (confirm('هل أنت تأكد من حذف جميع المواد؟')) {
-            items = [];
-            localStorage.removeItem('kandi_items');
-            renderItems();
-        }
-    }
-
-    function filterItems() {
-        const query = document.getElementById('search').value.toLowerCase();
-        const filtered = items.filter(i => 
-            i.code.toLowerCase().includes(query) || 
-            i.desc.toLowerCase().includes(query) ||
-            i.barcode.toLowerCase().includes(query)
-        );
-        renderItems(filtered);
-    }
-
-    // تشغيل القائمة عند الفتح
-    renderItems();
-</script>
-
+    <script src="app.js"></script>
 </body>
 </html>
