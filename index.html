@@ -2,267 +2,1131 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مخزن مواد التعبئة والتغليف</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KANDI - إدارة مواد التعبئة والتغليف</title>
     <style>
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent-blue: #2563eb;
-            --accent-red: #dc2626;
-            --border-color: #2a2a2a;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --border-color: #2d2d2d;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --card-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
+            padding-bottom: 90px;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        header {
+            background-color: var(--card-bg);
             padding: 16px;
-            padding-bottom: 80px;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            text-align: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo-title h1 {
-            font-size: 16px;
-            margin: 0;
-            font-weight: bold;
+        header h1 {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .logo-title span {
-            font-size: 12px;
-            color: var(--text-secondary);
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .section-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin: 16px 0 8px 0;
-            color: var(--text-secondary);
+        .view-section {
+            display: none;
         }
 
-        .card {
+        .view-section.active {
+            display: block;
+        }
+
+        /* Dashboard Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 12px;
+            border-radius: var(--card-radius);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .stat-card.danger .number {
+            color: var(--danger-color);
+        }
+
+        .stat-card.warning .number {
+            color: var(--warning-color);
+        }
+
+        /* Search & Filter Bar */
+        .search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+        }
+
+        /* Item Cards */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .item-card.low-stock {
+            border-color: var(--warning-color);
+        }
+
+        .item-card.out-of-stock {
+            border-color: var(--danger-color);
         }
 
         .item-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 8px;
-        }
-
-        .item-name {
-            font-size: 15px;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .item-code {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .item-details {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .progress-bar-container {
-            background-color: #2a2a2a;
-            border-radius: 4px;
-            height: 6px;
-            width: 100%;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--accent-blue);
-            border-radius: 4px;
-        }
-
-        .progress-bar.warning {
-            background-color: var(--accent-red);
-        }
-
-        .alert-box {
-            background-color: rgba(220, 38, 38, 0.15);
-            border: 1px solid var(--accent-red);
-            color: #fca5a5;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-
-        .action-buttons {
-            display: flex;
             gap: 8px;
         }
 
+        .item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            word-break: break-word;
+        }
+
+        .item-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .badge-normal {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--danger-color);
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .item-qty {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+
         .btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 12px;
             border-radius: 6px;
-            font-size: 13px;
-            font-weight: bold;
+            font-size: 0.85rem;
             cursor: pointer;
+            flex: 1;
             text-align: center;
-            color: white;
+            transition: background-color 0.2s;
         }
 
-        .btn-add {
-            background-color: var(--accent-blue);
+        .btn:active {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
-        .btn-sub {
-            background-color: #333333;
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
         }
 
+        .btn-danger {
+            color: var(--danger-color);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Forms and Inputs */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+        }
+
+        /* Bottom Navigation Bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
-            right: 0;
             left: 0;
-            background-color: #181818;
+            right: 0;
+            background-color: var(--card-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
+            z-index: 1000;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
         }
 
         .nav-item {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 11px;
-            text-decoration: none;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            flex: 1;
         }
 
         .nav-item.active {
-            color: var(--accent-blue);
+            color: var(--accent-color);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .export-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo-title">
-            <h1>شركة الكندي للصناعات الدوائية</h1>
-            <span>نظام إدارة ومتابعة المخزون</span>
-        </div>
-    </div>
+    <header>
+        <h1>KANDI - مواد التعبئة والتغليف</h1>
+    </header>
 
-    <!-- الملف الأول: جدول المواد العامة -->
-    <div class="section-title">ملف المواد العامة</div>
-    <div class="card">
-        <div class="item-header">
-            <div>
-                <p class="item-name">PARACETAMOL API</p>
-                <span class="item-code">الرمز: 1 | الموقع: A1</span>
+    <div class="container">
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="view-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>إجمالي المواد</h3>
+                    <div class="number" id="stat-total">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <h3>قريبة من النفاد (&le;1000)</h3>
+                    <div class="number" id="stat-low">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <h3>نفدت الرصيد (0)</h3>
+                    <div class="number" id="stat-zero">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>مواد بالكيلوجرام</h3>
+                    <div class="number" id="stat-kg">0</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <h3 style="font-size: 1rem; color: #fff; margin-bottom: 12px;">تنبيهات المواد الحرجة</h3>
+                <div id="critical-items-list" class="items-list">
+                    <!-- Dynamic Critical Items -->
+                </div>
             </div>
         </div>
-        <div class="item-details">
-            <span>الرصيد الحالي: 28,500</span>
-            <span>حد التنبيه: 25,000</span>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar" style="width: 70%;"></div>
-        </div>
-        <div class="action-buttons">
-            <button class="btn btn-add" onclick="alert('إضافة مادة')">إضافة (+)</button>
-            <button class="btn btn-sub" onclick="alert('صرف مادة')">صرف (-)</button>
-        </div>
-    </div>
 
-    <!-- الملف الثاني: مواد التعبئة والتغليف -->
-    <div class="section-title">ملف مواد التعبئة والتغليف</div>
-    <div class="card">
-        <div class="item-header">
-            <div>
-                <p class="item-name">CARTON BOX</p>
-                <span class="item-code">الرمز: 2 | الموقع: B1</span>
+        <!-- Inventory View -->
+        <div id="view-inventory" class="view-section">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="بحث باسم المادة، المستحضر، أو الكود..." oninput="filterItems()">
+            </div>
+            <div id="inventory-list" class="items-list">
+                <!-- Dynamic Inventory Items -->
             </div>
         </div>
-        <div class="item-details">
-            <span>الرصيد الحالي: 15,000</span>
-            <span>حد التنبيه: 20,000</span>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar warning" style="width: 60%;"></div>
-        </div>
-        <div class="alert-box">
-            ⚠️ تنبيه: وصل الرصيد الحد الأدنى المطلوب (20,000)
-        </div>
-        <div class="action-buttons">
-            <button class="btn btn-add" onclick="alert('إضافة كرتون')">إضافة (+)</button>
-            <button class="btn btn-sub" onclick="alert('صرف كرتون')">صرف (-)</button>
-        </div>
-    </div>
 
-    <!-- الملف الثالث: المواد الخام (PVC والألمنيوم) -->
-    <div class="section-title">ملف المواد الخام (PVC والألمنيوم)</div>
-    <div class="card">
-        <div class="item-header">
-            <div>
-                <p class="item-name">PVC ROLL</p>
-                <span class="item-code">الرمز: 3 | الموقع: C1</span>
+        <!-- Add/Edit View -->
+        <div id="view-add" class="view-section">
+            <div class="modal-content" style="max-width: 100%; border: none; padding: 0;">
+                <div class="modal-title" id="form-title">إضافة مادة جديدة</div>
+                <input type="hidden" id="edit-index" value="-1">
+                <div class="form-group">
+                    <label>اسم المادة</label>
+                    <input type="text" id="input-name" class="form-control" placeholder="أدخل اسم المادة بدقة...">
+                </div>
+                <div class="form-group">
+                    <label>الكمية الأولية</label>
+                    <input type="number" step="any" id="input-qty" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>الوحدة</label>
+                    <select id="input-unit" class="form-control">
+                        <option value="PCS">PCS</option>
+                        <option value="KG">KG</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="padding: 12px;" onclick="saveItem()">حفظ المادة</button>
             </div>
         </div>
-        <div class="item-details">
-            <span>الرصيد الحالي: 55 كغ</span>
-            <span>حد التنبيه: 60 كغ</span>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar warning" style="width: 85%;"></div>
-        </div>
-        <div class="alert-box">
-            🚨 تنبيه: المواد الخام أقل من 60 كغ!
-        </div>
-        <div class="action-buttons">
-            <button class="btn btn-add" onclick="alert('إضافة خامات')">إضافة (+)</button>
-            <button class="btn btn-sub" onclick="alert('صرف خامات')">صرف (-)</button>
+
+        <!-- Settings & Export View -->
+        <div id="view-settings" class="view-section">
+            <h3 style="font-size: 1rem; color: #fff; margin-bottom: 12px;">إدارة البيانات والتصدير</h3>
+            <div class="export-section">
+                <button class="btn btn-primary" style="padding: 14px;" onclick="exportToCSV()">تصدير البيانات إلى ملف Excel (CSV)</button>
+                <button class="btn btn-danger" style="padding: 14px; margin-top: 10px;" onclick="resetToDefaultData()">استعادة البيانات الأصلية الأساسية</button>
+            </div>
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي -->
-    <div class="nav-bar">
-        <a href="#" class="nav-item active">
-            <div>🏠</div>
-            <span>الرئيسية</span>
-        </a>
-        <a href="#" class="nav-item">
-            <div>📦</div>
-            <span>المخزون</span>
-        </a>
-        <a href="#" class="nav-item">
-            <div>📊</div>
-            <span>التقارير</span>
-        </a>
-        <a href="#" class="nav-item">
-            <div>⚙️</div>
-            <span>الإعدادات</span>
-        </a>
+    <!-- Transaction Modal (Add / Deduct) -->
+    <div id="transaction-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="trans-title">تعديل كمية المادة</div>
+            <input type="hidden" id="trans-index">
+            <input type="hidden" id="trans-type">
+            <div class="form-group">
+                <label id="trans-label">الكمية المراد إضافتها أو خصمها</label>
+                <input type="number" step="any" id="trans-qty" class="form-control" placeholder="0">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal()">إلغاء</button>
+                <button class="btn btn-primary" onclick="executeTransaction()">تأكيد العملية</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Bottom Navigation -->
+    <nav class="nav-bar">
+        <button class="nav-item active" onclick="switchView('dashboard', this)">
+            <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            الرئيسية
+        </button>
+        <button class="nav-item" onclick="switchView('inventory', this)">
+            <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0-2-.9-2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+            المخزن
+        </button>
+        <button class="nav-item" onclick="switchView('add', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            إضافة مادة
+        </button>
+        <button class="nav-item" onclick="switchView('settings', this)">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            الإعدادات
+        </button>
+    </nav>
+
+    <script>
+        const initialRawData = [
+            ["PACKET POVIDONE IODINE KINDI 47", 24999, "PCS"],
+            ["ALU FOIL CALCIUM-KINDI (243MM)", 84.4, "KG"],
+            ["ALU FOIL KINDIFED (243 MM)", 91.15, "KG"],
+            ["ALU FOIL KINDIFED (243 MM) MOH", 36.7, "KG"],
+            ["ALU FOIL KINDIPRIM TAB (243 MM)", 83.324, "KG"],
+            ["LEAFLET PERITIN SYRUP", 167000, "PCS"],
+            ["HOSPTL KINDAZOL 500 TAB", 0, "PCS"],
+            ["PACKET AWZARON ELXIR", 204200, "PCS"],
+            ["PACKET KIN-EXDIL ORAL SOLUTION", 0, "PCS"],
+            ["LEAFLET KINDICONE TAB", 96013, "PCS"],
+            ["ALU FOIL DUSPALINE TAB (204MM)", 0, "KG"],
+            ["PACKET DUSPALINE TAB", 8685, "PCS"],
+            ["LABEL AWZARON ELXIR", 273550, "PCS"],
+            ["LABEL KIN-EXDIL SOLUTION", 0, "PCS"],
+            ["PACKET NAPROKIN 250 TAB", 0, "PCS"],
+            ["LEAFLET TELMIKINDIN 80 TAB", 51700, "PCS"],
+            ["LEAFLET AWZARON ELXIR", 254727, "PCS"],
+            ["LEAFLET DUSPALINE TAB", 18753, "PCS"],
+            ["LABEL MOTILIONE ORAL SUSP", 0, "PCS"],
+            ["P.V.C 230 MM CLEAR", 4, "KG"],
+            ["LEAFLET NESTACOMB OINTMENT", 60000, "PCS"],
+            ["PACKET MOTILIONE ORAL SUSP", 0, "PCS"],
+            ["LEAFLET MOTILIONE ORAL SUSP", 0, "PCS"],
+            ["LEAFLET NESTACOMB CREAM", 0, "PCS"],
+            ["ALU FOIL MECLOKINDIN 10 TAB (250MM) MOH", 100000, "KG"],
+            ["ALU ALU FOIL (232MM)", 25.4, "KG"],
+            ["ALU FOIL KARVEDOL 25 (250MM)", 2271.8, "KG"],
+            ["PACKET TACROLIMUS-KIN OINTMENT 0.1%", 7300, "PCS"],
+            ["ALU FOIL HISTOFEN TAB (259 MM) MOH", 95.7, "KG"],
+            ["ALU FOIL KANDESAT 16 (259 MM)", 55.295, "KG"],
+            ["ALU FOIL METPHAGE 500 (228MM)", 146.85045, "KG"],
+            ["ALU FOIL METPHAGE 850 MG (228MM)", 227.296, "KG"],
+            ["ALU FOIL REYABAL (259 MM)", 0, "KG"],
+            ["ALU FOIL DUSPALINE (204MM) MOH", 0, "KG"],
+            ["P.V.C 256 MM CLEAR", 1958.552, "KG"],
+            ["P.V.C 226 MM CLEAR", 4201.3, "KG"],
+            ["P.V.C 268 MM CLEAR", 3116.2, "KG"],
+            ["P.V.C 259 MM CLEAR", 2424.2, "KG"],
+            ["P.V.C 250 MM CLEAR", 2832.447, "KG"],
+            ["P.V.C 235 MM CLEAR", 6020.75, "KG"],
+            ["PACKET E-CITALOPRAM", 0, "PCS"],
+            ["LEAFLET E-CITALOPRAM", 153044, "PCS"],
+            ["GELATIN CAP. S1 YELLOW / TURQUOISE", 0, "PCS"],
+            ["GELATIN CAPSULES SO PURPLE / WHTITE", 0, "PCS"],
+            ["PACKET SAMELLEN SYRUP", 0, "PCS"],
+            ["PACKET PARAMOL 120 SYRUP", 133085, "PCS"],
+            ["LEAFLET TACROLIMUS-KIN OINTMENT 0.1%", 0, "PCS"],
+            ["LABEL POVIDONE IODINE KINDI 10%", 71000, "PCS"],
+            ["LABEL POVIDONE IODINE KINDI 4%", 55900, "PCS"],
+            ["TUBE TACROLIMUS-KIN OINTMENT 0.1%", 849, "PCS"],
+            ["TUBE TACROLIMUS-KIN OINTMENT 0.1% MOH", 4620, "PCS"],
+            ["ALU FOIL CALCIUM-KINDI (243MM) MOH", 102.7, "KG"],
+            ["LABEL SAMELLEN-KINDI", 0, "PCS"],
+            ["ALU ALU FOIL (250 MM)", 2176.831, "KG"],
+            ["ALU ALU FOIL (243MM)", 2412.8, "KG"],
+            ["ALU ALU FOIL (228MM)", 0, "KG"],
+            ["ALU FOIL UN PRINTED 228MM", 493, "KG"],
+            ["BLANK", 0, "KG"],
+            ["ALU FOIL KARVEDOL 6.25 (250MM)", 100.266, "KG"],
+            ["ALU FOIL L-SARTAN 50 (243MM)", 154.4, "KG"],
+            ["ALU FOIL KIVAS 20 (228MM) TAB", 117.1, "KG"],
+            ["PACKET METPHAGE 850 TAB", 63300, "PCS"],
+            ["PACKET METPHAGE 500 TAB", 111120, "PCS"],
+            ["PACKET PLAVIKIN TAB", 237000, "PCS"],
+            ["PACKET KARVEDOL 6.25 TAB", 16318, "PCS"],
+            ["PACKET L-SARTAN 50 TAB", 206950, "PCS"],
+            ["PACKET KIVAS 20 TAB", 165804, "PCS"],
+            ["PACKET KANDESAT 16 TAB", 96986, "PCS"],
+            ["PACKET REYABAL TAB", 0, "PCS"],
+            ["LEAFLET REYABAL TAB", 0, "PCS"],
+            ["LEAFLET SAMELLEN-KINDI SYRUP", 0, "PCS"],
+            ["ALU FOIL PARAMOL 500 TAB (235MM)", 44.3, "KG"],
+            ["LABEL PAINPROOF ORAL SUSP", 315776, "PCS"],
+            ["ALU FOIL PARAMOL 500 TAB (235MM) MOH", 27, "KG"],
+            ["LABEL PAINPROOF OINTMENT MOH", 99792, "PCS"],
+            ["ALU FOIL FERFOLE-KINDI (259MM) MOH", 447.1, "KG"],
+            ["ALU FOIL UN PRINTED 235MM", 43.7, "KG"],
+            ["TUBE PAROMOKIN OINTMENT", 49048, "PCS"],
+            ["ALU FOIL FLAGKIN 500 TAB (228 MM)", 109.1, "KG"],
+            ["LABEL SAMYCOUGH SYRUP", 175000, "PCS"],
+            ["TOP DOOR CAP", 4000, "PCS"],
+            ["PACKET SPASMO TAB", 239440, "PCS"],
+            ["PACKET GASES-OUT ORAL DROPS", 576100, "PCS"],
+            ["PRICE STICKERS", 233058, "PCS"],
+            ["HOSPITAL KINDIPRIM TAB", 6175, "PCS"],
+            ["HOSPITAL PARADOL TAB 10 SHEET", 27051.3, "PCS"],
+            ["PACKET AMLODEPEN 5MG 14TAB", 0, "PCS"],
+            ["PACKET PARAMOL 250 SUSP", 421900, "PCS"],
+            ["PACKET COLDEN - KINDI SYRUP", 346116, "PCS"],
+            ["ALU FOIL ZYPRAXEN 5 MG (204MM) MOH", 0, "KG"],
+            ["LABEL COLDEN - KINDI SYRUP", 35392, "PCS"],
+            ["LABEL GASES-OUT ORAL DROPS", 531000, "PCS"],
+            ["PACKET ZYPRAXEN 5 TAB", 86650, "PCS"],
+            ["ALU FOIL ZYPRAXEN 5 MG (204MM)", 0, "KG"],
+            ["ALU FOIL KANDESAT 8 (204MM)", 0, "KG"],
+            ["ALU FOIL KINDIPRIM TAB (243 MM) MOH", 54.3, "KG"],
+            ["PACKET SAMYCOUGH SYRUP", 84800, "PCS"],
+            ["ALU FOIL ZYPRAXEN 10 MG (204MM)", 0, "KG"],
+            ["ALU FOIL DUSPALINE TAB (268MM) MOH", 28.9, "KG"],
+            ["PACKET PLAVIKIN TAB SMALL", 0, "PCS"],
+            ["PACKET KINPROFEN 200 TAB", 0, "PCS"],
+            ["ALU FOIL UN PRINTED 243MM", 789.45, "KG"],
+            ["ALU FOIL UN PRINTED 250MM", 1036.3, "KG"],
+            ["PACKET KANDESAT 8 TAB", 82500, "PCS"],
+            ["TUBE BETACON CREAM", 91740, "PCS"],
+            ["LEAFLET KARBAZEPIN 200 TAB", 138591, "PCS"],
+            ["LEAFLET FERFOLE KINDI CAP", 568678, "PCS"],
+            ["TUBE ZINC BYBY OINTMENT", 97522, "PCS"],
+            ["ALU FOIL FERFOLE KINDI (176MM)", 0, "KG"],
+            ["PACKET ZYPRAXEN 5 TAB 243", 51550, "PCS"],
+            ["PACKET ZYPRAXEN 10 TAB 243", 122744, "PCS"],
+            ["PACKET E-CITALOPRAM 10 TAB 243", 89750, "PCS"],
+            ["PACKET ZINC BABY OINTMENT", 291830, "PCS"],
+            ["PACKET VOLTAREN KINDI GEL", 149300, "PCS"],
+            ["LEAFLET ZINC BABY OINTMENT", 81990, "PCS"],
+            ["LEAFLET SILVAZIN 1% CREAM", 146360, "PCS"],
+            ["LEAFLET BRONCOPHYLIN ORAL SOLUTION", 143900, "PCS"],
+            ["LEAFLET SAMYCOUGH SYRUP", 99200, "PCS"],
+            ["ALU FOIL BUTAMOL TAB (250MM)", 66.4, "KG"],
+            ["ALU FOIL CIBTADEN TAB (250MM)", 115.55, "KG"],
+            ["LABEL KINOTEFEN SYRUP", 252031, "PCS"],
+            ["ALU FOIL METPHAGE 500 MG (228MM) MOH", 485.331, "KG"],
+            ["GELATIN CAP. S4 RED / WHITE", 1094555, "PCS"],
+            ["GELATIN CAP. S2 WHITE", 88474, "PCS"],
+            ["LEAFLET MECLOKINDIN SYRUP", 93800, "PCS"],
+            ["LEAFLET PYRIDOXINE (B6)", 230527, "PCS"],
+            ["ALU FOIL PYRIDOXINE B6 TAB (259MM)", 50.4, "KG"],
+            ["CARTON WHITE 30 (100 ML) PACKET (307255127)", 16902, "PCS"],
+            ["ALU FOIL L-SARTAN 50 (243MM) MOH", 388.8, "KG"],
+            ["ALU FOIL CAPTOPRIL 25 MG (250MM)", 28.8, "KG"],
+            ["LEAFLET FENESTEDIL DROPS", 253390, "PCS"],
+            ["LEAFLET LEBRAX-KINDI", 142689, "PCS"],
+            ["PACKET MECLOKINDIN SYRUP", 105700, "PCS"],
+            ["LEAFLET VITAMIN D3 KINDI", 482405, "PCS"],
+            ["LABEL VITAMIN D3-KINDI", 490512, "PCS"],
+            ["LEAFLET KINOTEFEN SYRUP", 203000, "PCS"],
+            ["LEAFLET MALOKES PLUS SUSP", 0, "PCS"],
+            ["PACKET VITAMIN D3-KINDI", 485548, "PCS"],
+            ["PACKET MALOKES PLUS SUSP", 0, "PCS"],
+            ["PACKET KINOTEFEN SYRUP", 81100, "PCS"],
+            ["LABEL MALOKES PLUS SUSP", 0, "PCS"],
+            ["ALU FOIL UN PRINTED SACHET (158MM)", 105.56, "KG"],
+            ["LEAFLET KIVAS 20 TAB", 257666, "PCS"],
+            ["LEAFLET CAPTOPRIL TAB", 0, "PCS"],
+            ["LEAFLET KARVEDOL TAB", 112212, "PCS"],
+            ["LEAFLET AMLODEPEN 5 TAB", 160562, "PCS"],
+            ["LEAFLET HISTOFEN TAB", 84950, "PCS"],
+            ["LEAFLET ZYPRAXEN TAB", 133343, "PCS"],
+            ["LEAFLET GASES-OUT DROPS", 511000, "PCS"],
+            ["PACKET PISOLON SYRUP", 700, "PCS"],
+            ["LABEL PISOLON SYRUP", 241044, "PCS"],
+            ["LEAFLET PISOLON SYRUP", 186763, "PCS"],
+            ["LEAFLET L-SARTAN 50 TAB", 270175, "PCS"],
+            ["ALU FOIL LOMO STOP (250 MM)", 70.4, "KG"],
+            ["ALU FOIL VALIUPAM 5 (250 MM)", 37.85, "KG"],
+            ["TUBE SILVAZIN 1% CREAM", 140909, "PCS"],
+            ["PACKET SILVAZIN 1% CREAM", 72365, "PCS"],
+            ["PACKET FERFOLE KINDI CAP", 715000, "PCS"],
+            ["ALU ALU FOIL (235MM)", 988.6, "KG"],
+            ["ALU FOIL UN PRINTED 263MM", 0, "KG"],
+            ["PACKET KARBAZEPIN TAB", 137397, "PCS"],
+            ["PACKET ZYPRAXEN 10 TAB", 0, "PCS"],
+            ["LEAFLET METPHAGE TAB", 271003, "PCS"],
+            ["LEAFLET KINPROFEN TAB", 0, "PCS"],
+            ["TUBE LIDOCAN-K 2% JELY", 0, "PCS"],
+            ["TUBE FUSIDIK OINTMENT", 61398, "PCS"],
+            ["TUBE FUSIDIK CREAM", 61075, "PCS"],
+            ["TUBE FUGEDENE 1% CREAM", 42070, "PCS"],
+            ["P.V.C 263 MM CLEAR", 143.86, "KG"],
+            ["PACKET KARVEDOL 25 TAB", 50460, "PCS"],
+            ["ALU FOIL AMLODEPEN 5 (250MM)", 135, "KG"],
+            ["PACKET AMLODEPEN 5MG 10TAB", 54176, "PCS"],
+            ["P.V.C 268MM WHITE", 6925.397, "KG"],
+            ["LEAFLET SPASMO TAB", 299022, "PCS"],
+            ["ALU FOIL AMLODEPEN 5 MG (263MM)", 0, "KG"],
+            ["PACKET CAPTOPRIL 25 TAB", 74975, "PCS"],
+            ["PACKET CAPTOPRIL 50 TAB", 378100, "PCS"],
+            ["ALU FOIL CAPTOPRIL 25 MG (198MM)", 0, "KG"],
+            ["ALU FOIL CAPTOPRIL 50 MG (250MM)", 355.378, "KG"],
+            ["PACKET KARBAZEPIN TAB 10 SHEET", 22000, "PCS"],
+            ["ALU FOIL KARBAZEPIN (259MM)", 119.7, "KG"],
+            ["ALU FOIL PLAVIKIN 75 MG (259MM)", 0, "KG"],
+            ["LABEL MECLOKINDIN SYRUP", 96000, "PCS"],
+            ["LEAFLET MECLOKINDIN TAB", 134616, "PCS"],
+            ["LEAFLET SEDAMOL SYRUP", 0, "PCS"],
+            ["LEAFLET CALCIUM-KINDI TAB", 132293, "PCS"],
+            ["LEAFLET VOLTAREN-KINDI GEL", 227000, "PCS"],
+            ["LEAFLET TUSSINAM KINDI SYRUP", 225270, "PCS"],
+            ["LEAFLET LIDOCAN-K 2% JELLY", 0, "PCS"],
+            ["LEAFLET PARAMOL 250 SUSP", 215589, "PCS"],
+            ["LABEL COHOL-KINDI", 194000, "PCS"],
+            ["BOTTLE TRANSPARENT 250 ML", 48687, "PCS"],
+            ["WHITE FINGERSPRY 24 MM", 188740, "PCS"],
+            ["HOSPITAL VITAMIN C 250 KINDI", 5750, "PCS"],
+            ["ALU FOIL VITAMIN C 250 KINDI (117MM)", 0, "KG"],
+            ["ALU FOIL SEREQUAPINE 200 (176MM)", 0, "KG"],
+            ["HOSPITAL VITAMIN C 500 KINDI", 6750, "PCS"],
+            ["ALU FOIL VITAMIN C 500 KINDI (117MM)", 0, "KG"],
+            ["PACKET VITAMIN C 500 KINDI", 212431, "PCS"],
+            ["LEAFLET PLAVIKIN TABLES", 162500, "PCS"],
+            ["TUBE SILVAZIN 1% CREAM MOH", 271956, "PCS"],
+            ["TUBE VOLTAREN KINDI GEL", 171185, "PCS"],
+            ["ALU FOIL ZYPRAXEN 10 MG (243MM)", 0, "KG"],
+            ["ALU FOIL ZYPRAXEN 5 MG (243MM)", 0, "KG"],
+            ["ALU FOIL E-CITALOPRAM 10 (243MM)", 152, "KG"],
+            ["ALU FOIL UN PRINTED 232MM", 260.04, "KG"],
+            ["ALU FOIL UN PRINTED 228MM", 12.45, "KG"],
+            ["LABEL TUSSINAM KINDI SYRUP", 206047, "PCS"],
+            ["ALU FOIL AMLODEPEN 5 MG (250MM) MOH", 65.65, "KG"],
+            ["ALU FOIL KARVEDOL 6.25 (250MM) MOH", 62.25, "KG"],
+            ["ALU FOIL KARVEDOL 25 (250MM) MOH", 3.5, "KG"],
+            ["LEAFLET LYRIKINE CAPSULE", 38740, "PCS"],
+            ["LEAFLET BETACON TABLETS", 100000, "PCS"],
+            ["LEAFLET CIBTADEN TABLETS", 188000, "PCS"],
+            ["LEAFLET DIARRHEA-STOP TABLETS", 178500, "PCS"],
+            ["ALU FOIL PLAVIKIN 75 MG (232MM) MOH", 97.8, "KG"],
+            ["ALU FOIL VITAMIN C 250 (263MM)", 20, "KG"],
+            ["ALU FOIL KIVAS (228MM) MOH", 49.5, "KG"],
+            ["ALU FOIL BETACON (250MM)", 54, "KG"],
+            ["PACKET PULMOCORDIN KINDI SYRUP", 0, "PCS"],
+            ["PACKET ANTI-VOMIT SYRUP", 265000, "PCS"],
+            ["PACKET TUSSINAM KINDI SYRUP", 175540, "PCS"],
+            ["ALU FOIL UN PRINTED SACHET (128MM)", 653.86, "KG"],
+            ["PACKET BETACON TAB", 101680, "PCS"],
+            ["PACKET KINDIENAC-K TAB", 100949, "PCS"],
+            ["PACKET CALCIUM-KINDI TAB", 14352, "PCS"],
+            ["PACKET MECLOKINDIN 5 TAB", 103400, "PCS"],
+            ["PACKET MECLOKINDIN 10 TAB", 167897, "PCS"],
+            ["PACKET DIARRHEA-STOP TAB", 73950, "PCS"],
+            ["PACKET CIBTADEN TAB", 162250, "PCS"],
+            ["PACKET NAPROKIN 500 TAB", 89224, "PCS"],
+            ["PACKET SEREQUAPINE 200 TAB", 151330, "PCS"],
+            ["ALU FOIL NAPROKIN 500 (176MM)", 0, "KG"],
+            ["ALU FOIL LIBROXIDE-KINDI 10 (198MM)", 0, "KG"],
+            ["ALU FOIL CALCIUM-KINDI (204MM)", 0, "KG"],
+            ["ALU FOIL KINDIFENAC-K (184MM)", 0, "KG"],
+            ["LEAFLET KINDIFENAC-K 50 TABLES", 99999, "PCS"],
+            ["LEAFLET ROUVASTATIN-KINDI TAB", 97348, "PCS"],
+            ["LEAFLET IRON-KINDI F/C TAB", 100000, "PCS"],
+            ["LEAFLET LIBROXIDE-KINDI TAB", 0, "PCS"],
+            ["LEAFLET LACTULAKIN SYRUP", 199100, "PCS"],
+            ["LABEL KALAMINA LOTION", 0, "PCS"],
+            ["LEAFLET KALAMINA LOTION", 0, "PCS"],
+            ["LEAFLET BETACON 0.1% CREAM", 59200, "PCS"],
+            ["LEAFLET LIBROKSIDIN TABLETS", 103488, "PCS"],
+            ["LEAFLET PARAMOL ORAL DROPS", 167073, "PCS"],
+            ["LABEL POVIDONE IODINE 7.5%", 43500, "PCS"],
+            ["LABEL POVIDONE IODINE 10%", 2380, "PCS"],
+            ["PACKET SEREQUAPINE 100", 60800, "PCS"],
+            ["PACKET LIBROKSIDIN 5 MG TAB", 125750, "PCS"],
+            ["PACKET LIBROKSIDIN 10 MG TAB", 99650, "PCS"],
+            ["PACKET ROUVASTATIN-KINDI 40", 98250, "PCS"],
+            ["PACKET IRON-KINDI 300", 54760, "PCS"],
+            ["PACKET KALAMINA LOTION", 0, "PCS"],
+            ["PACKET BETACON 0.1% CREAM", 124850, "PCS"],
+            ["PACKET FUGEDENE 1% CREAM", 133195, "PCS"],
+            ["ALU FOIL SEREQUAPINE 100 259MM", 43.2, "KG"],
+            ["ALU FOIL ROUVASTATIN-KINDI 40", 44.598, "KG"],
+            ["ALU FOIL IRON-KINDI 300 (259MM)", 43, "KG"],
+            ["HOSPITAL FENESTEDIL ORAL DROPS", 23719, "PCS"],
+            ["ALU FOIL LIBROKSIDIN 5 (198MM)", 0, "KG"],
+            ["LABEL LACTULAKIN SYRUP", 233766, "PCS"],
+            ["PACKET LACTULAKIN SYRUP", 209800, "PCS"],
+            ["PACKET KANDIFED SYRUP", 218600, "PCS"],
+            ["PLASTIC BOTTLE 1000 ML", 1543, "PCS"],
+            ["LABEL KANDIFED SYRUP", 301184, "PCS"],
+            ["PACKET AZITHROKINDIN 500 TAB", 190321, "PCS"],
+            ["PACKET LYRIKINE 75 TAB", 89513, "PCS"],
+            ["PACKET PISOLON 20 TAB", 27850, "PCS"],
+            ["LABEL ZINC KINDI 25 CAPSULE", 0, "PCS"],
+            ["PLASTIC BOTTLE 150ML+ CAP 37ML", 29950, "PCS"],
+            ["LABEL VALIUPAM SYRUP", 250000, "PCS"],
+            ["LABEL RISPERODEL SYRUP", 129370, "PCS"],
+            ["LEAFLET PARAMOL COLD & FLU TAB", 196510, "PCS"],
+            ["ALU FOIL PISOLON 20 MG TAB (204 MM)", 0, "KG"],
+            ["ALU FOIL MALOKES TAB (230MM)", 0, "KG"],
+            ["PACKET LUMINAL 30 KINDI", 50101, "PCS"],
+            ["PACKET PARAMOL COLD & FLU", 218916, "PCS"],
+            ["PACKET VALIUPAM SYRUP", 124050, "PCS"],
+            ["PACKET RISPERODEL SYRUP", 85987, "PCS"],
+            ["PACKET NESTACOMB OINTMENT", 218800, "PCS"],
+            ["PACKET NESTACOMB CREAM", 137500, "PCS"],
+            ["PACKET LIDOCAN-K 5% OINTMENT", 196450, "PCS"],
+            ["LEAFLET VALIUPAM SYRUP", 148500, "PCS"],
+            ["LEAFLET KINDIGESIC TAB", 119200, "PCS"],
+            ["LEAFLET RISPERODEL SYRUP", 204711, "PCS"],
+            ["ALU FOIL LUMINAL 30 (198MM)", 0, "KG"],
+            ["ALU FOIL PARAMOL COLD & FLU (268MM)", 238.9, "KG"],
+            ["ALU FOIL DIARRHEA-STOP TAB (250MM)", 108.5, "KG"],
+            ["ALU FOIL KINDIGESIC TAB (228MM)", 79.3, "KG"],
+            ["ALU FOIL KARBAZEPIN (259MM) MOH", 247.95, "KG"],
+            ["HOSPITAL KARBAZEPIN 200 TAB", 94900, "PCS"],
+            ["ALU FOIL KINDIRAMIN TAB (250MM)", 99.85, "KG"],
+            ["PACKET KINDIGESIC TAB", 2215, "PCS"],
+            ["LEAFLET PELMOCOUGH SYRUP", 393600, "PCS"],
+            ["LEAFLET DESLORATADINE KP SYRUP", 150100, "PCS"],
+            ["LEAFLET SOLVOCOUGH SYRUP", 93730, "PCS"],
+            ["LEAFLET DERMATOZOL OINTMENT", 255900, "PCS"],
+            ["TUBE DERMATOZOL OINTMENT", 230062, "PCS"],
+            ["TUBE LIDOCAN-K 5% OINTMENT", 199297, "PCS"],
+            ["TUBE NESTACOMB OINTMENT", 0, "PCS"],
+            ["TUBE NESTACOMB CREAM", 111072, "PCS"],
+            ["LEAFLET LIDOCAN-K 5% OINTMENT", 92336, "PCS"],
+            ["LEAFLET RIPREDON 2 TAB", 139900, "PCS"],
+            ["LEAFLET KINDIRAMIN SYRUP", 322300, "PCS"],
+            ["LEAFLET LUMINAL 30 KINDI", 145626, "PCS"],
+            ["PACKET DESLORATADINE KP SYRUP", 144150, "PCS"],
+            ["ALU FOIL KANDESAT 16 (259 MM) MOH", 82.561, "KG"],
+            ["ALU FOIL AZITHROKINDIN 500 TAB (243MM) MOH", 37.045, "KG"],
+            ["PACKET PAINPROOF ORAL SUSP", 312532, "PCS"],
+            ["LEAFLET PAINPROOF ORAL SUSP", 316947, "PCS"],
+            ["LEAFLET SPASMOL ORAL DROPS", 104997, "PCS"],
+            ["GLASS BOTTLE 60 ML", 0, "PCS"],
+            ["LEAFLET CONGEKIN SYRUP", 215997, "PCS"],
+            ["LEAFLET ALBENDAKIN ORAL DROPS", 200000, "PCS"],
+            ["ALU FOIL SACHET KINO (156MM)", 1000, "KG"],
+            ["LEAFLET STOP-ACID ORAL SUSPENSION", 169050, "PCS"],
+            ["PACKET ALBENDAKIN ORAL DROPS", 198100, "PCS"],
+            ["PACKET TULLAKIN SYRUP", 2330, "PCS"],
+            ["PACKET STOP-ACID ORAL SUSPENSION", 167000, "PCS"],
+            ["LABEL STOP-ACID ORAL SUSPENSION", 170660, "PCS"],
+            ["PACKET KINDYMINA LOTION", 102900, "PCS"],
+            ["LEAFLET KIN-CODEN PLUS TAB", 70950, "PCS"],
+            ["PACKET KIN-CODEN PLUS TAB", 67541, "PCS"],
+            ["LEAFLET TULLAKIN SYRUP", 20340, "PCS"],
+            ["LEAFLET KINDYMINA LOTION", 108000, "PCS"],
+            ["ALU FOIL KINDILUKAST 4 MG TAB (228MM)", 93.6, "KG"],
+            ["ALU FOIL KINDILUKAST 10 MG TAB (228MM)", 94.8, "KG"],
+            ["LEAFLET RIPREDON 4 TAB", 52000, "PCS"],
+            ["DROPPER 30 ML + CAP", 1500, "PCS"],
+            ["ALU FOIL VITAMIN C 500 KINDI (228MM)", 123.1, "KG"],
+            ["ALU FOIL KINDIKONE TAB (250MM)", 57.28, "KG"],
+            ["بك", 0, "PCS"],
+            ["توت بوك + قلم", 0, "PCS"],
+            ["كيس كارتونسي مطبوع", 0, "PCS"],
+            ["PACKET MOTIKINDIN ORAL SUSP", 147060, "PCS"],
+            ["PACKET BRONCOPHYLIN ORAL SOLUTION", 173400, "PCS"],
+            ["ALU FOIL TELMIKINDIN 80 TAB (176MM)", 0, "KG"],
+            ["ALU FOIL HYDROXYKINDIN 200 TAB (259MM)", 101.4, "KG"],
+            ["LEAFLET HYDROXYKINDIN 200MG TAB", 93434, "PCS"],
+            ["PACKET HYDROXYKINDIN 200MG TAB", 97750, "PCS"],
+            ["ALU FOIL TELMIKINDIN 80 TAB (259MM)", 28.5, "KG"],
+            ["ALU FOIL NAPROKIN 500 TAB (259MM)", 170.55, "KG"],
+            ["ALU FOIL MONSTAN 500 TAB (268MM)", 16.25, "KG"],
+            ["ALU FOIL CLARIKINDIN 500 TAB (268MM)", 17.7, "KG"],
+            ["ALU FOIL LYRIKINE 75 CAPSULE (217 MM)", 68.9, "KG"],
+            ["ALU FOIL KINDIFENAC-K 50 TAB (259MM)", 61.9, "KG"],
+            ["ALU FOIL LEBRAX-KINDI TAB (259MM)", 35.43, "KG"],
+            ["ALU FOIL LYRIKINE 150 CAPSULE (259 MM)", 34.8, "KG"],
+            ["ALU FOIL PARAMOL EX TAB (268 MM)", 171.2, "KG"],
+            ["ALU FOIL PARAMOL NIGHT CAPLETS (268MM)", 163.1, "KG"],
+            ["PACKET RIAPRIFIN CO. TAB", 100800, "PCS"],
+            ["LEAFLET RIAPRIFIN CO. TAB", 108000, "PCS"],
+            ["ALU FOIL RIAPRIFIN CO. TAB (259 MM)", 104.3, "KG"],
+            ["ALU FOIL MONSTAN 250 MG CAPSULE (259MM)", 40.24, "KG"],
+            ["ALU FOIL AZITHROKINDIN 500 TAB (243MM)", 85.629, "KG"],
+            ["PACKET RIPREDON 2 TAB", 224250, "PCS"],
+            ["TUBE LIDOCAN-K 5% OINTMENT MOH", 231.39, "PCS"],
+            ["TUBE DERMATOZOL OINTMENT MOH", 6860, "PCS"],
+            ["ALU FOIL ZYPRAXEN 10 MG (204MM) MOH", 0, "KG"],
+            ["PLASTIC DOSSIER CAP", 376917, "PCS"],
+            ["ALU FOIL VALIUPAM 5 (250 MM) MOH", 99.40001, "KG"],
+            ["LABEL DESLORATADINE KP SYRUP", 131500, "PCS"],
+            ["ALU FOIL RIPREDON 2 MG (243MM)", 31.9, "KG"],
+            ["PACKET RENEIH KINDI TAB", 311000, "PCS"],
+            ["GLASS BOTTLE 100ML PLASTIC 28MM", 99750, "PCS"],
+            ["PLASTIC DROPPER (SYRINGE)", 75053, "PCS"],
+            ["LEAFLET FOLIC ACID 400 MCG TAB", 105964, "PCS"],
+            ["LEAFLET PAINPROOF TAB", 102137, "PCS"],
+            ["GLASS BOTTLE 100ML PLASTIC 24MM", 80429, "PCS"],
+            ["ALU FOIL RIPREDON 4 MG (228MM)", 14.6, "KG"],
+            ["ALU FOIL MECLOKINDIN 5 TAB (250MM)", 75.9, "KG"],
+            ["ALU FOIL MECLOKINDIN 10 TAB (250MM)", 70.05, "KG"],
+            ["ALU FOIL LIBROKSIDIN 5 TAB (250MM)", 41.11, "KG"],
+            ["ALU FOIL LIBROKSIDIN 10 TAB (250MM)", 56.9, "KG"],
+            ["ALU FOIL SPASMD TAB (259MM)", 73.9, "KG"],
+            ["PACKET SPASMOL ORAL DROPS", 93600, "PCS"],
+            ["LEAFLET SEDACOUGH SYRUP", 228000, "PCS"],
+            ["P.V.C 226 MM WHITE", 3178.26, "KG"],
+            ["PACKET SEDACOUGH SYRUP", 137900, "PCS"],
+            ["LEAFLET MOTIKINDIN ORAL SUSP", 222500, "PCS"]
+        ];
+
+        let inventory = [];
+
+        function initApp() {
+            let saved = localStorage.getItem('kandi_inventory');
+            if (saved) {
+                try {
+                    inventory = JSON.parse(saved);
+                } catch(e) {
+                    inventory = processInitialData(initialRawData);
+                }
+            } else {
+                inventory = processInitialData(initialRawData);
+                saveToStorage();
+            }
+            renderAll();
+        }
+
+        function processInitialData(rawData) {
+            let map = new Map();
+            rawData.forEach(item => {
+                let name = item[0].trim();
+                let qty = Number(item[1]);
+                let unit = item[2];
+                let key = name + "_" + unit;
+                if (map.has(key)) {
+                    map.set(key, map.get(key) + qty);
+                } else {
+                    map.set(key, { name, qty, unit });
+                }
+            });
+            return Array.from(map.values());
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('kandi_inventory', JSON.stringify(inventory));
+        }
+
+        function switchView(viewId, btnEl) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+
+            if (viewId === 'add') {
+                document.getElementById('form-title').innerText = 'إضافة مادة جديدة';
+                document.getElementById('edit-index').value = -1;
+                document.getElementById('input-name').value = '';
+                document.getElementById('input-qty').value = '';
+                document.getElementById('input-unit').value = 'PCS';
+            }
+            renderAll();
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderInventory();
+        }
+
+        function renderDashboard() {
+            let total = inventory.length;
+            let low = 0;
+            let zero = 0;
+            let kgCount = 0;
+            let criticalHTML = '';
+
+            inventory.forEach((item, index) => {
+                if (item.unit === 'KG') kgCount++;
+                if (item.qty === 0) {
+                    zero++;
+                } else if (item.qty <= 1000) {
+                    low++;
+                }
+
+                if (item.qty <= 1000) {
+                    let badgeClass = item.qty === 0 ? 'badge-danger' : 'badge-warning';
+                    let badgeText = item.qty === 0 ? 'نفدت' : 'قريبة من النفاد';
+                    criticalHTML += `
+                        <div class="item-card ${item.qty === 0 ? 'out-of-stock' : 'low-stock'}">
+                            <div class="item-header">
+                                <span class="item-name">${item.name}</span>
+                                <span class="item-badge ${badgeClass}">${badgeText}</span>
+                            </div>
+                            <div class="item-details">
+                                <span>الرصيد الحالي:</span>
+                                <span class="item-qty">${item.qty.toLocaleString()} ${item.unit}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-low').innerText = low;
+            document.getElementById('stat-zero').innerText = zero;
+            document.getElementById('stat-kg').innerText = kgCount;
+
+            document.getElementById('critical-items-list').innerHTML = criticalHTML || '<div style="color:var(--text-muted); text-align:center; padding:20px;">لا توجد مواد قريبة من النفاد حالياً</div>';
+        }
+
+        function renderInventory(filteredList = null) {
+            let list = filteredList || inventory;
+            let html = '';
+
+            list.forEach((item) => {
+                let actualIndex = inventory.indexOf(item);
+                let badgeClass = 'badge-normal';
+                let badgeText = 'متوفر';
+                let cardClass = '';
+
+                if (item.qty === 0) {
+                    badgeClass = 'badge-danger';
+                    badgeText = 'نفدت';
+                    cardClass = 'out-of-stock';
+                } else if (item.qty <= 1000) {
+                    badgeClass = 'badge-warning';
+                    badgeText = 'قريبة من النفاد';
+                    cardClass = 'low-stock';
+                }
+
+                html += `
+                    <div class="item-card ${cardClass}">
+                        <div class="item-header">
+                            <span class="item-name">${item.name}</span>
+                            <span class="item-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                        <div class="item-details">
+                            <span>الرصيد:</span>
+                            <span class="item-qty">${item.qty.toLocaleString()} ${item.unit}</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn" onclick="openTransactionModal(${actualIndex}, 'add')">إضافة</button>
+                            <button class="btn" onclick="openTransactionModal(${actualIndex}, 'deduct')">خصم</button>
+                            <button class="btn btn-primary" onclick="editItem(${actualIndex})">تعديل</button>
+                            <button class="btn btn-danger" onclick="deleteItem(${actualIndex})">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('inventory-list').innerHTML = html || '<div style="color:var(--text-muted); text-align:center; padding:20px;">لا توجد نتائج مطابقة للبحث</div>';
+        }
+
+        function filterItems() {
+            let query = document.getElementById('search-input').value.toLowerCase().trim();
+            if (!query) {
+                renderInventory();
+                return;
+            }
+            let filtered = inventory.filter(item => item.name.toLowerCase().includes(query));
+            renderInventory(filtered);
+        }
+
+        function saveItem() {
+            let name = document.getElementById('input-name').value.trim();
+            let qty = parseFloat(document.getElementById('input-qty').value);
+            let unit = document.getElementById('input-unit').value;
+            let editIndex = parseInt(document.getElementById('edit-index').value);
+
+            if (!name) {
+                alert('يرجى إدخال اسم المادة');
+                return;
+            }
+            if (isNaN(qty) || qty < 0) {
+                alert('يرجى إدخال كمية صحيحة');
+                return;
+            }
+
+            if (editIndex > -1) {
+                inventory[editIndex].name = name;
+                inventory[editIndex].qty = qty;
+                inventory[editIndex].unit = unit;
+            } else {
+                let existing = inventory.find(i => i.name === name && i.unit === unit);
+                if (existing) {
+                    existing.qty += qty;
+                } else {
+                    inventory.push({ name, qty, unit });
+                }
+            }
+
+            saveToStorage();
+            switchView('inventory', document.querySelectorAll('.nav-item')[1]);
+        }
+
+        function editItem(index) {
+            let item = inventory[index];
+            switchView('add', document.querySelectorAll('.nav-item')[2]);
+            document.getElementById('form-title').innerText = 'تعديل مادة';
+            document.getElementById('edit-index').value = index;
+            document.getElementById('input-name').value = item.name;
+            document.getElementById('input-qty').value = item.qty;
+            document.getElementById('input-unit').value = item.unit;
+        }
+
+        function deleteItem(index) {
+            if (confirm('هل أنت متأكد من حذف هذه المادة تماماً؟')) {
+                inventory.splice(index, 1);
+                saveToStorage();
+                renderAll();
+            }
+        }
+
+        function openTransactionModal(index, type) {
+            document.getElementById('trans-index').value = index;
+            document.getElementById('trans-type').value = type;
+            document.getElementById('trans-qty').value = '';
+            document.getElementById('trans-title').innerText = type === 'add' ? 'إضافة كمية للمادة' : 'خصم كمية من المادة';
+            document.getElementById('trans-label').innerText = type === 'add' ? 'الكمية المراد إضافتها' : 'الكمية المراد خصمها';
+            document.getElementById('transaction-modal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('transaction-modal').classList.remove('open');
+        }
+
+        function executeTransaction() {
+            let index = parseInt(document.getElementById('trans-index').value);
+            let type = document.getElementById('trans-type').value;
+            let amount = parseFloat(document.getElementById('trans-qty').value);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('يرجى إدخال كمية صحيحة أكبر من الصفر');
+                return;
+            }
+
+            if (type === 'add') {
+                inventory[index].qty += amount;
+            } else {
+                if (inventory[index].qty < amount) {
+                    alert('الكمية المطلوبة للخصم أكبر من الرصيد الحالي المتاح!');
+                    return;
+                }
+                inventory[index].qty -= amount;
+            }
+
+            saveToStorage();
+            closeModal();
+            renderAll();
+        }
+
+        function exportToCSV() {
+            let csvContent = "\uFEFFاسم المادة,الرصيد,الوحدة\n";
+            inventory.forEach(item => {
+                let cleanName = item.name.replace(/"/g, '""');
+                csvContent += `"${cleanName}",${item.qty},"${item.unit}"\n`;
+            });
+
+            let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            let url = URL.createObjectURL(blob);
+            let link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "kandi_inventory_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetToDefaultData() {
+            if (confirm('هل أنت متأكد من استعادة البيانات الأصلية؟ سيؤدي ذلك إلى إعادة ضبط أي تعديلات.')) {
+                inventory = processInitialData(initialRawData);
+                saveToStorage();
+                renderAll();
+                alert('تمت استعادة البيانات الأصلية بنجاح.');
+            }
+        }
+
+        window.onload = initApp;
+    </script>
 </body>
 </html>
