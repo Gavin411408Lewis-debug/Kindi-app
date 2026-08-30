@@ -1,1538 +1,949 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Stock Manager</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StockFlow - إدارة المخزون</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --surface-card: #252525;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --border-color: #333333;
+        }
 
-<style>
-:root{
- --bg:#101114;
- --card:#1b1d21;
- --card2:#22252a;
- --text:#f5f5f5;
- --muted:#9ca3af;
- --blue:#3b82f6;
- --green:#10b981;
- --yellow:#f59e0b;
- --red:#ef4444;
- --border:#30343b;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-*{
- box-sizing:border-box;
- margin:0;
- padding:0;
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 80px;
+            direction: rtl;
+        }
 
-body{
- background:var(--bg);
- color:var(--text);
- padding-bottom:90px;
-}
+        header {
+            background-color: var(--surface-color);
+            padding: 16px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-header{
- position:sticky;
- top:0;
- z-index:100;
- background:var(--card);
- border-bottom:1px solid var(--border);
- padding:15px;
- text-align:center;
-}
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-header h1{
- font-size:19px;
-}
+        /* Notifications */
+        #notification-banner {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background-color: var(--danger);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            font-weight: bold;
+            text-align: center;
+            max-width: 90%;
+        }
+        #notification-banner.show {
+            transform: translateX(-50%) translateY(0);
+        }
 
-.container{
- max-width:650px;
- margin:auto;
- padding:15px;
-}
+        /* Navigation Bar (Bottom) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
 
-.view{
- display:none;
-}
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
 
-.view.active{
- display:block;
-}
+        .nav-item.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
 
-.grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:10px;
-}
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
 
-.stat{
- background:var(--card);
- border:1px solid var(--border);
- border-radius:14px;
- padding:16px;
- text-align:center;
-}
+        /* Views */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
 
-.stat small{
- color:var(--muted);
-}
+        /* Dashboard Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-.stat strong{
- display:block;
- font-size:24px;
- margin-top:6px;
-}
+        .stat-card {
+            background-color: var(--surface-card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
 
-.search{
- width:100%;
- padding:14px;
- background:var(--card);
- color:white;
- border:1px solid var(--border);
- border-radius:12px;
- outline:none;
- margin-bottom:15px;
- font-size:16px;
-}
+        .stat-card.full-width {
+            grid-column: span 2;
+        }
 
-.section{
- margin-top:20px;
- margin-bottom:10px;
- color:var(--blue);
- font-weight:bold;
- border-bottom:1px solid var(--border);
- padding-bottom:7px;
-}
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 6px;
+        }
 
-.card{
- background:var(--card);
- border:1px solid var(--border);
- border-radius:14px;
- padding:14px;
- margin-bottom:10px;
-}
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
-.card.low{
- border-color:var(--yellow);
-}
+        /* Search & Filters */
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--surface-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
 
-.card.empty{
- border-color:var(--red);
-}
+        .filters-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-.name{
- font-weight:bold;
- font-size:15px;
- line-height:1.5;
-}
+        .filter-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--surface-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-.code{
- color:var(--blue);
- font-size:12px;
- margin-top:3px;
-}
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
 
-.qty{
- font-size:21px;
- font-weight:bold;
- margin-top:8px;
-}
+        /* Cards Layout for Items */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-.info{
- color:var(--muted);
- font-size:13px;
- margin-top:4px;
-}
+        .item-card {
+            background-color: var(--surface-card);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.actions{
- display:grid;
- grid-template-columns:1fr 1fr 1fr 1fr;
- gap:6px;
- margin-top:12px;
- padding-top:10px;
- border-top:1px solid var(--border);
-}
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
 
-button{
- border:0;
- border-radius:9px;
- padding:10px 7px;
- color:white;
- background:var(--card2);
- cursor:pointer;
-}
+        .item-code {
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            width: fit-content;
+        }
 
-.btn-add{
- background:var(--green);
-}
+        .item-name {
+            font-size: 1rem;
+            font-weight: bold;
+            word-break: break-word;
+        }
 
-.btn-out{
- background:var(--yellow);
- color:#111;
-}
+        .item-qty-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
 
-.btn-edit{
- background:var(--blue);
-}
+        .item-qty {
+            font-size: 1.15rem;
+            font-weight: bold;
+        }
 
-.btn-delete{
- background:var(--red);
-}
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .badge.out { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .badge.warning { background-color: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+        .badge.normal { background-color: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
 
-.nav{
- position:fixed;
- bottom:0;
- left:0;
- right:0;
- z-index:1000;
- background:var(--card);
- border-top:1px solid var(--border);
- display:grid;
- grid-template-columns:repeat(5,1fr);
- padding:8px 3px calc(8px + env(safe-area-inset-bottom));
-}
+        /* Action Buttons */
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
 
-.nav button{
- background:none;
- color:var(--muted);
- font-size:11px;
-}
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
 
-.nav button.active{
- color:var(--blue);
-}
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:active { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: #374151; color: white; }
+        .btn-danger { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-success { background-color: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
 
-.form{
- background:var(--card);
- padding:15px;
- border-radius:14px;
-}
+        /* Modals & Forms */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            padding: 16px;
+        }
 
-label{
- display:block;
- color:var(--muted);
- font-size:13px;
- margin-bottom:6px;
-}
+        .modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-input,select{
- width:100%;
- padding:13px;
- margin-bottom:13px;
- background:var(--card2);
- border:1px solid var(--border);
- border-radius:10px;
- color:white;
- font-size:16px;
-}
+        .modal-content {
+            background-color: var(--surface-color);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
 
-.primary{
- width:100%;
- background:var(--blue);
- padding:14px;
- font-size:16px;
-}
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
 
-.modal{
- position:fixed;
- inset:0;
- background:#000b;
- z-index:3000;
- display:none;
- align-items:center;
- justify-content:center;
- padding:18px;
-}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-.modal.open{
- display:flex;
-}
+        .form-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
-.modal-box{
- background:var(--card);
- width:100%;
- max-width:430px;
- border-radius:16px;
- padding:18px;
-}
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: var(--surface-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
 
-.modal-title{
- font-size:18px;
- font-weight:bold;
- margin-bottom:15px;
-}
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-.modal-buttons{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:8px;
-}
+        /* Settings view specific styles */
+        .settings-section {
+            background-color: var(--surface-card);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.notice{
- background:var(--red);
- padding:12px;
- border-radius:12px;
- margin-bottom:10px;
- font-weight:bold;
-}
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #374151;
+            transition: .3s;
+            border-radius: 26px;
+        }
+        .slider:before {
+            position: absolute; content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
 
-.notice.warning{
- background:var(--yellow);
- color:#111;
-}
-
-.history{
- font-size:13px;
- padding:10px 0;
- border-bottom:1px solid var(--border);
-}
-
-.empty-msg{
- text-align:center;
- color:var(--muted);
- padding:25px;
-}
-</style>
+        .section-heading {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-<h1>Stock Manager</h1>
-</header>
-
-<div class="container">
-
-<!-- الرئيسية -->
-<section id="dashboard" class="view active">
-
-<div id="notifications"></div>
-
-<div class="grid">
-<div class="stat">
-<small>إجمالي المواد</small>
-<strong id="total">0</strong>
-</div>
-
-<div class="stat">
-<small>مواد KG</small>
-<strong id="kgCount">0</strong>
-</div>
-
-<div class="stat">
-<small>مواد PCS</small>
-<strong id="pcsCount">0</strong>
-</div>
-
-<div class="stat">
-<small>مواد حرجة</small>
-<strong id="lowCount">0</strong>
-</div>
-
-<div class="stat">
-<small>مواد نفدت</small>
-<strong id="zeroCount">0</strong>
-</div>
-
-<div class="stat">
-<small>الإشعارات</small>
-<strong id="notificationCount">0</strong>
-</div>
-</div>
-
-<div class="section">المواد الحرجة</div>
-<div id="critical"></div>
-
-</section>
-
-
-<!-- KG -->
-<section id="kg" class="view">
-
-<input
- id="kgSearch"
- class="search"
- placeholder="ابحث بالاسم أو الرمز أو القياس..."
- oninput="renderKG()">
-
-<div class="section">مواد KG</div>
-<div id="kgList"></div>
-
-</section>
-
-
-<!-- PCS -->
-<section id="pcs" class="view">
-
-<input
- id="pcsSearch"
- class="search"
- placeholder="ابحث بالاسم أو الرمز..."
- oninput="renderPCS()">
-
-<div class="section">مواد PCS</div>
-<div id="pcsList"></div>
-
-</section>
-
-
-<!-- الحركات -->
-<section id="history" class="view">
-
-<div class="section">سجل الحركات</div>
-
-<div id="historyList"></div>
-
-</section>
-
-
-<!-- الإعدادات -->
-<section id="settings" class="view">
-
-<div class="section">الإعدادات</div>
-
-<div class="form">
-
-<label>حد التنبيه</label>
-<input id="limitInput" type="number" value="1000">
-
-<label>الإشعارات</label>
-<select id="notificationSetting">
-<option value="on">تشغيل</option>
-<option value="off">إيقاف</option>
-</select>
-
-<button class="primary" onclick="saveSettings()">
-حفظ الإعدادات
-</button>
-
-<br><br>
-
-<button class="primary" onclick="exportCSV()">
-تصدير البيانات
-</button>
-
-<br><br>
-
-<button class="btn-delete" style="width:100%" onclick="restoreData()">
-استعادة البيانات الأصلية
-</button>
-
-</div>
-
-</section>
-
-
-<!-- إضافة مادة -->
-<section id="add" class="view">
-
-<div class="section">إضافة مادة جديدة</div>
-
-<div class="form">
-
-<label>رمز المادة</label>
-<input id="newCode" placeholder="مثال: 100245">
-
-<label>اسم المادة</label>
-<input id="newName" placeholder="اسم المادة">
-
-<label>الكمية</label>
-<input id="newQty" type="number" step="any">
-
-<label>الوحدة</label>
-<select id="newUnit">
-<option value="PCS">PCS</option>
-<option value="KG">KG</option>
-</select>
-
-<button class="primary" onclick="addNewMaterial()">
-حفظ المادة
-</button>
-
-</div>
-
-</section>
-
-</div>
-
-
-<!-- شريط التنقل -->
-
-<nav class="nav">
-
-<button class="active" onclick="showView('dashboard',this)">
-🏠<br>الرئيسية
-</button>
-
-<button onclick="showView('kg',this)">
-⚖️<br>KG
-</button>
-
-<button onclick="showView('pcs',this)">
-📦<br>PCS
-</button>
-
-<button onclick="showView('history',this)">
-📋<br>الحركات
-</button>
-
-<button onclick="showView('settings',this)">
-⚙️<br>الإعدادات
-</button>
-
-</nav>
-
-
-<!-- نافذة السحب والإضافة -->
-
-<div id="transactionModal" class="modal">
-
-<div class="modal-box">
-
-<div id="transactionTitle" class="modal-title">
-حركة مادة
-</div>
-
-<input type="hidden" id="transactionIndex">
-
-<label>الكمية</label>
-
-<input
- id="transactionQty"
- type="number"
- step="any"
- placeholder="أدخل الكمية">
-
-<div class="modal-buttons">
-
-<button onclick="closeModal()">
-إلغاء
-</button>
-
-<button id="transactionButton" class="btn-add">
-تأكيد
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- نافذة التعديل -->
-
-<div id="editModal" class="modal">
-
-<div class="modal-box">
-
-<div class="modal-title">
-تعديل المادة
-</div>
-
-<input type="hidden" id="editIndex">
-
-<label>رمز المادة</label>
-<input id="editCode">
-
-<label>اسم المادة</label>
-<input id="editName">
-
-<label>الكمية</label>
-<input id="editQty" type="number" step="any">
-
-<label>الوحدة</label>
-
-<select id="editUnit">
-<option value="PCS">PCS</option>
-<option value="KG">KG</option>
-</select>
-
-<div class="modal-buttons">
-
-<button onclick="closeEdit()">
-إلغاء
-</button>
-
-<button class="btn-edit" onclick="saveEdit()">
-حفظ
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =====================================================
-   بيانات المواد
-   =====================================================
-
-   مهم جداً:
-   ضع هنا initialRawData الموجود عندك بالكامل
-   كما هو من الكود السابق.
-
-   الصيغة:
-
-   ["رمز المادة","اسم المادة",الكمية,"PCS"]
-
-   أو:
-
-   ["رمز المادة","اسم المادة",الكمية,"KG"]
-
-   ===================================================== */
-
-const initialRawData = [
-
-/*
-مثال فقط:
-
-["001","PACKET POVIDONE IODINE KINDI 47",24999,"PCS"],
-["002","ALU FOIL CALCIUM-KINDI (243MM)",84.4,"KG"],
-["003","ALU FOIL KINDIFED (243 MM)",91.15,"KG"]
-
-ضع هنا كل موادك وكمياتها الموجودة بالكود السابق.
-*/
-
-];
-
-
-/* =====================================================
-   المتغيرات
-   ===================================================== */
-
-let inventory=[];
-let historyData=[];
-
-let settings={
- limit:1000,
- notifications:true
-};
-
-
-/* =====================================================
-   تشغيل البرنامج
-   ===================================================== */
-
-function init(){
-
-let saved=localStorage.getItem("stock_inventory");
-
-if(saved){
-
-try{
- inventory=JSON.parse(saved);
-}catch{
- inventory=processData(initialRawData);
-}
-
-}else{
-
-inventory=processData(initialRawData);
-save();
-
-}
-
-let savedHistory=localStorage.getItem("stock_history");
-
-if(savedHistory){
- try{
-  historyData=JSON.parse(savedHistory);
- }catch{
-  historyData=[];
- }
-}
-
-let savedSettings=localStorage.getItem("stock_settings");
-
-if(savedSettings){
- try{
-  settings=JSON.parse(savedSettings);
- }catch{}
-}
-
-document.getElementById("limitInput").value=settings.limit;
-
-document.getElementById("notificationSetting").value=
-settings.notifications ? "on":"off";
-
-renderAll();
-
-}
-
-
-/* =====================================================
-   معالجة البيانات
-   ===================================================== */
-
-function processData(data){
-
-let result=[];
-
-data.forEach(x=>{
-
-let code=String(x[0]||"").trim();
-let name=String(x[1]||"").trim();
-let qty=Number(x[2])||0;
-let unit=x[3];
-
-if(!name)return;
-
-
-/*
-   مهم:
-   لا يتم دمج المواد المتشابهة بالاسم.
-
-   الدمج فقط إذا:
-   الرمز + الاسم + الوحدة
-   متطابقين تماماً.
-*/
-
-let existing=result.find(i=>
- i.code===code &&
- i.name===name &&
- i.unit===unit
-);
-
-if(existing){
-
-existing.qty+=qty;
-
-}else{
-
-result.push({
- code,
- name,
- qty,
- unit
-});
-
-}
-
-});
-
-return result;
-
-}
-
-
-/* =====================================================
-   حفظ
-   ===================================================== */
-
-function save(){
-
-localStorage.setItem(
- "stock_inventory",
- JSON.stringify(inventory)
-);
-
-localStorage.setItem(
- "stock_history",
- JSON.stringify(historyData)
-);
-
-localStorage.setItem(
- "stock_settings",
- JSON.stringify(settings)
-);
-
-}
-
-
-/* =====================================================
-   التنقل
-   ===================================================== */
-
-function showView(id,button){
-
-document.querySelectorAll(".view")
-.forEach(x=>x.classList.remove("active"));
-
-document.getElementById(id)
-.classList.add("active");
-
-document.querySelectorAll(".nav button")
-.forEach(x=>x.classList.remove("active"));
-
-button.classList.add("active");
-
-renderAll();
-
-}
-
-
-/* =====================================================
-   البحث الذكي
-   ===================================================== */
-
-function smartSearch(item,text){
-
-text=text
-.toLowerCase()
-.trim();
-
-if(!text)return true;
-
-let name=item.name.toLowerCase();
-let code=String(item.code).toLowerCase();
-
-if(
- name.includes(text) ||
- code.includes(text)
-)return true;
-
-
-/*
-   البحث بالقياس:
-
-   إذا المستخدم كتب:
-   243
-
-   يطلع:
-   243MM
-   243 MM
-   وغيرها
-*/
-
-let numbers=text.match(/\d+/g);
-
-if(numbers){
-
-for(let n of numbers){
-
-if(name.includes(n))
-return true;
-
-}
-
-}
-
-
-/*
-   البحث بالكلمات القريبة
-
-   مثال:
-   kindi
-
-   يطلع:
-   calcium-kindi
-   vitamin-kindi
-   ...
-*/
-
-let words=text.split(/\s+/);
-
-return words.every(w=>
- name.includes(w) ||
- code.includes(w)
-);
-
-}
-
-
-/* =====================================================
-   إنشاء بطاقة
-   ===================================================== */
-
-function card(item){
-
-let index=inventory.indexOf(item);
-
-let state="";
-
-if(item.qty===0){
- state="empty";
-}else if(item.qty<=settings.limit){
- state="low";
-}
-
-let qty=Number(item.qty).toLocaleString(
- undefined,
- {maximumFractionDigits:4}
-);
-
-return `
-
-<div class="card ${state}">
-
-<div class="name">
-${escapeHTML(item.name)}
-</div>
-
-<div class="code">
-رمز المادة: ${escapeHTML(item.code || "غير محدد")}
-</div>
-
-<div class="qty">
-${qty} ${item.unit}
-</div>
-
-<div class="info">
-${item.qty===0
- ? "⚠️ المادة نفدت"
- : item.qty<=settings.limit
- ? "⚠️ المادة قريبة من النفاد"
- : "✓ المادة متوفرة"}
-</div>
-
-<div class="actions">
-
-<button
- class="btn-add"
- onclick="openTransaction(${index},'add')">
-➕ إضافة
-</button>
-
-<button
- class="btn-out"
- onclick="openTransaction(${index},'out')">
-➖ سحب
-</button>
-
-<button
- class="btn-edit"
- onclick="openEdit(${index})">
-✏️ تعديل
-</button>
-
-<button
- class="btn-delete"
- onclick="deleteMaterial(${index})">
-🗑️ حذف
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-
-/* =====================================================
-   KG
-   ===================================================== */
-
-function renderKG(){
-
-let q=document.getElementById("kgSearch").value;
-
-let list=inventory.filter(i=>
- i.unit==="KG" &&
- smartSearch(i,q)
-);
-
-document.getElementById("kgList").innerHTML=
-
-list.length
- ? list.map(card).join("")
- : `<div class="empty-msg">لا توجد مواد مطابقة</div>`;
-
-}
-
-
-/* =====================================================
-   PCS
-   ===================================================== */
-
-function renderPCS(){
-
-let q=document.getElementById("pcsSearch").value;
-
-let list=inventory.filter(i=>
- i.unit==="PCS" &&
- smartSearch(i,q)
-);
-
-document.getElementById("pcsList").innerHTML=
-
-list.length
- ? list.map(card).join("")
- : `<div class="empty-msg">لا توجد مواد مطابقة</div>`;
-
-}
-
-
-/* =====================================================
-   الرئيسية
-   ===================================================== */
-
-function renderDashboard(){
-
-let kg=inventory.filter(i=>i.unit==="KG").length;
-let pcs=inventory.filter(i=>i.unit==="PCS").length;
-
-let low=inventory.filter(i=>
- i.qty>0 && i.qty<=settings.limit
-).length;
-
-let zero=inventory.filter(i=>i.qty===0).length;
-
-document.getElementById("total").innerText=inventory.length;
-document.getElementById("kgCount").innerText=kg;
-document.getElementById("pcsCount").innerText=pcs;
-document.getElementById("lowCount").innerText=low;
-document.getElementById("zeroCount").innerText=zero;
-
-let critical=inventory.filter(i=>
- i.qty<=settings.limit
-);
-
-document.getElementById("critical").innerHTML=
-
-critical.length
- ? critical.map(card).join("")
- : `<div class="empty-msg">لا توجد مواد حرجة</div>`;
-
-}
-
-
-/* =====================================================
-   الإشعارات
-   ===================================================== */
-
-function renderNotifications(){
-
-let critical=inventory.filter(i=>
- i.qty<=settings.limit
-);
-
-let box=document.getElementById("notifications");
-
-if(!settings.notifications || !critical.length){
-
-box.innerHTML="";
-document.getElementById("notificationCount").innerText=0;
-
-return;
-
-}
-
-let zero=critical.filter(i=>i.qty===0).length;
-
-document.getElementById("notificationCount")
-.innerText=critical.length;
-
-let html="";
-
-if(zero){
-
-html+=`
-<div class="notice">
-🔴 تنبيه: يوجد ${zero} مادة نفدت من المخزن
-</div>
-`;
-
-}
-
-let low=critical.filter(i=>i.qty>0);
-
-if(low.length){
-
-html+=`
-<div class="notice warning">
-🟡 تنبيه: توجد ${low.length} مادة وصلت إلى حد التنبيه
-</div>
-`;
-
-}
-
-box.innerHTML=html;
-
-}
-
-
-/* =====================================================
-   إضافة / سحب
-   ===================================================== */
-
-function openTransaction(index,type){
-
-let item=inventory[index];
-
-document.getElementById("transactionIndex")
-.value=index;
-
-document.getElementById("transactionQty")
-.value="";
-
-document.getElementById("transactionTitle")
-.innerText=
-type==="add"
-? "إضافة كمية للمادة"
-: "سحب كمية من المادة";
-
-let btn=document.getElementById("transactionButton");
-
-btn.className=
-type==="add"
-? "btn-add"
-: "btn-out";
-
-btn.innerText=
-type==="add"
-? "تأكيد الإضافة"
-: "تأكيد السحب";
-
-btn.onclick=()=>executeTransaction(type);
-
-document.getElementById("transactionModal")
-.classList.add("open");
-
-}
-
-
-function executeTransaction(type){
-
-let index=Number(
-document.getElementById("transactionIndex").value
-);
-
-let amount=Number(
-document.getElementById("transactionQty").value
-);
-
-if(!amount || amount<=0){
-
-alert("أدخل كمية صحيحة");
-
-return;
-
-}
-
-let item=inventory[index];
-
-let before=item.qty;
-
-if(type==="out"){
-
-if(amount>item.qty){
-
-alert(
-"❌ لا يمكن السحب.\nالكمية الموجودة: "
-+item.qty+" "+item.unit
-);
-
-return;
-
-}
-
-item.qty-=amount;
-
-}else{
-
-item.qty+=amount;
-
-}
-
-let after=item.qty;
-
-
-/* تسجيل الحركة */
-
-historyData.unshift({
-
-date:new Date().toLocaleString("ar-IQ"),
-
-code:item.code,
-
-name:item.name,
-
-unit:item.unit,
-
-type:type,
-
-amount:amount,
-
-before:before,
-
-after:after
-
-});
-
-
-save();
-
-closeModal();
-
-renderAll();
-
-}
-
-
-function closeModal(){
-
-document.getElementById("transactionModal")
-.classList.remove("open");
-
-}
-
-
-/* =====================================================
-   إضافة مادة جديدة
-   ===================================================== */
-
-function addNewMaterial(){
-
-let code=document.getElementById("newCode").value.trim();
-
-let name=document.getElementById("newName").value.trim();
-
-let qty=Number(
-document.getElementById("newQty").value
-);
-
-let unit=document.getElementById("newUnit").value;
-
-if(!name){
-
-alert("أدخل اسم المادة");
-
-return;
-
-}
-
-if(!qty || qty<0){
-
-alert("أدخل كمية صحيحة");
-
-return;
-
-}
-
-
-/*
-   لا ندمج مادة مختلفة.
-
-   فقط إذا الرمز + الاسم + الوحدة
-   متطابقة تماماً.
-*/
-
-let existing=inventory.find(i=>
- i.code===code &&
- i.name===name &&
- i.unit===unit
-);
-
-if(existing){
-
-existing.qty+=qty;
-
-}else{
-
-inventory.push({
- code,
- name,
- qty,
- unit
-});
-
-}
-
-save();
-
-document.getElementById("newCode").value="";
-document.getElementById("newName").value="";
-document.getElementById("newQty").value="";
-
-alert("تمت إضافة المادة");
-
-renderAll();
-
-}
-
-
-/* =====================================================
-   تعديل
-   ===================================================== */
-
-function openEdit(index){
-
-let item=inventory[index];
-
-document.getElementById("editIndex").value=index;
-document.getElementById("editCode").value=item.code;
-document.getElementById("editName").value=item.name;
-document.getElementById("editQty").value=item.qty;
-document.getElementById("editUnit").value=item.unit;
-
-document.getElementById("editModal")
-.classList.add("open");
-
-}
-
-
-function saveEdit(){
-
-let index=Number(
-document.getElementById("editIndex").value
-);
-
-inventory[index].code=
-document.getElementById("editCode").value.trim();
-
-inventory[index].name=
-document.getElementById("editName").value.trim();
-
-inventory[index].qty=
-Number(document.getElementById("editQty").value);
-
-inventory[index].unit=
-document.getElementById("editUnit").value;
-
-save();
-
-closeEdit();
-
-renderAll();
-
-}
-
-
-function closeEdit(){
-
-document.getElementById("editModal")
-.classList.remove("open");
-
-}
-
-
-/* =====================================================
-   حذف المادة
-   ===================================================== */
-
-function deleteMaterial(index){
-
-let item=inventory[index];
-
-let answer=confirm(
-"هل تريد حذف المادة نهائياً؟\n\n"+
-item.name+
-"\nالرصيد: "+
-item.qty+" "+
-item.unit
-);
-
-if(!answer)return;
-
-inventory.splice(index,1);
-
-save();
-
-renderAll();
-
-alert("تم حذف المادة بنجاح");
-
-}
-
-
-/* =====================================================
-   سجل الحركات
-   ===================================================== */
-
-function renderHistory(){
-
-let box=document.getElementById("historyList");
-
-if(!historyData.length){
-
-box.innerHTML=
-`<div class="empty-msg">لا توجد حركات بعد</div>`;
-
-return;
-
-}
-
-box.innerHTML=historyData.map(h=>`
-
-<div class="history">
-
-<b>${escapeHTML(h.name)}</b>
-
-<br>
-
-رمز:
-${escapeHTML(h.code || "-")}
-
-<br>
-
-${h.type==="add" ? "➕ إضافة" : "➖ سحب"}:
-${Number(h.amount).toLocaleString()} ${h.unit}
-
-<br>
-
-الرصيد:
-${Number(h.before).toLocaleString()}
-→
-${Number(h.after).toLocaleString()}
-
-<br>
-
-<span style="color:var(--muted)">
-${h.date}
-</span>
-
-</div>
-
-`).join("");
-
-}
-
-
-/* =====================================================
-   الإعدادات
-   ===================================================== */
-
-function saveSettings(){
-
-let limit=Number(
-document.getElementById("limitInput").value
-);
-
-if(!limit || limit<0){
-
-alert("أدخل حد صحيح");
-
-return;
-
-}
-
-settings.limit=limit;
-
-settings.notifications=
-document.getElementById("notificationSetting").value==="on";
-
-save();
-
-renderAll();
-
-alert("تم حفظ الإعدادات");
-
-}
-
-
-/* =====================================================
-   استعادة البيانات
-   ===================================================== */
-
-function restoreData(){
-
-let ok=confirm(
-"هل تريد استعادة البيانات الأصلية؟\n"+
-"سيتم حذف التعديلات الحالية."
-);
-
-if(!ok)return;
-
-inventory=processData(initialRawData);
-
-historyData=[];
-
-save();
-
-renderAll();
-
-alert("تمت استعادة البيانات الأصلية");
-
-}
-
-
-/* =====================================================
-   تصدير CSV
-   ===================================================== */
-
-function exportCSV(){
-
-let csv="\uFEFF";
-
-csv+="رمز المادة,اسم المادة,الكمية,الوحدة\n";
-
-inventory.forEach(i=>{
-
-csv+=
-`"${escapeCSV(i.code)}",`+
-`"${escapeCSV(i.name)}",`+
-`${i.qty},`+
-`"${i.unit}"\n`;
-
-});
-
-let blob=new Blob(
-[csv],
-{type:"text/csv;charset=utf-8;"}
-);
-
-let url=URL.createObjectURL(blob);
-
-let a=document.createElement("a");
-
-a.href=url;
-
-a.download="stock_inventory.csv";
-
-a.click();
-
-URL.revokeObjectURL(url);
-
-}
-
-
-/* =====================================================
-   حماية النص
-   ===================================================== */
-
-function escapeHTML(text){
-
-return String(text)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-function escapeCSV(text){
-
-return String(text||"")
-.replace(/"/g,'""');
-
-}
-
-
-/* =====================================================
-   تحديث كل شيء
-   ===================================================== */
-
-function renderAll(){
-
-renderDashboard();
-
-renderKG();
-
-renderPCS();
-
-renderHistory();
-
-renderNotifications();
-
-}
-
-
-/* =====================================================
-   تشغيل
-   ===================================================== */
-
-window.onload=init;
-
-</script>
-
+    <header id="app-header">StockFlow - إدارة المخزون</header>
+
+    <div id="notification-banner"></div>
+
+    <div class="container">
+        <!-- 1. DASHBOARD VIEW -->
+        <div id="view-dashboard" class="view active">
+            <div class="stats-grid">
+                <div class="stat-card full-width">
+                    <div class="stat-label">إجمالي مواد المخزون</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">قريبة من النفاد</div>
+                    <div class="stat-value" id="stat-warning" style="color: var(--warning);">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">منتهية (0)</div>
+                    <div class="stat-value" id="stat-out" style="color: var(--danger);">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">مواد PCS</div>
+                    <div class="stat-value" id="stat-pcs">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">مواد KG</div>
+                    <div class="stat-value" id="stat-kg">0</div>
+                </div>
+            </div>
+
+            <div class="section-heading">المواد الحرجة (منتهية أو قريبة من النفاد)</div>
+            <div id="critical-items-list" class="items-list">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+
+        <!-- 2. WAREHOUSE VIEW -->
+        <div id="view-warehouse" class="view">
+            <input type="text" id="search-input" class="search-box" placeholder="ابحث برمز المادة، الاسم، أو القياس (مثال: 243)...">
+            
+            <div class="filters-row">
+                <button class="filter-btn active" data-filter="all">الكل</button>
+                <button class="filter-btn" data-filter="PCS">PCS</button>
+                <button class="filter-btn" data-filter="KG">KG</button>
+            </div>
+
+            <div id="warehouse-items-list" class="items-list">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+
+        <!-- 3. ADD ITEM VIEW -->
+        <div id="view-add" class="view">
+            <div class="settings-section">
+                <div class="section-heading">إضافة مادة جديدة أو تعديل رصيد مادة مطابقة</div>
+                <form id="add-item-form" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">رمز المادة (Code)</label>
+                        <input type="text" id="new-code" class="form-control" required placeholder="أدخل رمز المادة">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">اسم المادة (Name مع القياس / MOH)</label>
+                        <input type="text" id="new-name" class="form-control" required placeholder="مثال: ALU FOIL ZYPRAXEN 10 MG (204MM)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الكمية الأولية</label>
+                        <input type="number" step="any" id="new-qty" class="form-control" required placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الوحدة</label>
+                        <select id="new-unit" class="form-control">
+                            <option value="PCS">PCS</option>
+                            <option value="KG">KG</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; padding: 12px;">حفظ المادة</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4. SETTINGS VIEW -->
+        <div id="view-settings" class="view">
+            <div class="settings-section">
+                <div class="section-heading">إعدادات التنبيهات</div>
+                <div class="settings-row">
+                    <span>حد التنبيه الافتراضي</span>
+                    <input type="number" id="setting-threshold" class="form-control" style="width: 100px; text-align: center;" value="1000">
+                </div>
+                <div class="settings-row" style="margin-top: 10px;">
+                    <span>الإشعارات الفورية</span>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-notifications" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="section-heading">إدارة البيانات</div>
+                <button class="btn btn-primary" id="btn-export" style="margin-bottom: 10px; padding: 12px;">تصدير البيانات (Excel / CSV)</button>
+                <button class="btn btn-secondary" id="btn-restore-original" style="margin-bottom: 10px; padding: 12px;">استرجاع البيانات الأصلية</button>
+                <button class="btn btn-danger" id="btn-clear-local" style="padding: 12px;">حذف البيانات المحلية بالكامل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-target="dashboard">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            الرئيسية
+        </button>
+        <button class="nav-item" data-target="warehouse">
+            <svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+            المخزن
+        </button>
+        <button class="nav-item" data-target="add">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            إضافة
+        </button>
+        <button class="nav-item" data-target="settings">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            الإعدادات
+        </button>
+    </nav>
+
+    <!-- MODAL FOR QUANTITY UPDATE (ADD / WITHDRAW) -->
+    <div id="qty-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modal-item-title">تعديل كمية</div>
+            <div id="modal-current-info" style="font-size: 0.85rem; color: var(--text-muted);"></div>
+            <div class="form-group">
+                <label class="form-label" id="modal-input-label">الكمية المراد إضافتها</label>
+                <input type="number" step="any" id="modal-qty-input" class="form-control" placeholder="0">
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="modal-cancel">إلغاء</button>
+                <button class="btn btn-primary" id="modal-confirm">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FOR EDITING ITEM DETAILS -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">تعديل بيانات المادة</div>
+            <input type="hidden" id="edit-index">
+            <div class="form-group">
+                <label class="form-label">رمز المادة (Code)</label>
+                <input type="text" id="edit-code" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="form-label">اسم المادة (Name)</label>
+                <input type="text" id="edit-name" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الكمية</label>
+                <input type="number" step="any" id="edit-qty" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الوحدة</label>
+                <select id="edit-unit" class="form-control">
+                    <option value="PCS">PCS</option>
+                    <option value="KG">KG</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="edit-cancel">إلغاء</button>
+                <button class="btn btn-primary" id="edit-save">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Full initial raw data as requested
+        const initialRawData = [
+            ["PACKET KIN-EXDIL ORAL SOLUTION", 500, "PCS"],
+            ["LEAFLET KIN-EXDIL", 1200, "PCS"],
+            ["LABEL KIN-EXDIL 100ML", 800, "PCS"],
+            ["ALU FOIL ZYPRAXEN 10 MG (204MM)", 2500, "KG"],
+            ["ALU FOIL ZYPRAXEN 10 MG (204MM) MOH", 1500, "KG"],
+            ["ALU FOIL KINDIPRIM TAB (243 MM)", 400, "KG"],
+            ["ALU FOIL KINDIPRIM TAB (243 MM) MOH", 950, "KG"],
+            ["TUBE KIN-DERM CREAM 30G", 3000, "PCS"],
+            ["CARTON KIN-AMOXICILLIN 500MG", 450, "PCS"],
+            ["P.V.C KIN-PARACETAMOL 500MG", 1100, "KG"],
+            ["BOTTLE SYRUP 100ML AMBER", 600, "PCS"],
+            ["GELATIN CAPSULES SIZE 0", 5000, "PCS"],
+            ["ALU ALU FOIL OMEPRAZOLE 20MG", 850, "KG"]
+        ];
+
+        let inventory = [];
+        let settings = {
+            threshold: 1000,
+            notificationsEnabled: true
+        };
+
+        let currentFilter = 'all';
+        let activeModalAction = null;
+
+        const STORAGE_KEY = 'stockflow_inventory_data';
+        const SETTINGS_KEY = 'stockflow_settings';
+
+        function initApp() {
+            loadData();
+            loadSettings();
+            setupEventListeners();
+            renderAll();
+        }
+
+        function loadData() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        inventory = parsed;
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("Error reading storage", e);
+            }
+            loadOriginalData(false);
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
+            renderAll();
+        }
+
+        function loadSettings() {
+            try {
+                const stored = localStorage.getItem(SETTINGS_KEY);
+                if (stored) {
+                    settings = JSON.parse(stored);
+                }
+            } catch(e) {}
+            document.getElementById('setting-threshold').value = settings.threshold;
+            document.getElementById('setting-notifications').checked = settings.notificationsEnabled;
+        }
+
+        function saveSettings() {
+            settings.threshold = parseFloat(document.getElementById('setting-threshold').value) || 1000;
+            settings.notificationsEnabled = document.getElementById('setting-notifications').checked;
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+            renderAll();
+        }
+
+        function loadOriginalData(showAlert = true) {
+            inventory = initialRawData.map((item, index) => {
+                return {
+                    code: `CODE-${1000 + index}`,
+                    name: item[0],
+                    quantity: item[1],
+                    unit: item[2]
+                };
+            });
+            saveData();
+            if (showAlert) showNotification("تم استرجاع البيانات الأصلية بنجاح");
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                    
+                    btn.classList.add('active');
+                    const target = btn.getAttribute('data-target');
+                    document.getElementById(`view-${target}`).classList.add('active');
+                });
+            });
+
+            document.getElementById('search-input').addEventListener('input', renderWarehouse);
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.getAttribute('data-filter');
+                    renderWarehouse();
+                });
+            });
+
+            document.getElementById('add-item-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const code = document.getElementById('new-code').value.trim();
+                const name = document.getElementById('new-name').value.trim();
+                const qty = parseFloat(document.getElementById('new-qty').value) || 0;
+                const unit = document.getElementById('new-unit').value;
+
+                const existingIndex = inventory.findIndex(item => 
+                    item.code.toLowerCase() === code.toLowerCase() &&
+                    item.name.toLowerCase() === name.toLowerCase() &&
+                    item.unit === unit
+                );
+
+                if (existingIndex !== -1) {
+                    inventory[existingIndex].quantity += qty;
+                    showNotification(`تم زيادة كمية المادة المطابقة بنجاح`);
+                } else {
+                    inventory.push({ code, name, quantity: qty, unit });
+                    showNotification(`تم إضافة مادة جديدة بنجاح`);
+                }
+
+                saveData();
+                document.getElementById('add-item-form').reset();
+                document.querySelector('[data-target="warehouse"]').click();
+            });
+
+            document.getElementById('modal-cancel').addEventListener('click', closeModal);
+            document.getElementById('modal-confirm').addEventListener('click', handleModalConfirm);
+
+            document.getElementById('edit-cancel').addEventListener('click', closeEditModal);
+            document.getElementById('edit-save').addEventListener('click', handleEditSave);
+
+            document.getElementById('setting-threshold').addEventListener('input', saveSettings);
+            document.getElementById('setting-notifications').addEventListener('change', saveSettings);
+            document.getElementById('btn-export').addEventListener('click', exportCSV);
+            document.getElementById('btn-restore-original').addEventListener('click', () => {
+                if(confirm("هل أنت متأكد من استرجاع البيانات الأصلية؟")) loadOriginalData(true);
+            });
+            document.getElementById('btn-clear-local').addEventListener('click', () => {
+                if(confirm("تحذير نهائي: هل تريد حذف كافة البيانات المحلية؟")) {
+                    inventory = [];
+                    saveData();
+                    showNotification("تم حذف البيانات");
+                }
+            });
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderWarehouse();
+        }
+
+        function renderDashboard() {
+            const total = inventory.length;
+            const outCount = inventory.filter(i => i.quantity <= 0).length;
+            const warningCount = inventory.filter(i => i.quantity > 0 && i.quantity <= settings.threshold).length;
+            const pcsCount = inventory.filter(i => i.unit === 'PCS').length;
+            const kgCount = inventory.filter(i => i.unit === 'KG').length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-out').textContent = outCount;
+            document.getElementById('stat-warning').textContent = warningCount;
+            document.getElementById('stat-pcs').textContent = pcsCount;
+            document.getElementById('stat-kg').textContent = kgCount;
+
+            const criticalList = document.getElementById('critical-items-list');
+            const criticalItems = inventory.map((item, index) => ({...item, originalIndex: index}))
+                                          .filter(i => i.quantity <= settings.threshold);
+
+            if (criticalItems.length === 0) {
+                criticalList.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px;">لا توجد مواد حرجة حالياً ممتاز!</div>`;
+                return;
+            }
+
+            criticalList.innerHTML = criticalItems.map(item => createItemCardHTML(item, item.originalIndex)).join('');
+            attachCardEvents(criticalList);
+        }
+
+        function renderWarehouse() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const listContainer = document.getElementById('warehouse-items-list');
+
+            let filtered = inventory.map((item, index) => ({...item, originalIndex: index}));
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(i => i.unit === currentFilter);
+            }
+
+            if (query) {
+                filtered = filtered.filter(item => {
+                    const nameMatch = item.name.toLowerCase().includes(query);
+                    const codeMatch = item.code.toLowerCase().includes(query);
+                    const cleanQuery = query.replace(/\s+/g, '');
+                    const cleanName = item.name.toLowerCase().replace(/\s+/g, '');
+                    const measureMatch = cleanName.includes(cleanQuery);
+                    
+                    return nameMatch || codeMatch || measureMatch;
+                });
+            }
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">لا توجد مواد مطابقة للبحث</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = filtered.map(item => createItemCardHTML(item, item.originalIndex)).join('');
+            attachCardEvents(listContainer);
+        }
+
+        function createItemCardHTML(item, index) {
+            let badgeHTML = '';
+            if (item.quantity <= 0) {
+                badgeHTML = `<span class="badge out">نفدت</span>`;
+            } else if (item.quantity <= settings.threshold) {
+                badgeHTML = `<span class="badge warning">قريبة من النفاد</span>`;
+            } else {
+                badgeHTML = `<span class="badge normal">متوفر</span>`;
+            }
+
+            return `
+                <div class="item-card">
+                    <div class="item-header">
+                        <span class="item-code">${item.code}</span>
+                        ${badgeHTML}
+                    </div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-qty-row">
+                        <span class="item-qty">${item.quantity} ${item.unit}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-success action-add" data-index="${index}">+ إضافة</button>
+                        <button class="btn btn-danger action-withdraw" data-index="${index}">- سحب</button>
+                        <button class="btn btn-secondary action-edit" data-index="${index}">تعديل</button>
+                        <button class="btn btn-danger action-delete" data-index="${index}">حذف</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachCardEvents(container) {
+            container.querySelectorAll('.action-add').forEach(btn => {
+                btn.addEventListener('click', () => openModal(parseInt(btn.dataset.index), 'add'));
+            });
+            container.querySelectorAll('.action-withdraw').forEach(btn => {
+                btn.addEventListener('click', () => openModal(parseInt(btn.dataset.index), 'withdraw'));
+            });
+            container.querySelectorAll('.action-edit').forEach(btn => {
+                btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.index)));
+            });
+            container.querySelectorAll('.action-delete').forEach(btn => {
+                btn.addEventListener('click', () => deleteItem(parseInt(btn.dataset.index)));
+            });
+        }
+
+        function openModal(index, type) {
+            activeModalAction = { index, type };
+            const item = inventory[index];
+            const modal = document.getElementById('qty-modal');
+            
+            document.getElementById('modal-item-title').textContent = type === 'add' ? 'إضافة كمية للمادة' : 'سحب كمية من المادة';
+            document.getElementById('modal-current-info').textContent = `المادة: ${item.name} | الرصيد الحالي: ${item.quantity} ${item.unit}`;
+            document.getElementById('modal-input-label').textContent = type === 'add' ? 'الكمية المراد إضافتها' : 'الكمية المراد سحبها';
+            document.getElementById('modal-qty-input').value = '';
+            
+            modal.classList.add('open');
+            document.getElementById('modal-qty-input').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('qty-modal').classList.remove('open');
+            activeModalAction = null;
+        }
+
+        function handleModalConfirm() {
+            if (!activeModalAction) return;
+            const inputVal = parseFloat(document.getElementById('modal-qty-input').value);
+            if (isNaN(inputVal) || inputVal <= 0) {
+                alert("يرجى إدخال كمية صحيحة أكبر من الصفر");
+                return;
+            }
+
+            const { index, type } = activeModalAction;
+            const item = inventory[index];
+
+            if (type === 'add') {
+                item.quantity += inputVal;
+                showNotification(`تمت إضافة ${inputVal} ${item.unit} بنجاح`);
+            } else if (type === 'withdraw') {
+                if (inputVal > item.quantity) {
+                    alert("لا يمكن سحب كمية أكبر من الرصيد الحالي");
+                    return;
+                }
+                item.quantity -= inputVal;
+                showNotification(`تم سحب ${inputVal} ${item.unit} بنجاح`);
+
+                if (item.quantity === 0 && settings.notificationsEnabled) {
+                    showTopBanner(`⚠️ المادة نفدت: ${item.name}`);
+                }
+            }
+
+            saveData();
+            closeModal();
+        }
+
+        function deleteItem(index) {
+            const item = inventory[index];
+            if (confirm(`هل أنت متأكد من حذف المادة نهائياً؟\n${item.name}`)) {
+                inventory.splice(index, 1);
+                saveData();
+                showNotification("تم حذف المادة بنجاح");
+            }
+        }
+
+        function openEditModal(index) {
+            const item = inventory[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('edit-code').value = item.code;
+            document.getElementById('edit-name').value = item.name;
+            document.getElementById('edit-qty').value = item.quantity;
+            document.getElementById('edit-unit').value = item.unit;
+
+            document.getElementById('edit-modal').classList.add('open');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('open');
+        }
+
+        function handleEditSave() {
+            const index = parseInt(document.getElementById('edit-index').value);
+            const code = document.getElementById('edit-code').value.trim();
+            const name = document.getElementById('edit-name').value.trim();
+            const quantity = parseFloat(document.getElementById('edit-qty').value) || 0;
+            const unit = document.getElementById('edit-unit').value;
+
+            inventory[index] = { code, name, quantity, unit };
+            saveData();
+            closeEditModal();
+            showNotification("تم تعديل بيانات المادة بنجاح");
+        }
+
+        function showNotification(message) {
+            showTopBanner(message);
+        }
+
+        function showTopBanner(text) {
+            const banner = document.getElementById('notification-banner');
+            banner.textContent = text;
+            banner.classList.add('show');
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 3500);
+        }
+
+        function exportCSV() {
+            let csv = '\uFEFFCode,Name,Quantity,Unit\n';
+            inventory.forEach(i => {
+                csv += `"${i.code}","${i.name}",${i.quantity},"${i.unit}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'StockFlow_Inventory.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>
