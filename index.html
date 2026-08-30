@@ -4,182 +4,265 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مخزن مواد التعبئة والتغليف</title>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1e293b">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #2563eb;
+            --accent-red: #dc2626;
+            --border-color: #2a2a2a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .logo-title h1 {
+            font-size: 16px;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .logo-title span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin: 16px 0 8px 0;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .item-name {
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .item-code {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .item-details {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-container {
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-blue);
+            border-radius: 4px;
+        }
+
+        .progress-bar.warning {
+            background-color: var(--accent-red);
+        }
+
+        .alert-box {
+            background-color: rgba(220, 38, 38, 0.15);
+            border: 1px solid var(--accent-red);
+            color: #fca5a5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+        }
+
+        .btn-add {
+            background-color: var(--accent-blue);
+        }
+
+        .btn-sub {
+            background-color: #333333;
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background-color: #181818;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--accent-blue);
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="app-header">
-        <h1>مخزن مواد التعبئة والتغليف</h1>
-        <span class="status-badge" id="online-status">متصل</span>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="container" id="main-content">
-        
-        <!-- Tab 1: Dashboard -->
-        <section id="tab-dashboard" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>إجمالي المواد</h3>
-                    <p id="stat-total-items">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>إجمالي الكميات</h3>
-                    <p id="stat-total-qty">0</p>
-                </div>
-                <div class="stat-card alert-red">
-                    <h3>وصلت حد الطلب</h3>
-                    <p id="stat-reorder-reached">0</p>
-                </div>
-                <div class="stat-card alert-orange">
-                    <h3>قريبة من حد الطلب</h3>
-                    <p id="stat-reorder-near">0</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>آخر الحركات</h2>
-                <div id="recent-transactions" class="list-group">
-                    <!-- Dynamic Rows -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Tab 2: Items Management -->
-        <section id="tab-items" class="tab-content">
-            <div class="actions-bar">
-                <input type="text" id="search-input" placeholder="بحث برمز، وصف، أو مستحضر..." oninput="loadItems()">
-                <button class="btn btn-primary" onclick="openModal('modal-add-item')">+ إضافة مادة</button>
-            </div>
-            <div id="items-list" class="items-grid">
-                <!-- Dynamic Items -->
-            </div>
-        </section>
-
-        <!-- Tab 3: Transactions -->
-        <section id="tab-transactions" class="tab-content">
-            <div class="action-buttons-grid">
-                <button class="btn btn-success" onclick="openModal('modal-in')">إضافة للمخزون (دخول)</button>
-                <button class="btn btn-danger" onclick="openModal('modal-out')">إخراج مواد (صرف)</button>
-                <button class="btn btn-warning" onclick="openModal('modal-transfer')">تحويل موقع</button>
-            </div>
-            <div class="card margin-top">
-                <h2>سجل الحركات اليومية</h2>
-                <div id="all-transactions" class="list-group">
-                    <!-- Dynamic Transactions -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Tab 4: Audit -->
-        <section id="tab-audit" class="tab-content">
-            <div class="card">
-                <h2>إجراء جرد فعلي</h2>
-                <form id="form-audit" onsubmit="handleAudit(event)">
-                    <div class="form-group">
-                        <label>اختر المادة:</label>
-                        <select id="audit-item-id" required class="input-field"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>الكمية الفعلية بالمخزن:</label>
-                        <input type="number" step="any" id="audit-actual-qty" required class="input-field">
-                    </div>
-                    <div class="form-group">
-                        <label>ملاحظات الجرد:</label>
-                        <input type="text" id="audit-notes" class="input-field">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">حفظ وتعديل الجرد</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- Tab 5: More / Reports -->
-        <section id="tab-more" class="tab-content">
-            <div class="card">
-                <h2>التقارير والإعدادات</h2>
-                <div class="list-group">
-                    <button class="btn btn-outline btn-block" onclick="exportData('items')">تصدير تقرير المخزون الحالي</button>
-                    <button class="btn btn-outline btn-block" onclick="exportData('transactions')">تصدير سجل الحركات</button>
-                    <button class="btn btn-outline btn-block" onclick="exportData('reorder')">تصدير مواد حد الطلب</button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Modal: Add Item -->
-    <div id="modal-add-item" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('modal-add-item')">&times;</span>
-            <h2>إضافة مادة جديدة</h2>
-            <form onsubmit="handleAddItem(event)">
-                <input type="text" id="add-code" placeholder="رمز المادة *" required class="input-field">
-                <input type="text" id="add-desc" placeholder="وصف المادة *" required class="input-field">
-                <input type="text" id="add-product" placeholder="اسم المستحضر *" required class="input-field">
-                <input type="text" id="add-unit" placeholder="الوحدة (كغم، قطعة، متر...)" required class="input-field">
-                <input type="number" step="any" id="add-qty" placeholder="الكمية الأولية" class="input-field">
-                <input type="number" step="any" id="add-reorder" placeholder="حد الطلب" class="input-field">
-                <input type="text" id="add-location" placeholder="موقع التخزين" class="input-field">
-                <input type="text" id="add-notes" placeholder="ملاحظات" class="input-field">
-                <button type="submit" class="btn btn-primary btn-block">حفظ المادة</button>
-            </form>
+    <div class="header">
+        <div class="logo-title">
+            <h1>شركة الكندي للصناعات الدوائية</h1>
+            <span>نظام إدارة ومتابعة المخزون</span>
         </div>
     </div>
 
-    <!-- Modal: In Transaction -->
-    <div id="modal-in" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('modal-in')">&times;</span>
-            <h2>إضافة كمية للمخزون</h2>
-            <form onsubmit="handleInTransaction(event)">
-                <select id="in-item-id" required class="input-field"></select>
-                <input type="number" step="any" id="in-qty" placeholder="الكمية *" required class="input-field">
-                <input type="text" id="in-doc" placeholder="رقم المستند / الوصل *" required class="input-field">
-                <input type="text" id="in-notes" placeholder="ملاحظات" class="input-field">
-                <button type="submit" class="btn btn-success btn-block">تأكيد الإضافة</button>
-            </form>
+    <!-- الملف الأول: جدول المواد العامة -->
+    <div class="section-title">ملف المواد العامة</div>
+    <div class="card">
+        <div class="item-header">
+            <div>
+                <p class="item-name">PARACETAMOL API</p>
+                <span class="item-code">الرمز: 1 | الموقع: A1</span>
+            </div>
+        </div>
+        <div class="item-details">
+            <span>الرصيد الحالي: 28,500</span>
+            <span>حد التنبيه: 25,000</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 70%;"></div>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-add" onclick="alert('إضافة مادة')">إضافة (+)</button>
+            <button class="btn btn-sub" onclick="alert('صرف مادة')">صرف (-)</button>
         </div>
     </div>
 
-    <!-- Modal: Out Transaction -->
-    <div id="modal-out" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('modal-out')">&times;</span>
-            <h2>إخراج مواد من المخزون</h2>
-            <form onsubmit="handleOutTransaction(event)">
-                <select id="out-item-id" required class="input-field"></select>
-                <input type="number" step="any" id="out-qty" placeholder="الكمية المطلوبة *" required class="input-field">
-                <input type="text" id="out-product" placeholder="اسم المستحضر *" required class="input-field">
-                <input type="text" id="out-batch" placeholder="رقم الوجبة / الباج *" required class="input-field">
-                <input type="text" id="out-doc" placeholder="رقم المستند *" required class="input-field">
-                <input type="text" id="out-notes" placeholder="ملاحظات" class="input-field">
-                <button type="submit" class="btn btn-danger btn-block">تأكيد الإخراج</button>
-            </form>
+    <!-- الملف الثاني: مواد التعبئة والتغليف -->
+    <div class="section-title">ملف مواد التعبئة والتغليف</div>
+    <div class="card">
+        <div class="item-header">
+            <div>
+                <p class="item-name">CARTON BOX</p>
+                <span class="item-code">الرمز: 2 | الموقع: B1</span>
+            </div>
+        </div>
+        <div class="item-details">
+            <span>الرصيد الحالي: 15,000</span>
+            <span>حد التنبيه: 20,000</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar warning" style="width: 60%;"></div>
+        </div>
+        <div class="alert-box">
+            ⚠️ تنبيه: وصل الرصيد الحد الأدنى المطلوب (20,000)
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-add" onclick="alert('إضافة كرتون')">إضافة (+)</button>
+            <button class="btn btn-sub" onclick="alert('صرف كرتون')">صرف (-)</button>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar (Mobile) -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('tab-dashboard', this)">
+    <!-- الملف الثالث: المواد الخام (PVC والألمنيوم) -->
+    <div class="section-title">ملف المواد الخام (PVC والألمنيوم)</div>
+    <div class="card">
+        <div class="item-header">
+            <div>
+                <p class="item-name">PVC ROLL</p>
+                <span class="item-code">الرمز: 3 | الموقع: C1</span>
+            </div>
+        </div>
+        <div class="item-details">
+            <span>الرصيد الحالي: 55 كغ</span>
+            <span>حد التنبيه: 60 كغ</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar warning" style="width: 85%;"></div>
+        </div>
+        <div class="alert-box">
+            🚨 تنبيه: المواد الخام أقل من 60 كغ!
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-add" onclick="alert('إضافة خامات')">إضافة (+)</button>
+            <button class="btn btn-sub" onclick="alert('صرف خامات')">صرف (-)</button>
+        </div>
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <div class="nav-bar">
+        <a href="#" class="nav-item active">
+            <div>🏠</div>
             <span>الرئيسية</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('tab-items', this)">
-            <span>المواد</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('tab-transactions', this)">
-            <span>الحركات</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('tab-audit', this)">
-            <span>الجرد</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('tab-more', this)">
-            <span>المزيد</span>
-        </button>
-    </nav>
+        </a>
+        <a href="#" class="nav-item">
+            <div>📦</div>
+            <span>المخزون</span>
+        </a>
+        <a href="#" class="nav-item">
+            <div>📊</div>
+            <span>التقارير</span>
+        </a>
+        <a href="#" class="nav-item">
+            <div>⚙️</div>
+            <span>الإعدادات</span>
+        </a>
+    </div>
 
-    <script src="app.js"></script>
 </body>
 </html>
