@@ -4,2161 +4,1347 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f3d56">
-<title>مخزن مواد التعبئة والتغليف</title>
+<meta name="theme-color" content="#111827">
+
+<title>جرد مواد التعبئة والتغليف</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
 body{
- margin:0;
- font-family:Arial,Tahoma,sans-serif;
- background:#f3f6f8;
- color:#17212b;
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+    background:#f4f7fb;
+    color:#172033;
 }
-button,input,select{font:inherit}
-button{cursor:pointer;border:0}
-.app{min-height:100vh}
-.header{
- background:#0f3d56;
- color:white;
- padding:18px 16px;
- position:sticky;
- top:0;
- z-index:10;
- box-shadow:0 3px 12px #0002;
+
+header{
+    background:linear-gradient(135deg,#111827,#1e3a5f);
+    color:white;
+    padding:22px 16px 28px;
+    border-radius:0 0 26px 26px;
+    box-shadow:0 8px 25px rgba(15,23,42,.18);
 }
-.header h1{margin:0;font-size:20px}
-.header p{margin:5px 0 0;font-size:13px;opacity:.8}
-.container{max-width:1200px;margin:auto;padding:16px}
-.cards{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:12px;
- margin-bottom:18px;
+
+.header-title{
+    font-size:25px;
+    font-weight:800;
 }
-.card{
- background:white;
- border-radius:15px;
- padding:16px;
- box-shadow:0 2px 10px #0000000d;
+
+.header-sub{
+    opacity:.78;
+    margin-top:5px;
+    font-size:13px;
 }
-.card .num{font-size:26px;font-weight:bold;margin-top:8px}
-.card small{color:#667}
-.nav{
- display:flex;
- gap:8px;
- overflow:auto;
- margin-bottom:16px;
- padding-bottom:4px;
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:15px;
 }
-.nav button{
- white-space:nowrap;
- padding:11px 15px;
- border-radius:10px;
- background:white;
- color:#234;
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:-22px;
+    position:relative;
 }
-.nav button.active{
- background:#0f3d56;
- color:white;
+
+.stat{
+    background:white;
+    border-radius:17px;
+    padding:15px 10px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(15,23,42,.08);
 }
-.section{display:none}
-.section.active{display:block}
-.panel{
- background:white;
- border-radius:15px;
- padding:16px;
- box-shadow:0 2px 10px #0000000d;
- margin-bottom:15px;
+
+.stat-number{
+    font-size:22px;
+    font-weight:800;
 }
-.panel h2{margin:0 0 14px;font-size:18px}
-.row{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:10px;
+
+.stat-label{
+    font-size:12px;
+    color:#6b7280;
+    margin-top:4px;
 }
-.field{margin-bottom:10px}
-.field label{
- display:block;
- font-size:13px;
- margin-bottom:5px;
- color:#52606d;
+
+.toolbar{
+    margin-top:15px;
+    background:white;
+    padding:13px;
+    border-radius:18px;
+    box-shadow:0 5px 20px rgba(15,23,42,.06);
 }
-input,select{
- width:100%;
- border:1px solid #d5dde3;
- border-radius:9px;
- padding:11px;
- background:white;
- outline:none;
-}
-input:focus,select:focus{border-color:#0f3d56}
-.actions{
- display:flex;
- gap:8px;
- flex-wrap:wrap;
- margin-top:10px;
-}
-.btn{
- padding:10px 14px;
- border-radius:9px;
- color:white;
- background:#0f3d56;
-}
-.btn.green{background:#16845b}
-.btn.red{background:#b83232}
-.btn.gray{background:#65727e}
-.btn.orange{background:#b66a00}
+
 .search{
- margin-bottom:12px;
+    width:100%;
+    border:1px solid #e5e7eb;
+    background:#f8fafc;
+    padding:14px;
+    border-radius:13px;
+    font-size:16px;
+    outline:none;
 }
+
+.search:focus{
+    border-color:#2563eb;
+    background:white;
+}
+
+.buttons{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    flex-wrap:wrap;
+}
+
+button,
+.file-label{
+    border:0;
+    border-radius:12px;
+    padding:11px 14px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.primary{
+    background:#2563eb;
+    color:white;
+}
+
+.secondary{
+    background:#eef2ff;
+    color:#3730a3;
+}
+
+.green{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.orange{
+    background:#ffedd5;
+    color:#9a3412;
+}
+
+.red{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+input[type=file]{
+    display:none;
+}
+
+.tabs{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+    overflow-x:auto;
+}
+
+.tab{
+    white-space:nowrap;
+    background:white;
+    color:#475569;
+    border:1px solid #e5e7eb;
+}
+
+.tab.active{
+    background:#111827;
+    color:white;
+}
+
+.info{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:13px;
+    background:#eff6ff;
+    color:#1e40af;
+    font-size:13px;
+}
+
+.table-wrap{
+    margin-top:14px;
+    background:white;
+    border-radius:18px;
+    overflow:auto;
+    box-shadow:0 5px 20px rgba(15,23,42,.06);
+}
+
 table{
- width:100%;
- border-collapse:collapse;
- min-width:750px;
+    width:100%;
+    border-collapse:collapse;
+    min-width:780px;
 }
-.table-wrap{overflow:auto}
-th,td{
- padding:11px 8px;
- border-bottom:1px solid #edf0f2;
- text-align:right;
- font-size:13px;
+
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-size:13px;
+    padding:13px 10px;
+    text-align:right;
+    position:sticky;
+    top:0;
 }
-th{background:#f5f7f8}
+
+td{
+    padding:13px 10px;
+    border-top:1px solid #f1f5f9;
+    font-size:14px;
+}
+
+.name{
+    font-weight:700;
+    max-width:360px;
+}
+
+.code{
+    color:#64748b;
+    font-weight:700;
+}
+
+.qty{
+    font-size:18px;
+    font-weight:900;
+}
+
+.unit{
+    font-weight:800;
+}
+
 .badge{
- padding:5px 8px;
- border-radius:20px;
- font-size:11px;
- display:inline-block;
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:800;
 }
-.ok{background:#dff5e9;color:#147344}
-.low{background:#ffe8e8;color:#b51f1f}
-.near{background:#fff1d8;color:#9b5c00}
+
+.badge-ok{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-low{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.badge-warning{
+    background:#ffedd5;
+    color:#9a3412;
+}
+
+.action-btn{
+    padding:8px 10px;
+    font-size:12px;
+    margin:2px;
+}
+
 .empty{
- text-align:center;
- padding:30px;
- color:#777;
+    text-align:center;
+    padding:40px 15px;
+    color:#64748b;
 }
-.toast{
- position:fixed;
- bottom:20px;
- left:20px;
- right:20px;
- max-width:500px;
- margin:auto;
- background:#182b38;
- color:white;
- padding:13px;
- border-radius:10px;
- text-align:center;
- display:none;
- z-index:100;
-}
+
 .modal{
- position:fixed;
- inset:0;
- background:#0008;
- display:none;
- align-items:center;
- justify-content:center;
- padding:15px;
- z-index:50;
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    z-index:1000;
+    padding:20px;
+    align-items:center;
+    justify-content:center;
 }
+
+.modal.show{
+    display:flex;
+}
+
 .modal-box{
- width:100%;
- max-width:520px;
- max-height:90vh;
- overflow:auto;
- background:white;
- border-radius:16px;
- padding:18px;
+    background:white;
+    width:100%;
+    max-width:430px;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
 }
-.close{
- float:left;
- background:#eee;
- width:34px;
- height:34px;
- border-radius:50%;
+
+.modal-title{
+    font-size:19px;
+    font-weight:800;
+    margin-bottom:15px;
 }
-.activity{
- border-bottom:1px solid #eee;
- padding:10px 0;
+
+.modal-input{
+    width:100%;
+    padding:13px;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    font-size:17px;
+    margin-bottom:12px;
+    outline:none;
 }
-.activity b{font-size:14px}
-.activity small{display:block;color:#777;margin-top:4px}
-.setting{
- display:flex;
- justify-content:space-between;
- align-items:center;
- padding:13px 0;
- border-bottom:1px solid #eee;
+
+.modal-actions{
+    display:flex;
+    gap:8px;
 }
-.empty-state{
- background:white;
- border-radius:15px;
- padding:35px;
- text-align:center;
- color:#667;
+
+.modal-actions button{
+    flex:1;
 }
-@media(max-width:800px){
- .cards{grid-template-columns:repeat(2,1fr)}
- .row{grid-template-columns:repeat(2,1fr)}
+
+.toast{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%) translateY(100px);
+    background:#111827;
+    color:white;
+    padding:13px 18px;
+    border-radius:13px;
+    z-index:2000;
+    transition:.3s;
+    font-size:13px;
+    box-shadow:0 8px 30px rgba(0,0,0,.2);
 }
-@media(max-width:500px){
- .container{padding:10px}
- .cards{gap:8px}
- .card{padding:12px}
- .card .num{font-size:22px}
- .row{grid-template-columns:1fr}
- .header h1{font-size:18px}
+
+.toast.show{
+    transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:600px){
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .stat-number{
+        font-size:18px;
+    }
+
+    .stat{
+        padding:12px 5px;
+    }
+
+    .header-title{
+        font-size:21px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
-<header class="header">
- <h1 id="companyName">شركة الكندي للصناعات الدوائية</h1>
- <p id="warehouseName">مخزن مواد التعبئة والتغليف</p>
+<header>
+    <div class="header-title">📦 جرد مواد التعبئة والتغليف</div>
+    <div class="header-sub">إدارة الأرصدة الفعلية للمواد</div>
 </header>
 
-<main class="container">
+<div class="container">
 
-<div class="nav">
- <button class="active" onclick="showSection('home',this)">الرئيسية</button>
- <button onclick="showSection('materials',this)">المواد</button>
- <button onclick="showSection('add',this)">➕ إضافة</button>
- <button onclick="showSection('withdraw',this)">➖ سحب</button>
- <button onclick="showSection('import',this)">📁 استيراد</button>
- <button onclick="showSection('reports',this)">📊 التقارير</button>
- <button onclick="showSection('users',this)">👥 المستخدمون</button>
- <button onclick="showSection('settings',this)">⚙️ الإعدادات</button>
-</div>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number" id="totalMaterials">0</div>
+            <div class="stat-label">كل المواد</div>
+        </div>
 
-<section id="home" class="section active">
+        <div class="stat">
+            <div class="stat-number" id="pcsCount">0</div>
+            <div class="stat-label">مواد PCS</div>
+        </div>
 
-<div class="cards">
- <div class="card">
-  <small>إجمالي المواد</small>
-  <div class="num" id="totalMaterials">0</div>
- </div>
+        <div class="stat">
+            <div class="stat-number" id="kgCount">0</div>
+            <div class="stat-label">مواد KG</div>
+        </div>
+    </div>
 
- <div class="card">
-  <small>مواد بالكيلو</small>
-  <div class="num" id="kgMaterials">0</div>
- </div>
+    <div class="toolbar">
 
- <div class="card">
-  <small>مواد بالقطعة</small>
-  <div class="num" id="pcsMaterials">0</div>
- </div>
+        <input
+            id="search"
+            class="search"
+            type="search"
+            placeholder="🔎 ابحث بالكود أو اسم المادة أو المنتج..."
+        >
 
- <div class="card">
-  <small>مواد تحتاج طلب</small>
-  <div class="num" id="lowMaterials">0</div>
- </div>
-</div>
+        <div class="buttons">
 
-<div class="panel">
- <h2>🔔 المواد التي تحتاج متابعة</h2>
- <div id="lowList"></div>
-</div>
+            <label class="file-label primary">
+                📂 تحميل ملف Excel
+                <input type="file" id="excelFile" accept=".xlsx,.xls,.csv">
+            </label>
 
-<div class="panel">
- <h2>🕐 آخر العمليات</h2>
- <div id="homeActivities"></div>
-</div>
+            <button class="secondary" onclick="exportExcel()">
+                📊 تصدير Excel
+            </button>
 
-</section>
+            <button class="green" onclick="addStockPrompt()">
+                ➕ إضافة رصيد
+            </button>
 
-<section id="materials" class="section">
+            <button class="orange" onclick="withdrawPrompt()">
+                ➖ سحب رصيد
+            </button>
 
-<div class="panel">
- <h2>📦 جميع المواد</h2>
+            <button class="red" onclick="showLowStock()">
+                ⚠️ المواد الناقصة
+            </button>
 
- <input class="search"
-  id="search"
-  placeholder="🔎 ابحث بالكود أو اسم المادة أو المنتج..."
-  oninput="renderMaterials()">
+        </div>
 
- <div class="table-wrap">
- <table>
-  <thead>
-   <tr>
-    <th>الكود</th>
-    <th>اسم المادة</th>
-    <th>المنتج</th>
-    <th>الوحدة</th>
-    <th>الرصيد</th>
-    <th>حد الطلب</th>
-    <th>الحالة</th>
-    <th>إجراء</th>
-   </tr>
-  </thead>
-  <tbody id="materialsTable"></tbody>
- </table>
- </div>
-</div>
+        <div class="tabs">
+            <button class="tab active" onclick="setFilter('ALL',this)">الكل</button>
+            <button class="tab" onclick="setFilter('PCS',this)">PCS</button>
+            <button class="tab" onclick="setFilter('KG',this)">KG</button>
+            <button class="tab" onclick="setFilter('LOW',this)">⚠️ تنبيه</button>
+        </div>
 
-</section>
+        <div class="info">
+            💡 الأرصدة المعروضة مأخوذة من ملف Excel نفسه، ويمكن تعديلها بالسحب والإضافة.
+        </div>
 
-<section id="add" class="section">
+    </div>
 
-<div class="panel">
- <h2>📥 إضافة مواد إلى المخزن</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الكود</th>
+                    <th>المادة</th>
+                    <th>الوحدة</th>
+                    <th>الرصيد</th>
+                    <th>الحالة</th>
+                    <th>العملية</th>
+                </tr>
+            </thead>
 
- <div class="row">
-
-  <div class="field">
-   <label>المادة</label>
-   <select id="addMaterial"></select>
-  </div>
-
-  <div class="field">
-   <label>الكمية</label>
-   <input id="addQty" type="number" step="0.0001" min="0">
-  </div>
-
-  <div class="field">
-   <label>رقم المستند</label>
-   <input id="addDoc" placeholder="مثلاً ADD-0001">
-  </div>
-
-  <div class="field">
-   <label>ملاحظات</label>
-   <input id="addNote">
-  </div>
-
- </div>
-
- <div class="actions">
-  <button class="btn green" onclick="addStock()">حفظ الإضافة</button>
- </div>
-</div>
-
-</section>
-
-<section id="withdraw" class="section">
-
-<div class="panel">
- <h2>📤 سحب مواد من المخزن</h2>
-
- <div class="row">
-
-  <div class="field">
-   <label>المادة</label>
-   <select id="withdrawMaterial"></select>
-  </div>
-
-  <div class="field">
-   <label>الكمية</label>
-   <input id="withdrawQty" type="number" step="0.0001" min="0">
-  </div>
-
-  <div class="field">
-   <label>رقم المستند</label>
-   <input id="withdrawDoc" placeholder="مثلاً OUT-0001">
-  </div>
-
-  <div class="field">
-   <label>ملاحظات</label>
-   <input id="withdrawNote">
-  </div>
-
- </div>
-
- <div id="withdrawBalance"></div>
-
- <div class="actions">
-  <button class="btn orange" onclick="withdrawStock()">حفظ السحب</button>
- </div>
-</div>
-
-</section>
-
-<section id="import" class="section">
-
-<div class="panel">
-
- <h2>📁 استيراد المواد دفعة واحدة</h2>
-
- <p>
- ارفع ملف Excel يحتوي على المواد، والبرنامج يقرأ المواد كلها دفعة واحدة.
- </p>
-
- <input
-  type="file"
-  id="excelFile"
-  accept=".xlsx,.xls,.csv">
-
- <div class="actions">
-  <button class="btn" onclick="importExcel()">
-   استيراد الملف
-  </button>
- </div>
-
- <hr>
-
- <h3>الأعمدة المقبولة</h3>
-
- <table>
-  <tr>
-   <th>Code</th>
-   <th>Name</th>
-   <th>Product</th>
-   <th>Unit</th>
-   <th>Quantity</th>
-   <th>Reorder</th>
-  </tr>
-
-  <tr>
-   <td>1001</td>
-   <td>PVC 243mm</td>
-   <td>---</td>
-   <td>KG</td>
-   <td>500</td>
-   <td>100</td>
-  </tr>
- </table>
-
- <p>
- يمكن أيضاً استخدام أسماء الأعمدة العربية مثل:
- الكود، اسم المادة، المنتج، الوحدة، الكمية، حد الطلب.
- </p>
-
- <p>
- إذا كان الكود موجوداً مسبقاً، لن يتم إنشاء مادة مكررة.
- </p>
+            <tbody id="materialsBody"></tbody>
+        </table>
+    </div>
 
 </div>
 
-</section>
+<div class="modal" id="modal">
+    <div class="modal-box">
 
-<section id="reports" class="section">
+        <div class="modal-title" id="modalTitle"></div>
 
-<div class="panel">
+        <input
+            id="modalValue"
+            class="modal-input"
+            type="number"
+            step="any"
+            min="0"
+            placeholder="أدخل الكمية"
+        >
 
- <h2>📊 التقارير</h2>
+        <div class="modal-actions">
+            <button class="secondary" onclick="closeModal()">إلغاء</button>
+            <button class="primary" onclick="confirmModal()">تأكيد</button>
+        </div>
 
- <div class="actions">
-
-  <button class="btn" onclick="exportExcel()">
-   تصدير المواد إلى Excel
-  </button>
-
-  <button class="btn gray" onclick="exportOperations()">
-   تصدير سجل العمليات
-  </button>
-
-  <button class="btn orange" onclick="printReport()">
-   طباعة التقرير
-  </button>
-
- </div>
-
-</div>
-
-<div class="panel">
-
- <h2>سجل العمليات</h2>
-
- <div class="table-wrap">
-
- <table>
-
-  <thead>
-   <tr>
-    <th>التاريخ</th>
-    <th>المستخدم</th>
-    <th>العملية</th>
-    <th>المادة</th>
-    <th>الكمية</th>
-    <th>الرصيد</th>
-    <th>المستند</th>
-   </tr>
-  </thead>
-
-  <tbody id="operationsTable"></tbody>
-
- </table>
-
- </div>
-
-</div>
-
-</section>
-
-<section id="users" class="section">
-
-<div class="panel">
-
- <h2>👥 المستخدمون</h2>
-
- <div class="actions">
-  <button class="btn green" onclick="openUserModal()">
-   ➕ إضافة مستخدم
-  </button>
- </div>
-
- <div class="table-wrap">
-
- <table>
-
-  <thead>
-   <tr>
-    <th>اسم المستخدم</th>
-    <th>الاسم الظاهر</th>
-    <th>الصلاحية</th>
-    <th>إجراء</th>
-   </tr>
-  </thead>
-
-  <tbody id="usersTable"></tbody>
-
- </table>
-
- </div>
-
-</div>
-
-</section>
-
-<section id="settings" class="section">
-
-<div class="panel">
-
- <h2>⚙️ إعدادات النظام</h2>
-
- <div class="field">
-  <label>اسم الشركة</label>
-  <input id="setCompany">
- </div>
-
- <div class="field">
-  <label>اسم المخزن</label>
-  <input id="setWarehouse">
- </div>
-
- <div class="field">
-  <label>حد الطلب الافتراضي</label>
-  <input id="setReorder" type="number" step="0.0001">
- </div>
-
- <div class="actions">
-  <button class="btn green" onclick="saveSettings()">
-   حفظ الإعدادات
-  </button>
- </div>
-
-</div>
-
-<div class="panel">
-
- <h2>🗃️ إدارة البيانات</h2>
-
- <div class="actions">
-
-  <button class="btn" onclick="backup()">
-   نسخة احتياطية
-  </button>
-
-  <button class="btn gray" onclick="restoreInput.click()">
-   استعادة نسخة
-  </button>
-
-  <button class="btn red" onclick="clearAll()">
-   حذف جميع البيانات
-  </button>
-
- </div>
-
- <input
-  hidden
-  type="file"
-  id="restoreInput"
-  accept=".json"
-  onchange="restoreBackup(event)">
-
-</div>
-
-</section>
-
-</main>
+    </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<div class="modal" id="userModal">
-
- <div class="modal-box">
-
-  <button class="close" onclick="closeUserModal()">×</button>
-
-  <h2 id="userModalTitle">إضافة مستخدم</h2>
-
-  <input type="hidden" id="editUserId">
-
-  <div class="field">
-   <label>اسم المستخدم</label>
-   <input id="username">
-  </div>
-
-  <div class="field">
-   <label>الاسم الظاهر</label>
-   <input id="displayName">
-  </div>
-
-  <div class="field">
-   <label>رمز الدخول PIN</label>
-   <input
-    id="pin"
-    type="password"
-    inputmode="numeric"
-    maxlength="6">
-  </div>
-
-  <div class="field">
-   <label>الصلاحية</label>
-
-   <select id="role">
-    <option value="admin">مدير</option>
-    <option value="store">مخزن</option>
-    <option value="view">مشاهدة فقط</option>
-   </select>
-
-  </div>
-
-  <div class="actions">
-
-   <button class="btn green" onclick="saveUser()">
-    حفظ
-   </button>
-
-   <button class="btn gray" onclick="closeUserModal()">
-    إلغاء
-   </button>
-
-  </div>
-
- </div>
-
-</div>
-
-<div class="modal" id="materialModal">
-
- <div class="modal-box">
-
-  <button class="close" onclick="closeMaterialModal()">×</button>
-
-  <h2>تعديل المادة</h2>
-
-  <input type="hidden" id="editMaterialId">
-
-  <div class="field">
-   <label>كود المادة</label>
-   <input id="mCode">
-  </div>
-
-  <div class="field">
-   <label>اسم المادة</label>
-   <input id="mName">
-  </div>
-
-  <div class="field">
-   <label>اسم المنتج</label>
-   <input id="mProduct">
-  </div>
-
-  <div class="field">
-
-   <label>الوحدة</label>
-
-   <select id="mUnit">
-    <option value="KG">KG</option>
-    <option value="PCS">PCS</option>
-    <option value="L">L</option>
-    <option value="GM">GM</option>
-   </select>
-
-  </div>
-
-  <div class="field">
-   <label>حد الطلب</label>
-   <input id="mReorder" type="number" step="0.0001">
-  </div>
-
-  <div class="actions">
-
-   <button class="btn green" onclick="saveMaterial()">
-    حفظ
-   </button>
-
-  </div>
-
- </div>
-
-</div>
-
 <script>
 
-const KEY="kindi_packaging_v1";
+let materials = [];
+let currentFilter = "ALL";
+let currentAction = null;
+let currentMaterialIndex = null;
 
-let db={
- materials:[],
- operations:[],
- users:[
-  {
-   id:"admin",
-   username:"admin",
-   displayName:"المدير",
-   pin:"1234",
-   role:"admin"
-  }
- ],
- settings:{
-  company:"شركة الكندي للصناعات الدوائية",
-  warehouse:"مخزن مواد التعبئة والتغليف",
-  reorder:1000
- },
- currentUser:"admin"
-};
+/* =========================
+   تحميل البيانات
+========================= */
 
-function load(){
+document.getElementById("excelFile").addEventListener("change", function(e){
 
- const saved=localStorage.getItem(KEY);
+    const file = e.target.files[0];
 
- if(saved){
+    if(!file) return;
 
-  try{
+    const reader = new FileReader();
 
-   const x=JSON.parse(saved);
+    reader.onload = function(event){
 
-   db={...db,...x};
+        try{
 
-   if(!Array.isArray(db.materials))
-    db.materials=[];
+            const data = new Uint8Array(event.target.result);
 
-   if(!Array.isArray(db.operations))
-    db.operations=[];
+            const workbook = XLSX.read(data,{
+                type:"array"
+            });
 
-   if(!Array.isArray(db.users))
-    db.users=[];
+            const sheetName = workbook.SheetNames[0];
 
-   if(!db.settings)
-    db.settings={
-     company:"شركة الكندي للصناعات الدوائية",
-     warehouse:"مخزن مواد التعبئة والتغليف",
-     reorder:1000
+            const sheet = workbook.Sheets[sheetName];
+
+            const rows = XLSX.utils.sheet_to_json(sheet,{
+                defval:""
+            });
+
+            if(!rows.length){
+
+                showToast("❌ الملف فارغ");
+
+                return;
+            }
+
+            materials = convertExcelRows(rows);
+
+            saveData();
+
+            render();
+
+            showToast(
+                "✅ تم تحميل " + materials.length + " مادة مع أرصدتها"
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showToast("❌ صار خطأ بقراءة ملف Excel");
+
+        }
+
     };
 
-  }catch(e){}
+    reader.readAsArrayBuffer(file);
 
- }
+});
 
- renderAll();
-}
 
-function save(){
+/* =========================
+   تحويل Excel
+========================= */
 
- localStorage.setItem(
-  KEY,
-  JSON.stringify(db)
- );
+function convertExcelRows(rows){
 
- renderAll();
-}
+    return rows.map((row,index)=>{
 
-function id(){
+        const keys = Object.keys(row);
 
- return Date.now().toString(36)+
- Math.random().toString(36).slice(2,7);
+        const codeKey = findKey(
+            keys,
+            [
+                "code",
+                "كود",
+                "الكود",
+                "رقم المادة",
+                "رمز المادة"
+            ]
+        );
 
-}
+        const nameKey = findKey(
+            keys,
+            [
+                "name",
+                "اسم",
+                "اسم المادة",
+                "المادة",
+                "description",
+                "الوصف",
+                "وصف"
+            ]
+        );
 
-function now(){
+        const qtyKey = findKey(
+            keys,
+            [
+                "quantity",
+                "qty",
+                "الكمية",
+                "الرصيد",
+                "الرصيد الحالي",
+                "كمية"
+            ]
+        );
 
- return new Date().toLocaleString("ar-IQ");
+        const unitKey = findKey(
+            keys,
+            [
+                "unit",
+                "الوحدة",
+                "وحدة"
+            ]
+        );
 
-}
+        const productKey = findKey(
+            keys,
+            [
+                "product",
+                "product name",
+                "اسم المنتج",
+                "المستحضر",
+                "المنتج"
+            ]
+        );
 
-function currentUser(){
+        let code = codeKey !== null ? row[codeKey] : "";
 
- return db.users.find(
-  x=>x.id===db.currentUser
- ) || db.users[0];
+        let name = nameKey !== null ? row[nameKey] : "";
 
-}
+        let quantity = qtyKey !== null
+            ? parseNumber(row[qtyKey])
+            : 0;
 
-function toast(text){
+        let unit = unitKey !== null
+            ? normalizeUnit(row[unitKey])
+            : detectUnit(row);
 
- const t=document.getElementById("toast");
+        let product = productKey !== null
+            ? row[productKey]
+            : "";
 
- t.textContent=text;
- t.style.display="block";
+        return {
 
- setTimeout(()=>{
-  t.style.display="none";
- },2500);
+            id: String(code || ("MAT-" + (index+1))),
 
-}
+            code: String(code || "").trim(),
 
-function showSection(name,btn){
+            name: String(name || "").trim(),
 
- document.querySelectorAll(".section")
- .forEach(x=>x.classList.remove("active"));
+            product: String(product || "").trim(),
 
- document.getElementById(name)
- .classList.add("active");
+            quantity: quantity,
 
- document.querySelectorAll(".nav button")
- .forEach(x=>x.classList.remove("active"));
+            unit: unit
 
- if(btn)
-  btn.classList.add("active");
+        };
 
- renderAll();
-
-}
-
-function renderAll(){
-
- renderHeader();
- renderCards();
- renderLow();
- renderActivities();
- renderMaterials();
- renderSelects();
- renderOperations();
- renderUsers();
- renderSettings();
-
-}
-
-function renderHeader(){
-
- document.getElementById("companyName")
- .textContent=db.settings.company;
-
- document.getElementById("warehouseName")
- .textContent=db.settings.warehouse;
-
-}
-
-function renderCards(){
-
- document.getElementById("totalMaterials")
- .textContent=db.materials.length;
-
- document.getElementById("kgMaterials")
- .textContent=db.materials.filter(
-  x=>String(x.unit).toUpperCase()==="KG"
- ).length;
-
- document.getElementById("pcsMaterials")
- .textContent=db.materials.filter(
-  x=>String(x.unit).toUpperCase()==="PCS"
- ).length;
-
- document.getElementById("lowMaterials")
- .textContent=db.materials.filter(
-  x=>Number(x.quantity)<=Number(x.reorder)
- ).length;
+    });
 
 }
 
-function status(m){
 
- if(Number(m.quantity)<=0)
-  return '<span class="badge low">نفدت</span>';
+/* =========================
+   البحث عن العمود
+========================= */
 
- if(Number(m.quantity)<=Number(m.reorder))
-  return '<span class="badge low">حد الطلب</span>';
+function findKey(keys, candidates){
 
- if(Number(m.quantity)<=Number(m.reorder)*1.5)
-  return '<span class="badge near">قريبة</span>';
+    for(const key of keys){
 
- return '<span class="badge ok">جيدة</span>';
+        const normalizedKey = normalizeText(key);
 
-}
+        for(const candidate of candidates){
 
-function renderLow(){
+            if(
+                normalizedKey === normalizeText(candidate) ||
+                normalizedKey.includes(normalizeText(candidate))
+            ){
+                return key;
+            }
 
- const box=document.getElementById("lowList");
-
- const arr=db.materials.filter(
-  x=>Number(x.quantity)<=Number(x.reorder)
- );
-
- if(!arr.length){
-
-  box.innerHTML=
-   '<div class="empty">لا توجد مواد تحتاج طلب حالياً ✅</div>';
-
-  return;
-
- }
-
- box.innerHTML=arr.map(m=>`
-
-  <div class="activity">
-
-   <b>${esc(m.name)}</b>
-
-   <small>
-    الكود: ${esc(m.code)}
-    | الرصيد: ${fmt(m.quantity)} ${esc(m.unit)}
-    | حد الطلب: ${fmt(m.reorder)}
-   </small>
-
-  </div>
-
- `).join("");
-
-}
-
-function renderActivities(){
-
- const box=document.getElementById("homeActivities");
-
- if(!db.operations.length){
-
-  box.innerHTML=
-   '<div class="empty">لا توجد عمليات بعد</div>';
-
-  return;
-
- }
-
- box.innerHTML=db.operations
- .slice()
- .reverse()
- .slice(0,8)
- .map(o=>`
-
-  <div class="activity">
-
-   <b>
-    ${o.type==="add"?"📥 إضافة":"📤 سحب"}
-    — ${esc(o.materialName)}
-   </b>
-
-   <small>
-    ${esc(o.userName)}
-    — ${esc(o.date)}
-    — ${fmt(o.quantity)} ${esc(o.unit)}
-    — الرصيد ${fmt(o.balance)}
-   </small>
-
-  </div>
-
- `).join("");
-
-}
-
-function renderMaterials(){
-
- const tbody=document.getElementById("materialsTable");
-
- const q=(
-  document.getElementById("search")?.value||""
- ).toLowerCase();
-
- const arr=db.materials.filter(m=>
-
-  String(m.code)
-   .toLowerCase()
-   .includes(q)
-
-  ||
-
-  String(m.name)
-   .toLowerCase()
-   .includes(q)
-
-  ||
-
-  String(m.product||"")
-   .toLowerCase()
-   .includes(q)
-
- );
-
- if(!arr.length){
-
-  tbody.innerHTML=
-   `<tr>
-    <td colspan="8" class="empty">لا توجد مواد</td>
-   </tr>`;
-
-  return;
-
- }
-
- tbody.innerHTML=arr.map(m=>`
-
-  <tr>
-
-   <td>${esc(m.code)}</td>
-
-   <td>${esc(m.name)}</td>
-
-   <td>${esc(m.product||"-")}</td>
-
-   <td>${esc(m.unit)}</td>
-
-   <td><b>${fmt(m.quantity)}</b></td>
-
-   <td>${fmt(m.reorder)}</td>
-
-   <td>${status(m)}</td>
-
-   <td>
-
-    <button
-     class="btn"
-     onclick="editMaterial('${m.id}')">
-     تعديل
-    </button>
-
-    <button
-     class="btn red"
-     onclick="deleteMaterial('${m.id}')">
-     حذف
-    </button>
-
-   </td>
-
-  </tr>
-
- `).join("");
-
-}
-
-function renderSelects(){
-
- const a=document.getElementById("addMaterial");
- const w=document.getElementById("withdrawMaterial");
-
- const html=db.materials.map(m=>
-
-  `<option value="${esc(m.id)}">
-
-   ${esc(m.code)}
-   - ${esc(m.name)}
-   (${fmt(m.quantity)} ${esc(m.unit)})
-
-  </option>`
-
- ).join("");
-
- a.innerHTML=
-  '<option value="">اختر المادة</option>'+
-  html;
-
- w.innerHTML=
-  '<option value="">اختر المادة</option>'+
-  html;
-
-}
-
-function renderOperations(){
-
- const tbody=document.getElementById("operationsTable");
-
- if(!db.operations.length){
-
-  tbody.innerHTML=
-   '<tr><td colspan="7" class="empty">لا توجد عمليات</td></tr>';
-
-  return;
-
- }
-
- tbody.innerHTML=db.operations
- .slice()
- .reverse()
- .map(o=>`
-
-  <tr>
-
-   <td>${esc(o.date)}</td>
-
-   <td>${esc(o.userName)}</td>
-
-   <td>
-    ${o.type==="add"?"إضافة":"سحب"}
-   </td>
-
-   <td>${esc(o.materialName)}</td>
-
-   <td>
-    ${fmt(o.quantity)}
-    ${esc(o.unit)}
-   </td>
-
-   <td>${fmt(o.balance)}</td>
-
-   <td>${esc(o.document||"-")}</td>
-
-  </tr>
-
- `).join("");
-
-}
-
-function renderUsers(){
-
- const tbody=document.getElementById("usersTable");
-
- tbody.innerHTML=db.users.map(u=>`
-
-  <tr>
-
-   <td>${esc(u.username)}</td>
-
-   <td>${esc(u.displayName)}</td>
-
-   <td>${roleName(u.role)}</td>
-
-   <td>
-
-    <button
-     class="btn"
-     onclick="editUser('${u.id}')">
-     تعديل
-    </button>
-
-    ${u.id!=="admin"
-     ?
-     `<button
-       class="btn red"
-       onclick="deleteUser('${u.id}')">
-       حذف
-      </button>`
-     :
-     ""}
-
-   </td>
-
-  </tr>
-
- `).join("");
-
-}
-
-function roleName(r){
-
- if(r==="admin")return "مدير";
-
- if(r==="store")return "مخزن";
-
- return "مشاهدة فقط";
-
-}
-
-function renderSettings(){
-
- document.getElementById("setCompany")
- .value=db.settings.company;
-
- document.getElementById("setWarehouse")
- .value=db.settings.warehouse;
-
- document.getElementById("setReorder")
- .value=db.settings.reorder;
-
-}
-
-function addStock(){
-
- const mid=document.getElementById("addMaterial").value;
-
- const qty=parseNumber(
-  document.getElementById("addQty").value
- );
-
- if(!mid||qty<=0){
-
-  toast("⚠️ اختر المادة وأدخل كمية صحيحة");
-
-  return;
- }
-
- const m=db.materials.find(x=>x.id===mid);
-
- if(!m)return;
-
- m.quantity=parseNumber(m.quantity)+qty;
-
- db.operations.push({
-
-  id:id(),
-  date:now(),
-  type:"add",
-  materialId:m.id,
-  materialName:m.name,
-  quantity:qty,
-  unit:m.unit,
-  balance:m.quantity,
-  document:document.getElementById("addDoc").value,
-  note:document.getElementById("addNote").value,
-  userName:currentUser().displayName
-
- });
-
- document.getElementById("addQty").value="";
- document.getElementById("addDoc").value="";
- document.getElementById("addNote").value="";
-
- save();
-
- toast("✅ تمت إضافة المادة إلى الرصيد");
-
-}
-
-function withdrawStock(){
-
- const mid=document.getElementById("withdrawMaterial").value;
-
- const qty=parseNumber(
-  document.getElementById("withdrawQty").value
- );
-
- if(!mid||qty<=0){
-
-  toast("⚠️ اختر المادة وأدخل كمية صحيحة");
-
-  return;
- }
-
- const m=db.materials.find(x=>x.id===mid);
-
- if(!m)return;
-
- if(qty>Number(m.quantity)){
-
-  toast("❌ الكمية المطلوبة أكبر من الرصيد");
-
-  return;
- }
-
- m.quantity=parseNumber(m.quantity)-qty;
-
- db.operations.push({
-
-  id:id(),
-  date:now(),
-  type:"withdraw",
-  materialId:m.id,
-  materialName:m.name,
-  quantity:qty,
-  unit:m.unit,
-  balance:m.quantity,
-  document:document.getElementById("withdrawDoc").value,
-  note:document.getElementById("withdrawNote").value,
-  userName:currentUser().displayName
-
- });
-
- document.getElementById("withdrawQty").value="";
- document.getElementById("withdrawDoc").value="";
- document.getElementById("withdrawNote").value="";
-
- save();
-
- toast("✅ تمت عملية السحب");
-
-}
-
-function editMaterial(mid){
-
- const m=db.materials.find(x=>x.id===mid);
-
- if(!m)return;
-
- document.getElementById("editMaterialId").value=m.id;
-
- document.getElementById("mCode").value=m.code;
-
- document.getElementById("mName").value=m.name;
-
- document.getElementById("mProduct").value=
-  m.product||"";
-
- document.getElementById("mUnit").value=m.unit;
-
- document.getElementById("mReorder").value=m.reorder;
-
- document.getElementById("materialModal")
- .style.display="flex";
-
-}
-
-function closeMaterialModal(){
-
- document.getElementById("materialModal")
- .style.display="none";
-
-}
-
-function saveMaterial(){
-
- const mid=
-  document.getElementById("editMaterialId").value;
-
- const m=db.materials.find(x=>x.id===mid);
-
- if(!m)return;
-
- const newCode=
-  document.getElementById("mCode").value.trim();
-
- if(!newCode){
-
-  toast("⚠️ الكود مطلوب");
-
-  return;
- }
-
- const duplicate=db.materials.some(
-  x=>
-   x.id!==mid &&
-   String(x.code).trim().toLowerCase()===
-   newCode.toLowerCase()
- );
-
- if(duplicate){
-
-  toast("❌ هذا الكود موجود مسبقاً");
-
-  return;
- }
-
- m.code=newCode;
-
- m.name=
-  document.getElementById("mName").value.trim();
-
- m.product=
-  document.getElementById("mProduct").value.trim();
-
- m.unit=
-  document.getElementById("mUnit").value;
-
- m.reorder=
-  parseNumber(
-   document.getElementById("mReorder").value
-  );
-
- closeMaterialModal();
-
- save();
-
- toast("✅ تم تعديل المادة");
-
-}
-
-function deleteMaterial(mid){
-
- const m=db.materials.find(x=>x.id===mid);
-
- if(!m)return;
-
- if(!confirm(
-  `هل أنت متأكد من حذف المادة؟\n\n`+
-  `${m.name}\n`+
-  `الرصيد الحالي: ${m.quantity} ${m.unit}`
- ))return;
-
- db.materials=
-  db.materials.filter(x=>x.id!==mid);
-
- save();
-
- toast("🗑️ تم حذف المادة");
-
-}
-
-/* =====================================================
-   استيراد Excel الجديد
-   ===================================================== */
-
-function importExcel(){
-
- const file=
-  document.getElementById("excelFile").files[0];
-
- if(!file){
-
-  toast("⚠️ اختر ملف Excel أولاً");
-
-  return;
- }
-
- const reader=new FileReader();
-
- reader.onload=e=>{
-
-  try{
-
-   const data=
-    new Uint8Array(e.target.result);
-
-   const workbook=XLSX.read(
-    data,
-    {
-     type:"array",
-     cellDates:true
-    }
-   );
-
-   if(!workbook.SheetNames.length){
-
-    toast("❌ الملف لا يحتوي على أوراق");
-
-    return;
-   }
-
-   const sheet=
-    workbook.Sheets[
-     workbook.SheetNames[0]
-    ];
-
-   const rows=
-    XLSX.utils.sheet_to_json(
-     sheet,
-     {
-      defval:"",
-      raw:true
-     }
-    );
-
-   if(!rows.length){
-
-    toast("❌ الملف فارغ");
-
-    return;
-   }
-
-   let added=0;
-   let updated=0;
-   let skipped=0;
-
-   rows.forEach(row=>{
-
-    const code=String(
-
-     row.Code ??
-     row.CODE ??
-     row.code ??
-     row["Code"] ??
-     row["CODE"] ??
-     row["كود"] ??
-     row["كود المادة"] ??
-     row["الكود"] ??
-     row["رمز المادة"] ??
-     ""
-
-    ).trim();
-
-    const name=String(
-
-     row.Name ??
-     row.NAME ??
-     row.name ??
-     row["Name"] ??
-     row["NAME"] ??
-     row["اسم المادة"] ??
-     row["اسم"] ??
-     row["وصف المادة"] ??
-     row["الوصف"] ??
-     ""
-
-    ).trim();
-
-    if(!code||!name){
-
-     skipped++;
-
-     return;
-    }
-
-    const product=String(
-
-     row.Product ??
-     row.PRODUCT ??
-     row.product ??
-     row["Product"] ??
-     row["PRODUCT"] ??
-     row["المنتج"] ??
-     row["اسم المنتج"] ??
-     row["المستحضر"] ??
-     ""
-
-    ).trim();
-
-    let unit=String(
-
-     row.Unit ??
-     row.UNIT ??
-     row.unit ??
-     row["Unit"] ??
-     row["UNIT"] ??
-     row["الوحدة"] ??
-     row["وحدة القياس"] ??
-     ""
-
-    ).trim().toUpperCase();
-
-    if(
-     unit==="كيلو" ||
-     unit==="كيلوغرام" ||
-     unit==="كغم" ||
-     unit==="كگم"
-    )
-     unit="KG";
-
-    if(
-     unit==="قطعة" ||
-     unit==="قطع" ||
-     unit==="حبة"
-    )
-     unit="PCS";
-
-    if(unit==="لتر")
-     unit="L";
-
-    if(
-     unit==="غرام" ||
-     unit==="غرامات"
-    )
-     unit="GM";
-
-    if(
-     !["KG","PCS","L","GM"].includes(unit)
-    )
-     unit="PCS";
-
-    const quantity=parseNumber(
-
-     row.Quantity ??
-     row.QUANTITY ??
-     row.quantity ??
-     row["Quantity"] ??
-     row["QUANTITY"] ??
-     row["الكمية"] ??
-     row["الرصيد"] ??
-     row["الكمية المتوفرة"] ??
-     0
-
-    );
-
-    let reorder=parseNumber(
-
-     row.Reorder ??
-     row.REORDER ??
-     row.reorder ??
-     row["Reorder"] ??
-     row["REORDER"] ??
-     row["حد الطلب"] ??
-     row["حد إعادة الطلب"] ??
-     db.settings.reorder
-
-    );
-
-    if(reorder<=0)
-     reorder=
-      Number(db.settings.reorder)||1000;
-
-    const old=db.materials.find(x=>
-
-     String(x.code)
-      .trim()
-      .toLowerCase()===
-     code.toLowerCase()
-
-    );
-
-    if(old){
-
-     /*
-      المادة موجودة:
-      لا نكررها.
-      نحدث الاسم والمنتج والوحدة وحد الطلب.
-      الرصيد الحالي يبقى كما هو.
-     */
-
-     old.name=name;
-     old.product=product;
-     old.unit=unit;
-     old.reorder=reorder;
-
-     updated++;
-
-    }else{
-
-     db.materials.push({
-
-      id:id(),
-      code:code,
-      name:name,
-      product:product,
-      unit:unit,
-      quantity:quantity,
-      reorder:reorder
-
-     });
-
-     added++;
+        }
 
     }
 
-   });
+    return null;
+}
 
-   save();
 
-   document.getElementById("excelFile").value="";
+function normalizeText(value){
 
-   alert(
-
-    "تم استيراد الملف بنجاح\n\n"+
-    "مواد جديدة: "+added+"\n"+
-    "مواد موجودة تم تحديث بياناتها: "+updated+"\n"+
-    "أسطر غير صالحة: "+skipped
-
-   );
-
-   toast("✅ تم استيراد المواد بنجاح");
-
-  }catch(err){
-
-   console.error(err);
-
-   toast(
-    "❌ تعذر قراءة الملف. تأكد أن الملف Excel صحيح."
-   );
-
-  }
-
- };
-
- reader.readAsArrayBuffer(file);
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[أإآ]/g,"ا")
+        .replace(/ة/g,"ه")
+        .replace(/\s+/g," ");
 
 }
 
-/* =====================================================
-   قراءة الأرقام من Excel
-   ===================================================== */
+
+/* =========================
+   تحويل الرقم
+========================= */
 
 function parseNumber(value){
 
- if(
-  value===null ||
-  value===undefined ||
-  value===""
- )
-  return 0;
+    if(typeof value === "number"){
 
- if(typeof value==="number")
-  return isFinite(value)?value:0;
+        return isFinite(value) ? value : 0;
 
- let s=String(value).trim();
+    }
 
- if(!s)
-  return 0;
+    let text = String(value || "").trim();
 
- s=s.replace(/\s/g,"");
+    if(!text) return 0;
 
- const arabicNumbers={
+    text = text
+        .replace(/٬/g,"")
+        .replace(/,/g,"")
+        .replace(/[^\d.-]/g,"");
 
-  "٠":"0",
-  "١":"1",
-  "٢":"2",
-  "٣":"3",
-  "٤":"4",
-  "٥":"5",
-  "٦":"6",
-  "٧":"7",
-  "٨":"8",
-  "٩":"9"
+    const number = Number(text);
 
- };
-
- s=s.replace(
-  /[٠-٩]/g,
-  d=>arabicNumbers[d]
- );
-
- s=s.replace(/٬/g,"");
-
- s=s.replace(/،/g,".");
-
- /*
-  إذا كان الرقم مثل:
-  1,500
-  نعتبر الفاصلة فاصل آلاف.
- */
-
- if(
-  s.includes(",") &&
-  !s.includes(".")
- ){
-
-  const parts=s.split(",");
-
-  if(
-   parts.length===2 &&
-   parts[1].length===3
-  ){
-
-   s=parts[0]+parts[1];
-
-  }
-
- }
-
- s=s.replace(
-  /[^0-9.\-]/g,
-  ""
- );
-
- const n=Number(s);
-
- return isFinite(n)?n:0;
+    return isFinite(number) ? number : 0;
 
 }
+
+
+/* =========================
+   الوحدة
+========================= */
+
+function normalizeUnit(value){
+
+    let unit = String(value || "")
+        .trim()
+        .toUpperCase();
+
+    if(
+        unit.includes("KG") ||
+        unit.includes("KILO") ||
+        unit.includes("كيلو") ||
+        unit.includes("كغم") ||
+        unit.includes("كغ")
+    ){
+        return "KG";
+    }
+
+    if(
+        unit.includes("PCS") ||
+        unit.includes("PC") ||
+        unit.includes("PIECE") ||
+        unit.includes("قطعة") ||
+        unit.includes("قطعه")
+    ){
+        return "PCS";
+    }
+
+    return unit || "PCS";
+
+}
+
+
+function detectUnit(row){
+
+    const text = Object.values(row)
+        .join(" ")
+        .toUpperCase();
+
+    if(
+        text.includes("KG") ||
+        text.includes("KILO") ||
+        text.includes("كيلو") ||
+        text.includes("كغم")
+    ){
+        return "KG";
+    }
+
+    return "PCS";
+
+}
+
+
+/* =========================
+   التخزين
+========================= */
+
+function saveData(){
+
+    localStorage.setItem(
+        "packaging_inventory_v2",
+        JSON.stringify(materials)
+    );
+
+}
+
+
+function loadData(){
+
+    try{
+
+        const saved = localStorage.getItem(
+            "packaging_inventory_v2"
+        );
+
+        if(saved){
+
+            materials = JSON.parse(saved);
+
+        }
+
+    }catch(error){
+
+        materials = [];
+
+    }
+
+}
+
+
+/* =========================
+   البحث
+========================= */
+
+document.getElementById("search").addEventListener(
+    "input",
+    render
+);
+
+
+/* =========================
+   الفلاتر
+========================= */
+
+function setFilter(filter,button){
+
+    currentFilter = filter;
+
+    document.querySelectorAll(".tab").forEach(
+        b => b.classList.remove("active")
+    );
+
+    if(button){
+        button.classList.add("active");
+    }
+
+    render();
+
+}
+
+
+/* =========================
+   حالة المادة
+========================= */
+
+function isLow(material){
+
+    if(material.unit === "KG"){
+
+        return material.quantity <= 50;
+
+    }
+
+    return material.quantity <= 20000;
+
+}
+
+
+function getStatus(material){
+
+    if(isLow(material)){
+
+        return {
+            text:"⚠️ قريب من النفاد",
+            className:"badge-low"
+        };
+
+    }
+
+    return {
+        text:"✓ جيد",
+        className:"badge-ok"
+    };
+
+}
+
+
+/* =========================
+   عرض البيانات
+========================= */
+
+function render(){
+
+    const body = document.getElementById("materialsBody");
+
+    const search = document
+        .getElementById("search")
+        .value
+        .trim()
+        .toLowerCase();
+
+    let filtered = materials.filter(material=>{
+
+        const searchable = (
+            material.code + " " +
+            material.name + " " +
+            material.product
+        ).toLowerCase();
+
+        const matchesSearch =
+            !search ||
+            searchable.includes(search);
+
+        let matchesFilter = true;
+
+        if(currentFilter === "PCS"){
+
+            matchesFilter = material.unit === "PCS";
+
+        }
+
+        if(currentFilter === "KG"){
+
+            matchesFilter = material.unit === "KG";
+
+        }
+
+        if(currentFilter === "LOW"){
+
+            matchesFilter = isLow(material);
+
+        }
+
+        return matchesSearch && matchesFilter;
+
+    });
+
+
+    if(!filtered.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    <div class="empty">
+                        📭 لا توجد مواد مطابقة
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    }else{
+
+        body.innerHTML = filtered.map((material)=>{
+
+            const originalIndex =
+                materials.indexOf(material);
+
+            const status = getStatus(material);
+
+            return `
+                <tr>
+
+                    <td>${originalIndex + 1}</td>
+
+                    <td class="code">
+                        ${escapeHTML(material.code)}
+                    </td>
+
+                    <td class="name">
+                        ${escapeHTML(material.name)}
+                        ${
+                            material.product
+                            ? `<br><small style="color:#64748b">
+                                ${escapeHTML(material.product)}
+                               </small>`
+                            : ""
+                        }
+                    </td>
+
+                    <td class="unit">
+                        ${material.unit}
+                    </td>
+
+                    <td class="qty">
+                        ${formatNumber(material.quantity)}
+                    </td>
+
+                    <td>
+                        <span class="badge ${status.className}">
+                            ${status.text}
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="action-btn green"
+                            onclick="openAction(${originalIndex},'add')"
+                        >
+                            ➕ إضافة
+                        </button>
+
+                        <button
+                            class="action-btn orange"
+                            onclick="openAction(${originalIndex},'withdraw')"
+                        >
+                            ➖ سحب
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+
+    }
+
+
+    updateStats();
+
+}
+
+
+/* =========================
+   الإحصائيات
+========================= */
+
+function updateStats(){
+
+    document.getElementById("totalMaterials").textContent =
+        materials.length;
+
+    document.getElementById("pcsCount").textContent =
+        materials.filter(m=>m.unit==="PCS").length;
+
+    document.getElementById("kgCount").textContent =
+        materials.filter(m=>m.unit==="KG").length;
+
+}
+
+
+/* =========================
+   تنسيق الأرقام
+========================= */
+
+function formatNumber(value){
+
+    if(!isFinite(value)) return "0";
+
+    return Number(value).toLocaleString(
+        "en-US",
+        {
+            maximumFractionDigits:8
+        }
+    );
+
+}
+
+
+/* =========================
+   العمليات
+========================= */
+
+function openAction(index,action){
+
+    currentMaterialIndex = index;
+
+    currentAction = action;
+
+    const material = materials[index];
+
+    document.getElementById("modalTitle").textContent =
+        action === "add"
+        ? "➕ إضافة رصيد"
+        : "➖ سحب من الرصيد";
+
+    document.getElementById("modalValue").value = "";
+
+    document.getElementById("modalValue").placeholder =
+        "الرصيد الحالي: " +
+        formatNumber(material.quantity) +
+        " " +
+        material.unit;
+
+    document.getElementById("modal").classList.add("show");
+
+    setTimeout(()=>{
+        document.getElementById("modalValue").focus();
+    },100);
+
+}
+
+
+function addStockPrompt(){
+
+    if(!materials.length){
+
+        showToast("⚠️ أولاً حمّل ملف Excel");
+
+        return;
+
+    }
+
+    const search = document.getElementById("search").value.trim();
+
+    if(search){
+
+        const index = materials.findIndex(m=>
+            (
+                m.code + " " +
+                m.name + " " +
+                m.product
+            ).toLowerCase().includes(search.toLowerCase())
+        );
+
+        if(index >= 0){
+
+            openAction(index,"add");
+
+            return;
+
+        }
+
+    }
+
+    showToast("🔎 ابحث عن المادة أولاً ثم اضغط إضافة");
+
+}
+
+
+function withdrawPrompt(){
+
+    if(!materials.length){
+
+        showToast("⚠️ أولاً حمّل ملف Excel");
+
+        return;
+
+    }
+
+    const search = document.getElementById("search").value.trim();
+
+    if(search){
+
+        const index = materials.findIndex(m=>
+            (
+                m.code + " " +
+                m.name + " " +
+                m.product
+            ).toLowerCase().includes(search.toLowerCase())
+        );
+
+        if(index >= 0){
+
+            openAction(index,"withdraw");
+
+            return;
+
+        }
+
+    }
+
+    showToast("🔎 ابحث عن المادة أولاً ثم اضغط سحب");
+
+}
+
+
+function confirmModal(){
+
+    const input = document.getElementById("modalValue");
+
+    const amount = Number(input.value);
+
+    if(!isFinite(amount) || amount <= 0){
+
+        showToast("❌ أدخل كمية صحيحة");
+
+        return;
+
+    }
+
+    const material = materials[currentMaterialIndex];
+
+    if(currentAction === "add"){
+
+        material.quantity += amount;
+
+        showToast(
+            "✅ تمت إضافة " +
+            formatNumber(amount) +
+            " " +
+            material.unit
+        );
+
+    }else{
+
+        if(amount > material.quantity){
+
+            showToast(
+                "❌ الكمية المطلوبة أكبر من الرصيد الحالي"
+            );
+
+            return;
+
+        }
+
+        material.quantity -= amount;
+
+        showToast(
+            "✅ تم سحب " +
+            formatNumber(amount) +
+            " " +
+            material.unit
+        );
+
+    }
+
+    saveData();
+
+    closeModal();
+
+    render();
+
+}
+
+
+function closeModal(){
+
+    document.getElementById("modal")
+        .classList.remove("show");
+
+}
+
+
+/* =========================
+   المواد الناقصة
+========================= */
+
+function showLowStock(){
+
+    currentFilter = "LOW";
+
+    document.querySelectorAll(".tab").forEach(
+        b=>b.classList.remove("active")
+    );
+
+    document
+        .querySelectorAll(".tab")[3]
+        .classList.add("active");
+
+    render();
+
+    showToast(
+        "⚠️ تم عرض المواد التي وصلت لحد التنبيه"
+    );
+
+}
+
+
+/* =========================
+   تصدير Excel
+========================= */
 
 function exportExcel(){
 
- if(!db.materials.length){
+    if(!materials.length){
 
-  toast("لا توجد مواد للتصدير");
+        showToast("⚠️ لا توجد بيانات للتصدير");
 
-  return;
- }
+        return;
 
- const rows=db.materials.map(m=>({
+    }
 
-  Code:m.code,
-  Name:m.name,
-  Product:m.product,
-  Unit:m.unit,
-  Quantity:m.quantity,
-  Reorder:m.reorder
+    const data = materials.map(m=>({
 
- }));
+        Code:m.code,
 
- const ws=XLSX.utils.json_to_sheet(rows);
+        Name:m.name,
 
- const wb=XLSX.utils.book_new();
+        Product:m.product,
 
- XLSX.utils.book_append_sheet(
-  wb,
-  ws,
-  "Materials"
- );
+        Quantity:m.quantity,
 
- XLSX.writeFile(
-  wb,
-  "مواد_التعبئة_والتغليف.xlsx"
- );
+        Unit:m.unit
 
-}
+    }));
 
-function exportOperations(){
+    const worksheet =
+        XLSX.utils.json_to_sheet(data);
 
- const rows=db.operations.map(o=>({
+    const workbook =
+        XLSX.utils.book_new();
 
-  Date:o.date,
-  User:o.userName,
-  Type:o.type==="add"
-   ?"ADD"
-   :"WITHDRAW",
-  Material:o.materialName,
-  Quantity:o.quantity,
-  Unit:o.unit,
-  Balance:o.balance,
-  Document:o.document,
-  Note:o.note
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Materials"
+    );
 
- }));
+    XLSX.writeFile(
+        workbook,
+        "مواد_تعبئة_وتغليف_الرصيد.xlsx"
+    );
 
- const ws=
-  XLSX.utils.json_to_sheet(rows);
-
- const wb=
-  XLSX.utils.book_new();
-
- XLSX.utils.book_append_sheet(
-  wb,
-  ws,
-  "Operations"
- );
-
- XLSX.writeFile(
-  wb,
-  "سجل_عمليات_المخزن.xlsx"
- );
+    showToast("✅ تم تصدير الملف");
 
 }
 
-function printReport(){
 
- window.print();
+/* =========================
+   حماية HTML
+========================= */
 
-}
+function escapeHTML(value){
 
-function openUserModal(){
-
- document.getElementById("userModalTitle")
- .textContent="إضافة مستخدم";
-
- document.getElementById("editUserId")
- .value="";
-
- document.getElementById("username")
- .value="";
-
- document.getElementById("displayName")
- .value="";
-
- document.getElementById("pin")
- .value="";
-
- document.getElementById("role")
- .value="store";
-
- document.getElementById("userModal")
- .style.display="flex";
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
-function closeUserModal(){
 
- document.getElementById("userModal")
- .style.display="none";
+/* =========================
+   إشعار
+========================= */
 
-}
+function showToast(message){
 
-function editUser(uid){
+    const toast =
+        document.getElementById("toast");
 
- const u=db.users.find(x=>x.id===uid);
+    toast.textContent = message;
 
- if(!u)return;
+    toast.classList.add("show");
 
- document.getElementById("userModalTitle")
- .textContent="تعديل المستخدم";
+    clearTimeout(window.toastTimer);
 
- document.getElementById("editUserId")
- .value=u.id;
+    window.toastTimer = setTimeout(()=>{
 
- document.getElementById("username")
- .value=u.username;
+        toast.classList.remove("show");
 
- document.getElementById("displayName")
- .value=u.displayName;
-
- document.getElementById("pin")
- .value=u.pin;
-
- document.getElementById("role")
- .value=u.role;
-
- document.getElementById("userModal")
- .style.display="flex";
+    },3000);
 
 }
 
-function saveUser(){
 
- const uid=
-  document.getElementById("editUserId").value;
+/* =========================
+   إغلاق المودال
+========================= */
 
- const username=
-  document.getElementById("username")
-  .value.trim();
+document.getElementById("modal")
+    .addEventListener("click",function(e){
 
- const displayName=
-  document.getElementById("displayName")
-  .value.trim();
+        if(e.target === this){
 
- const pin=
-  document.getElementById("pin")
-  .value.trim();
+            closeModal();
 
- const role=
-  document.getElementById("role").value;
+        }
 
- if(!username||!displayName||!pin){
+    });
 
-  toast("⚠️ أكمل بيانات المستخدم");
 
-  return;
- }
+/* =========================
+   تشغيل البرنامج
+========================= */
 
- if(!/^[0-9]{4,6}$/.test(pin)){
+loadData();
 
-  toast(
-   "⚠️ رمز الدخول يجب أن يكون 4 إلى 6 أرقام"
-  );
-
-  return;
- }
-
- const duplicate=db.users.some(
-
-  x=>
-   x.username.toLowerCase()===
-   username.toLowerCase() &&
-   x.id!==uid
-
- );
-
- if(duplicate){
-
-  toast("❌ اسم المستخدم مستخدم مسبقاً");
-
-  return;
- }
-
- if(uid){
-
-  const u=db.users.find(x=>x.id===uid);
-
-  if(u){
-
-   u.username=username;
-   u.displayName=displayName;
-   u.pin=pin;
-   u.role=role;
-
-  }
-
- }else{
-
-  db.users.push({
-
-   id:id(),
-   username,
-   displayName,
-   pin,
-   role
-
-  });
-
- }
-
- closeUserModal();
-
- save();
-
- toast("✅ تم حفظ المستخدم");
-
-}
-
-function deleteUser(uid){
-
- const u=db.users.find(x=>x.id===uid);
-
- if(!u)return;
-
- if(!confirm(
-  `حذف المستخدم ${u.displayName}؟`
- ))return;
-
- db.users=
-  db.users.filter(x=>x.id!==uid);
-
- save();
-
- toast("🗑️ تم حذف المستخدم");
-
-}
-
-function saveSettings(){
-
- db.settings.company=
-  document.getElementById("setCompany")
-  .value.trim()
-  ||
-  "شركة الكندي للصناعات الدوائية";
-
- db.settings.warehouse=
-  document.getElementById("setWarehouse")
-  .value.trim()
-  ||
-  "مخزن مواد التعبئة والتغليف";
-
- db.settings.reorder=
-  parseNumber(
-   document.getElementById("setReorder").value
-  )||1000;
-
- save();
-
- toast("✅ تم حفظ الإعدادات");
-
-}
-
-function backup(){
-
- const blob=new Blob(
-
-  [JSON.stringify(db,null,2)],
-
-  {
-   type:"application/json"
-  }
-
- );
-
- const url=
-  URL.createObjectURL(blob);
-
- const a=
-  document.createElement("a");
-
- a.href=url;
-
- a.download=
-  "نسخة_احتياطية_المخزن.json";
-
- a.click();
-
- URL.revokeObjectURL(url);
-
-}
-
-function restoreBackup(e){
-
- const file=e.target.files[0];
-
- if(!file)return;
-
- const reader=new FileReader();
-
- reader.onload=()=>{
-
-  try{
-
-   const x=
-    JSON.parse(reader.result);
-
-   if(
-    !x.materials ||
-    !x.operations ||
-    !x.users
-   )
-    throw new Error();
-
-   db=x;
-
-   save();
-
-   toast(
-    "✅ تمت استعادة النسخة الاحتياطية"
-   );
-
-  }catch(err){
-
-   toast(
-    "❌ ملف النسخة الاحتياطية غير صحيح"
-   );
-
-  }
-
- };
-
- reader.readAsText(file);
-
-}
-
-function clearAll(){
-
- const answer=prompt(
-  "اكتب DELETE لتأكيد حذف جميع البيانات:"
- );
-
- if(answer!=="DELETE"){
-
-  toast("تم إلغاء الحذف");
-
-  return;
- }
-
- db.materials=[];
- db.operations=[];
-
- save();
-
- toast(
-  "🗑️ تم حذف بيانات المواد والعمليات"
- );
-
-}
-
-function fmt(n){
-
- return Number(n||0).toLocaleString(
-  "en-US",
-  {
-   maximumFractionDigits:4
-  }
- );
-
-}
-
-function esc(v){
-
- return String(v??"")
-
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
-
-}
-
-document
-.getElementById("withdrawMaterial")
-.addEventListener(
- "change",
- function(){
-
-  const m=db.materials.find(
-   x=>x.id===this.value
-  );
-
-  const box=
-   document.getElementById(
-    "withdrawBalance"
-   );
-
-  if(m){
-
-   box.innerHTML=
-
-    `<p>
-     <b>الرصيد المتوفر:</b>
-     ${fmt(m.quantity)}
-     ${esc(m.unit)}
-    </p>`;
-
-  }else{
-
-   box.innerHTML="";
-
-  }
-
- }
-);
-
-load();
+render();
 
 </script>
 
