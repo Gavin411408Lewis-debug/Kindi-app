@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة مواد التعبئة والتغليف - شركة الكندي</title>
-
+    <title>إدارة المخزن - شركة الكندي</title>
     <style>
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --text-color: #e0e0e0;
             --text-secondary: #a0a0a0;
-            --accent-color: #bb86fc;
-            --accent-hover: #3700b3;
-            --danger-color: #cf6679;
+            --accent-color: #3b82f6;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
             --border-color: #2c2c2c;
             --input-bg: #2d2d2d;
         }
@@ -22,890 +22,407 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                         Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 16px;
+            padding-bottom: 70px; /* مساحة لشريط التنقل السفلي */
             direction: rtl;
         }
 
         header {
             text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 1.25rem;
-            color: var(--accent-color);
-            margin-bottom: 5px;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .container {
+            padding: 16px;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        .card {
+        /* لوحة الإحصائيات */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 12px;
-            color: var(--accent-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-size: 0.95rem;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--accent-color);
-            color: #121212;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        button:active {
-            opacity: 0.8;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: #fff;
-            margin-top: 4px;
-            padding: 8px;
-            font-size: 0.85rem;
-        }
-
-        .btn-file {
-            background-color: #444;
-            color: #fff;
-        }
-
-        .alert {
-            background-color: rgba(207, 102, 121, 0.15);
-            border: 1px solid var(--danger-color);
-            color: var(--danger-color);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .success {
-            background-color: rgba(80, 200, 120, 0.15);
-            border: 1px solid #50c878;
-            color: #50c878;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .item-card {
-            background-color: var(--input-bg);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-right: 4px solid var(--accent-color);
-        }
-
-        .item-info {
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .item-info span,
-        .item-info strong {
-            overflow-wrap: anywhere;
-        }
-
-        .diff-alert {
-            border-right-color: var(--danger-color) !important;
-            background-color: rgba(207, 102, 121, 0.08);
-        }
-
-        .file-info {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            margin-top: 8px;
+            padding: 14px;
             text-align: center;
         }
 
-        #fileInput {
+        .stat-card.full-width {
+            grid-column: span 2;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .text-danger { color: var(--danger-color); }
+        .text-warning { color: var(--warning-color); }
+        .text-success { color: var(--accent-color); }
+
+        /* قسم استيراد الملفات */
+        .import-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .file-input-label {
+            display: block;
+            background-color: var(--input-bg);
+            border: 2px dashed var(--accent-color);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            margin-top: 8px;
+        }
+
+        input[type="file"] {
             display: none;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin: 16px 0 10px 0;
+            color: var(--text-color);
+        }
+
+        /* بطاقات المواد */
+        .item-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .badge-warning { background-color: rgba(245, 158, 11, 0.15); color: var(--warning-color); }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: var(--danger-color); }
+        .badge-normal { background-color: rgba(59, 130, 246, 0.15); color: var(--accent-color); }
+
+        .item-code {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .item-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .item-qty {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .item-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .btn {
+            padding: 6px 0;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-add { background-color: rgba(16, 185, 129, 0.2); color: var(--success-color); }
+        .btn-sub { background-color: rgba(239, 68, 68, 0.2); color: var(--danger-color); }
+        .btn-edit { background-color: rgba(59, 130, 246, 0.2); color: var(--accent-color); }
+        .btn-del { background-color: rgba(239, 68, 68, 0.2); color: var(--danger-color); }
+
+        /* شريط التنقل السفلي (مثل الصورة) */
+        nav.bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+.nav-item {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
         }
     </style>
 </head>
-
 <body>
 
-<header>
-    <h1>شركة الكندي للصناعات الدوائية</h1>
-    <p style="font-size: 0.8rem; color: var(--text-secondary);">
-        إدارة مواد التعبئة والتغليف (الاثزو)
-    </p>
-</header>
+    <header>
+        StockFlow - إدارة المخزن (<span id="totalCount">0</span> مادة)
+    </header>
 
-<div class="container">
-
-    <!-- بطاقة إضافة مادة جديدة -->
-    <div class="card">
-
-        <div class="card-title">إضافة مادة جديدة للبرنامج</div>
-
-        <div id="formAlert" class="alert">
-            تحذير: الفروقات تجاوزت الحد المسموح (3,000 دينار)!
+    <div class="container">
+        
+        <!-- إحصائيات المخزن -->
+        <div class="stats-grid">
+            <div class="stat-card full-width">
+                <div class="stat-label">إجمالي مواد المخزن</div>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">منتهية</div>
+                <div class="stat-value text-danger" id="statExpired">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">قريبة من النفاد</div>
+                <div class="stat-value text-warning" id="statWarning">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">مواد KG</div>
+                <div class="stat-value" id="statKg">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">مواد PCS</div>
+                <div class="stat-value" id="statPcs">0</div>
+            </div>
         </div>
 
-        <div id="successAlert" class="success"></div>
-
-        <div class="form-group">
-            <label for="itemName">اسم المادة</label>
-            <input type="text" id="itemName"
-                   placeholder="أدخل اسم المادة...">
+        <!-- صندوق استيراد الملفات -->
+        <div class="import-section">
+            <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 4px;">استيراد المواد دفعة واحدة</div>
+            <p style="font-size: 0.75rem; color: var(--text-secondary);">اختر ملف (JSON أو CSV) يحتوي على المواد ليتم إضافتها تلقائياً.</p>
+            <label class="file-input-label">
+                اختر ملف المواد
+                <input type="file" id="fileUpload" accept=".json,.csv,.txt" onchange="handleFileUpload(event)">
+            </label>
         </div>
 
-        <div class="form-group">
-            <label for="itemCode">رمز المادة</label>
-            <input type="text" id="itemCode"
-                   placeholder="أدخل الرمز...">
-        </div>
-
-        <div class="form-group">
-            <label for="itemQty">الكمية</label>
-            <input type="number" id="itemQty"
-                   placeholder="0">
-        </div>
-
-        <div class="form-group">
-            <label for="itemDiff">الفروقات (د.ع)</label>
-            <input type="number" id="itemDiff"
-                   placeholder="0"
-                   oninput="checkDifference()">
-        </div>
-
-        <button onclick="addNewItem()">
-            إضافة المادة
-        </button>
-
-        <!-- زر استيراد الملف -->
-        <input
-            type="file"
-            id="fileInput"
-            accept=".csv,.txt"
-            onchange="importFile(event)"
-        >
-
-        <button class="btn-file"
-                onclick="document.getElementById('fileInput').click()">
-            📂 إضافة مواد من ملف
-        </button>
-
-        <div class="file-info">
-            صيغة الملف: Code,Name,Quantity,Unit
+        <div class="section-title">المواد المخزنة</div>
+        <div id="itemsListContainer">
+            <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem; margin-top: 20px;">لا توجد مواد حالياً. قم برفع ملف لإضافة المواد.</p>
         </div>
 
     </div>
 
+    <!-- شريط التنقل السفلي -->
+    <nav class="bottom-nav">
+        <button class="nav-item active">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            الرئيسية
+        </button>
+        <button class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+            المخزن
+        </button>
+        <button class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            إضافة
+        </button>
+        <button class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            الإعدادات
+        </button>
+    </nav>
 
-    <!-- بطاقة عرض المواد المضافة -->
-    <div class="card">
+    <script>
+        // مصفوفة تخزين المواد
+        let inventoryItems = [];
 
-        <div class="card-title">
-            قائمة المواد المضافة
-        </div>
+        // دالة قراءة الملف المرفوع وإضافة المواد دفعة واحدة
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-        <div id="itemsContainer">
-
-            <p style="text-align: center;
-                      color: var(--text-secondary);
-                      font-size: 0.85rem;"
-               id="emptyMsg">
-
-                لا توجد مواد مضافة حالياً.
-                استخدم النموذج أعلاه لإضافة المواد.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<script>
-
-    /*
-     * =========================================================
-     * تخزين المواد
-     * =========================================================
-     *
-     * نحاول أولاً تحميل المواد القديمة من الجهاز.
-     * إذا ماكو مواد، نبدأ بمصفوفة فارغة.
-     */
-
-    let dynamicItems =
-        JSON.parse(localStorage.getItem("kindiPackagingItems")) || [];
-
-
-    /*
-     * =========================================================
-     * حفظ المواد
-     * =========================================================
-     */
-
-    function saveItems() {
-
-        localStorage.setItem(
-            "kindiPackagingItems",
-            JSON.stringify(dynamicItems)
-        );
-
-    }
-
-
-    /*
-     * =========================================================
-     * فحص الفروقات
-     * =========================================================
-     */
-
-    function checkDifference() {
-
-        const diffVal =
-            parseFloat(
-                document.getElementById('itemDiff').value
-            ) || 0;
-
-        const alertBox =
-            document.getElementById('formAlert');
-
-        if (Math.abs(diffVal) > 3000) {
-
-            alertBox.style.display = 'block';
-
-        } else {
-
-            alertBox.style.display = 'none';
-
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    // فحص إذا كان الملف بصيغة JSON
+                    if (file.name.endsWith('.json') || content.trim().startsWith('[')) {
+                        const parsedData = JSON.parse(content);
+                        if (Array.isArray(parsedData)) {
+                            inventoryItems = parsedData;
+                        } else {
+                            throw new Error("الملف يجب أن يحتوي على مصفوفة بيانات");
+                        }
+                    } else {
+                        // معالجة ملفات النص/CSV البسيطة (كل سطر: الاسم,الرمز,الكمية,الوحدة,الحالة)
+                        const lines = content.split('\n');
+                        inventoryItems = [];
+                        lines.forEach((line, index) => {
+                            if (line.trim() !== '') {
+                                const parts = line.split(',');
+                                if (parts.length >= 3) {
+                                    inventoryItems.push({
+                                        id: Date.now() + index,
+                                        code: parts[0].trim(),
+                                        name: parts[1].trim(),
+                                        qty: parts[2].trim(),
+                                        unit: parts[3] ? parts[3].trim() : 'KG',
+                                        status: parts[4] ? parts[4].trim() : 'عادي'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    updateDashboard();
+                    alert('تم استيراد المواد بنجاح!');
+                } catch (error) {
+                    alert('خطأ في قراءة الملف. تأكد من صحة تنسيق الملف.');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
         }
 
-    }
+        // تحديث الواجهة والإحصائيات
+        function updateDashboard() {
+            const totalCount = inventoryItems.length;
+            document.getElementById('totalCount').innerText = totalCount;
+            document.getElementById('statTotal').innerText = totalCount;
 
+            let expiredCount = 0;
+            let warningCount = 0;
+            let kgCount = 0;
+            let pcsCount = 0;
 
-    /*
-     * =========================================================
-     * إضافة مادة يدوياً
-     * =========================================================
-     */
+            let html = '';
 
-    function addNewItem() {
+            inventoryItems.forEach(item => {
+                const unit = (item.unit || 'KG').toUpperCase();
+                if (unit === 'KG') kgCount++;
+                if (unit === 'PCS') pcsCount++;
 
-        const name =
-            document.getElementById('itemName')
-            .value.trim();
+                let badgeClass = 'badge-normal';
+                let statusText = item.status || 'متوفر';
 
-        const code =
-            document.getElementById('itemCode')
-            .value.trim();
-
-        const qty =
-            document.getElementById('itemQty')
-            .value;
-
-        const diff =
-            document.getElementById('itemDiff')
-            .value;
-
-
-        if (!name) {
-
-            alert('يرجى إدخال اسم المادة على الأقل.');
-            return;
-
-        }
-
-
-        /*
-         * منع تكرار رمز المادة
-         */
-
-        if (code) {
-
-            const exists =
-                dynamicItems.some(
-                    item =>
-                    String(item.code).trim().toLowerCase()
-                    === code.toLowerCase()
-                );
-
-            if (exists) {
-
-                alert(
-                    'هذه المادة موجودة مسبقاً بنفس الرمز.'
-                );
-
-                return;
-
-            }
-
-        }
-
-
-        const newItem = {
-
-            id: Date.now(),
-
-            name: name,
-
-            code: code || 'غير محدد',
-
-            qty: qty || '0',
-
-            diff: diff || '0'
-
-        };
-
-
-        dynamicItems.push(newItem);
-
-        saveItems();
-
-        renderItems();
-
-        clearForm();
-
-    }
-
-
-    /*
-     * =========================================================
-     * حذف مادة
-     * =========================================================
-     */
-
-    function deleteItem(id) {
-
-        if (!confirm('هل تريد حذف هذه المادة؟')) {
-            return;
-        }
-
-        dynamicItems =
-            dynamicItems.filter(
-                item => item.id !== id
-            );
-
-        saveItems();
-
-        renderItems();
-
-    }
-
-
-    /*
-     * =========================================================
-     * قراءة CSV
-     * =========================================================
-     */
-
-    function parseCSVLine(line) {
-
-        const result = [];
-
-        let current = '';
-
-        let insideQuotes = false;
-
-
-        for (let i = 0; i < line.length; i++) {
-
-            const char = line[i];
-
-            if (char === '"') {
-
-                if (
-                    insideQuotes &&
-                    line[i + 1] === '"'
-                ) {
-
-                    current += '"';
-
-                    i++;
-
-                } else {
-
-                    insideQuotes = !insideQuotes;
-
+                if (statusText.includes('منتهية') || statusText.includes('منتهي')) {
+                    expiredCount++;
+                    badgeClass = 'badge-danger';
+                } else if (statusText.includes('قريبة') || statusText.includes('تحذير')) {
+                    warningCount++;
+                    badgeClass = 'badge-warning';
                 }
 
-            }
-
-            else if (
-                char === ',' &&
-                !insideQuotes
-            ) {
-
-                result.push(
-                    current.trim()
-                );
-
-                current = '';
-
-            }
-
-            else {
-
-                current += char;
-
-            }
-
-        }
-
-
-        result.push(
-            current.trim()
-        );
-
-        return result;
-
-    }
-
-
-    /*
-     * =========================================================
-     * استيراد المواد من الملف
-     * =========================================================
-     */
-
-    function importFile(event) {
-
-        const file =
-            event.target.files[0];
-
-        if (!file) {
-            return;
-        }
-
-
-        const reader = new FileReader();
-
-
-        reader.onload = function(e) {
-
-            let text = e.target.result;
-
-
-            /*
-             * إزالة BOM إذا موجود
-             */
-
-            text =
-                text.replace(/^\uFEFF/, '');
-
-
-            /*
-             * توحيد نهاية الأسطر
-             */
-
-            text =
-                text.replace(/\r\n/g, '\n')
-                    .replace(/\r/g, '\n');
-
-
-            const lines =
-                text.split('\n')
-                    .filter(
-                        line => line.trim() !== ''
-                    );
-
-
-            if (lines.length < 2) {
-
-                alert(
-                    'الملف فارغ أو لا يحتوي على مواد.'
-                );
-
-                return;
-
-            }
-
-
-            let added = 0;
-
-            let duplicated = 0;
-
-            let invalid = 0;
-
-
-            /*
-             * أول سطر هو العناوين
-             */
-
-            for (
-                let i = 1;
-                i < lines.length;
-                i++
-            ) {
-
-                const columns =
-                    parseCSVLine(lines[i]);
-
-
-                /*
-                 * المطلوب:
-                 *
-                 * Code
-                 * Name
-                 * Quantity
-                 * Unit
-                 */
-
-                if (columns.length < 4) {
-
-                    invalid++;
-
-                    continue;
-
-                }
-
-
-                const code =
-                    columns[0].trim();
-
-                const name =
-                    columns[1].trim();
-
-                const qty =
-                    columns[2].trim();
-
-                const unit =
-                    columns[3].trim();
-
-
-                /*
-                 * لازم يكون عندنا كود واسم
-                 */
-
-                if (!code || !name) {
-
-                    invalid++;
-
-                    continue;
-
-                }
-
-
-                /*
-                 * فحص التكرار
-                 */
-
-                const exists =
-                    dynamicItems.some(
-                        item =>
-                        String(item.code)
-                        .trim()
-                        .toLowerCase()
-                        === code.toLowerCase()
-                    );
-
-
-                if (exists) {
-
-                    duplicated++;
-
-                    continue;
-
-                }
-
-
-                /*
-                 * إضافة المادة
-                 */
-
-                dynamicItems.push({
-
-                    id:
-                        Date.now()
-                        + i
-                        + Math.random(),
-
-                    name: name,
-
-                    code: code,
-
-                    qty: qty || '0',
-
-                    unit: unit || '',
-
-                    diff: '0'
-
-                });
-
-
-                added++;
-
-            }
-
-
-            /*
-             * حفظ البيانات
-             */
-
-            saveItems();
-
-            renderItems();
-
-
-            /*
-             * إظهار النتيجة
-             */
-
-            let message =
-                'تم استيراد الملف بنجاح.\n\n' +
-
-                'المواد الجديدة: ' +
-                added + '\n' +
-
-                'المواد المكررة: ' +
-                duplicated + '\n' +
-
-                'السطور غير الصحيحة: ' +
-                invalid;
-
-
-            alert(message);
-
-
-            /*
-             * إرجاع اختيار الملف
-             * حتى يمكن اختيار نفس الملف مرة ثانية
-             */
-
-            event.target.value = '';
-
-        };
-
-
-        reader.onerror = function() {
-
-            alert(
-                'حدث خطأ أثناء قراءة الملف.'
-            );
-
-        };
-
-
-        reader.readAsText(file, 'UTF-8');
-
-    }
-
-
-    /*
-     * =========================================================
-     * عرض المواد
-     * =========================================================
-     */
-
-    function renderItems() {
-
-        const container =
-            document.getElementById(
-                'itemsContainer'
-            );
-
-
-        if (dynamicItems.length === 0) {
-
-            container.innerHTML = `
-
-                <p style="
-                    text-align: center;
-                    color: var(--text-secondary);
-                    font-size: 0.85rem;
-                ">
-
-                    لا توجد مواد مضافة حالياً.
-                    استخدم النموذج أعلاه لإضافة المواد.
-
-                </p>
-
-            `;
-
-            return;
-
-        }
-
-
-        let html = '';
-
-
-        dynamicItems.forEach(item => {
-
-            const isOverLimit =
-                Math.abs(
-                    parseFloat(item.diff) || 0
-                ) > 3000;
-
-
-            html += `
-
-                <div class="item-card
-                    ${isOverLimit ? 'diff-alert' : ''}">
-
-                    <div class="item-info">
-
-                        <strong>
-                            ${escapeHTML(item.name)}
-                        </strong>
-
-                        <span>
-                            الرمز:
-                            ${escapeHTML(item.code)}
-                        </span>
-
+                html += `
+                    <div class="item-card">
+                        <div class="item-header">
+                            <span class="badge ${badgeClass}">${statusText}</span>
+                            <span class="item-code">${item.code}</span>
+                        </div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-qty">${unit} ${item.qty}</div>
+                        <div class="item-actions">
+                            <button class="btn btn-add" onclick="modifyQty(${item.id}, 10)">+ إضافة</button>
+                            <button class="btn btn-sub" onclick="modifyQty(${item.id}, -10)">- سحب</button>
+                            <button class="btn btn-edit" onclick="editItem(${item.id})">تعديل</button>
+                            <button class="btn btn-del" onclick="deleteItem(${item.id})">حذف</button>
+                        </div>
                     </div>
+                `;
+            });
 
+            document.getElementById('statExpired').innerText = expiredCount;
+            document.getElementById('statWarning').innerText = warningCount;
+            document.getElementById('statKg').innerText = kgCount;
+            document.getElementById('statPcs').innerText = pcsCount;
 
-                    <div class="item-info">
+            const container = document.getElementById('itemsListContainer');
+            if (inventoryItems.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var_text-secondary; font-size: 0.85rem; margin-top: 20px;">لا توجد مواد حالياً. قم برفع ملف لإضافة المواد.</p>`;
+            } else {
+                container.innerHTML = html;
+            }
+        }
 
-                        <span>
-                            الكمية:
-                            ${escapeHTML(item.qty)}
-                            ${item.unit
-                                ? ' ' +
-                                  escapeHTML(item.unit)
-                                : ''}
-                        </span>
+        function deleteItem(id) {
+            inventoryItems = inventoryItems.filter(item => item.id !== id);
+            updateDashboard();
+        }
 
-                        <span>
-                            الفروقات:
-                            ${escapeHTML(item.diff)}
-                            د.ع
-                        </span>
+        function modifyQty(id, amount) {
+            const item = inventoryItems.find(i => i.id === id);
+            if (item) {
+                let currentQty = parseFloat(item.qty) || 0;
+                currentQty = Math.max(0, currentQty + amount);
+                item.qty = currentQty.toString();
+                updateDashboard();
+            }
+        }
 
-                    </div>
-
-
-                    <button
-                        class="btn-danger"
-                        onclick="deleteItem(${item.id})">
-
-                        حذف المادة
-
-                    </button>
-
-                </div>
-
-            `;
-
-        });
-
-
-        container.innerHTML = html;
-
-    }
-
-
-    /*
-     * =========================================================
-     * حماية النصوص
-     * =========================================================
-     */
-
-    function escapeHTML(value) {
-
-        return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-
-    }
-
-
-    /*
-     * =========================================================
-     * تنظيف النموذج
-     * =========================================================
-     */
-
-    function clearForm() {
-
-        document.getElementById('itemName').value = '';
-
-        document.getElementById('itemCode').value = '';
-
-        document.getElementById('itemQty').value = '';
-
-        document.getElementById('itemDiff').value = '';
-
-        document.getElementById(
-            'formAlert'
-        ).style.display = 'none';
-
-    }
-
-
-    /*
-     * =========================================================
-     * تشغيل البرنامج
-     * =========================================================
-     */
-
-    renderItems();
-
-</script>
-
+        function editItem(id) {
+            const item = inventoryItems.find(i => i.id === id);
+            if (item) {
+                const newName = prompt("تعديل اسم المادة:", item.name);
+                if (newName !== null) {
+                    item.name = newName;
+                    updateDashboard();
+                }
+            }
+        }
+    </script>
 </body>
 </html>
