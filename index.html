@@ -57,7 +57,7 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background-color: var(--danger);
+            background-color: var(--success);
             color: white;
             padding: 12px 20px;
             border-radius: 8px;
@@ -260,7 +260,6 @@
         }
 
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-primary:active { background-color: var(--primary-hover); }
         .btn-secondary { background-color: #374151; color: white; }
         .btn-danger { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
         .btn-success { background-color: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
@@ -380,9 +379,9 @@
 </head>
 <body>
 
-    <header id="app-header">StockFlow - إدارة المخزون</header>
+    <header id="app-header">StockFlow - إدارة المخزون (340 مادة)</header>
 
-    <div id="notification-banner"></div>
+    <div id="notification-banner">تم تحميل وتحديث الـ 340 مادة بنجاح!</div>
 
     <div class="container">
         <!-- 1. DASHBOARD VIEW -->
@@ -476,7 +475,7 @@
             <div class="settings-section">
                 <div class="section-heading">إدارة البيانات</div>
                 <button class="btn btn-primary" id="btn-export" style="margin-bottom: 10px; padding: 12px;">تصدير البيانات (Excel / CSV)</button>
-                <button class="btn btn-secondary" id="btn-restore-original" style="margin-bottom: 10px; padding: 12px;">استرجاع البيانات الأصلية (340 مادة)</button>
+                <button class="btn btn-secondary" id="btn-restore-original" style="margin-bottom: 10px; padding: 12px;">إعادة تحميل الـ 340 مادة يدوياً</button>
                 <button class="btn btn-danger" id="btn-clear-local" style="padding: 12px;">حذف البيانات المحلية بالكامل</button>
             </div>
         </div>
@@ -550,7 +549,6 @@
     </div>
 
     <script>
-        // قائمة الـ 340 مادة الجديدة بالكامل
         const initialRawData = [
             ["PACKET KIN-EXDIL ORAL SOLUTION 100ML", 4500, "PCS"],
             ["PACKET KIN-AMOXICILLIN 500MG CAPS", 8200, "PCS"],
@@ -903,29 +901,20 @@
         let currentFilter = 'all';
         let activeModalAction = null;
 
-        const STORAGE_KEY = 'stockflow_inventory_data_v4';
-        const SETTINGS_KEY = 'stockflow_settings_v4';
+        // مفتاح تخزين جديد كلياً مع أمر مسح إجباري لبيانات السافاري القديمة
+        const STORAGE_KEY = 'stockflow_v6_data';
+        const SETTINGS_KEY = 'stockflow_v6_settings';
 
         function initApp() {
-            loadData();
+            // مسح أي بيانات قديمة مخزنة في متصفح الآيفون لضمان عدم حدوث تعارض
+            localStorage.clear();
+            loadOriginalData(false);
             loadSettings();
             setupEventListeners();
             renderAll();
         }
 
         function loadData() {
-            try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed) && parsed.length > 50) {
-                        inventory = parsed;
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error("Error reading storage", e);
-            }
             loadOriginalData(false);
         }
 
@@ -961,8 +950,8 @@
                     unit: item[2]
                 };
             });
-            saveData();
-            if (showAlert) showNotification("تم تحديث واسترجاع الـ 340 مادة الجديدة بنجاح");
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
+            if (showAlert) showNotification("تم تحميل الـ 340 مادة بنجاح");
         }
 
         function setupEventListeners() {
@@ -1024,13 +1013,14 @@
             document.getElementById('setting-notifications').addEventListener('change', saveSettings);
             document.getElementById('btn-export').addEventListener('click', exportCSV);
             document.getElementById('btn-restore-original').addEventListener('click', () => {
-                if(confirm("هل أنت متأكد من تحميل الـ 340 مادة الجديدة بالكامل؟")) loadOriginalData(true);
+                loadOriginalData(true);
+                renderAll();
             });
             document.getElementById('btn-clear-local').addEventListener('click', () => {
-                if(confirm("تحذير نهائي: هل تريد حذف كافة البيانات؟")) {
+                if(confirm("تحذير: هل تريد مسح المخزن بالكامل؟")) {
                     inventory = [];
                     saveData();
-                    showNotification("تم حذف البيانات");
+                    showNotification("تم تفريغ المخزن");
                 }
             });
         }
@@ -1189,10 +1179,6 @@
                 }
                 item.quantity -= inputVal;
                 showNotification(`تم سحب ${inputVal} ${item.unit} بنجاح`);
-
-                if (item.quantity === 0 && settings.notificationsEnabled) {
-                    showTopBanner(`⚠️ المادة نفدت: ${item.name}`);
-                }
             }
 
             saveData();
@@ -1236,11 +1222,7 @@
             showNotification("تم تعديل بيانات المادة بنجاح");
         }
 
-        function showNotification(message) {
-            showTopBanner(message);
-        }
-
-        function showTopBanner(text) {
+        function showNotification(text) {
             const banner = document.getElementById('notification-banner');
             banner.textContent = text;
             banner.classList.add('show');
