@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة مواد التعبئة والتغليف - شركة الكندي</title>
+
     <style>
         :root {
             --bg-color: #121212;
@@ -21,7 +22,8 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
@@ -47,7 +49,6 @@
             margin: 0 auto;
         }
 
-        /* Card Layout */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -77,7 +78,8 @@
             margin-bottom: 4px;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 10px;
             background-color: var(--input-bg);
@@ -87,7 +89,8 @@
             font-size: 0.95rem;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: var(--accent-color);
         }
@@ -117,7 +120,11 @@
             font-size: 0.85rem;
         }
 
-        /* Alert Styling */
+        .btn-file {
+            background-color: #444;
+            color: #fff;
+        }
+
         .alert {
             background-color: rgba(207, 102, 121, 0.15);
             border: 1px solid var(--danger-color);
@@ -129,7 +136,17 @@
             display: none;
         }
 
-        /* Items List Cards */
+        .success {
+            background-color: rgba(80, 200, 120, 0.15);
+            border: 1px solid #50c878;
+            color: #50c878;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+
         .item-card {
             background-color: var(--input-bg);
             border-radius: 8px;
@@ -143,142 +160,752 @@
             margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
+            gap: 10px;
+        }
+
+        .item-info span,
+        .item-info strong {
+            overflow-wrap: anywhere;
         }
 
         .diff-alert {
             border-right-color: var(--danger-color) !important;
             background-color: rgba(207, 102, 121, 0.08);
         }
+
+        .file-info {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        #fileInput {
+            display: none;
+        }
     </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>شركة الكندي للصناعات الدوائية</h1>
-        <p style="font-size: 0.8rem; color: var(--text-secondary);">إدارة مواد التعبئة والتغليف (الاثزو)</p>
-    </header>
+<header>
+    <h1>شركة الكندي للصناعات الدوائية</h1>
+    <p style="font-size: 0.8rem; color: var(--text-secondary);">
+        إدارة مواد التعبئة والتغليف (الاثزو)
+    </p>
+</header>
 
-    <div class="container">
-        
-        <!-- بطاقة إضافة مادة جديدة -->
-        <div class="card">
-            <div class="card-title">إضافة مادة جديدة للبرنامج</div>
-            <div id="formAlert" class="alert">تحذير: الفروقات تجاوزت الحد المسموح (3,000 دينار)!</div>
-            
-            <div class="form-group">
-                <label for="itemName">اسم المادة</label>
-                <input type="text" id="itemName" placeholder="أدخل اسم المادة...">
-            </div>
+<div class="container">
 
-            <div class="form-group">
-                <label for="itemCode">رمز المادة</label>
-                <input type="text" id="itemCode" placeholder="أدخل الرمز...">
-            </div>
+    <!-- بطاقة إضافة مادة جديدة -->
+    <div class="card">
 
-            <div class="form-group">
-                <label for="itemQty">الكمية</label>
-                <input type="number" id="itemQty" placeholder="0">
-            </div>
+        <div class="card-title">إضافة مادة جديدة للبرنامج</div>
 
-            <div class="form-group">
-                <label for="itemDiff">الفروقات (د.ع)</label>
-                <input type="number" id="itemDiff" placeholder="0" oninput="checkDifference()">
-            </div>
-
-            <button onclick="addNewItem()">إضافة المادة</button>
+        <div id="formAlert" class="alert">
+            تحذير: الفروقات تجاوزت الحد المسموح (3,000 دينار)!
         </div>
 
-        <!-- بطاقة عرض المواد المضافة -->
-        <div class="card">
-            <div class="card-title">قائمة المواد المضافة</div>
-            <div id="itemsContainer">
-                <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;" id="emptyMsg">لا توجد مواد مضافة حالياً. استخدم النموذج أعلاه لإضافة المواد.</p>
-            </div>
+        <div id="successAlert" class="success"></div>
+
+        <div class="form-group">
+            <label for="itemName">اسم المادة</label>
+            <input type="text" id="itemName"
+                   placeholder="أدخل اسم المادة...">
+        </div>
+
+        <div class="form-group">
+            <label for="itemCode">رمز المادة</label>
+            <input type="text" id="itemCode"
+                   placeholder="أدخل الرمز...">
+        </div>
+
+        <div class="form-group">
+            <label for="itemQty">الكمية</label>
+            <input type="number" id="itemQty"
+                   placeholder="0">
+        </div>
+
+        <div class="form-group">
+            <label for="itemDiff">الفروقات (د.ع)</label>
+            <input type="number" id="itemDiff"
+                   placeholder="0"
+                   oninput="checkDifference()">
+        </div>
+
+        <button onclick="addNewItem()">
+            إضافة المادة
+        </button>
+
+        <!-- زر استيراد الملف -->
+        <input
+            type="file"
+            id="fileInput"
+            accept=".csv,.txt"
+            onchange="importFile(event)"
+        >
+
+        <button class="btn-file"
+                onclick="document.getElementById('fileInput').click()">
+            📂 إضافة مواد من ملف
+        </button>
+
+        <div class="file-info">
+            صيغة الملف: Code,Name,Quantity,Unit
         </div>
 
     </div>
 
-    <script>
-        // مصفوفة تخزين المواد المضافة ديناميكياً
-        let dynamicItems = [];
 
-        function checkDifference() {
-            const diffVal = parseFloat(document.getElementById('itemDiff').value) || 0;
-            const alertBox = document.getElementById('formAlert');
-            
-            // قاعدة الفروقات: إذا تجاوزت 3,000 دينار يظهر تنبيه أحمر
-            if (Math.abs(diffVal) > 3000) {
-                alertBox.style.display = 'block';
-            } else {
-                alertBox.style.display = 'none';
-            }
+    <!-- بطاقة عرض المواد المضافة -->
+    <div class="card">
+
+        <div class="card-title">
+            قائمة المواد المضافة
+        </div>
+
+        <div id="itemsContainer">
+
+            <p style="text-align: center;
+                      color: var(--text-secondary);
+                      font-size: 0.85rem;"
+               id="emptyMsg">
+
+                لا توجد مواد مضافة حالياً.
+                استخدم النموذج أعلاه لإضافة المواد.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+     * =========================================================
+     * تخزين المواد
+     * =========================================================
+     *
+     * نحاول أولاً تحميل المواد القديمة من الجهاز.
+     * إذا ماكو مواد، نبدأ بمصفوفة فارغة.
+     */
+
+    let dynamicItems =
+        JSON.parse(localStorage.getItem("kindiPackagingItems")) || [];
+
+
+    /*
+     * =========================================================
+     * حفظ المواد
+     * =========================================================
+     */
+
+    function saveItems() {
+
+        localStorage.setItem(
+            "kindiPackagingItems",
+            JSON.stringify(dynamicItems)
+        );
+
+    }
+
+
+    /*
+     * =========================================================
+     * فحص الفروقات
+     * =========================================================
+     */
+
+    function checkDifference() {
+
+        const diffVal =
+            parseFloat(
+                document.getElementById('itemDiff').value
+            ) || 0;
+
+        const alertBox =
+            document.getElementById('formAlert');
+
+        if (Math.abs(diffVal) > 3000) {
+
+            alertBox.style.display = 'block';
+
+        } else {
+
+            alertBox.style.display = 'none';
+
         }
 
-        function addNewItem() {
-            const name = document.getElementById('itemName').value.trim();
-            const code = document.getElementById('itemCode').value.trim();
-            const qty = document.getElementById('itemQty').value;
-            const diff = document.getElementById('itemDiff').value;
+    }
 
-            if (!name) {
-                alert('يرجى إدخال اسم المادة على الأقل.');
+
+    /*
+     * =========================================================
+     * إضافة مادة يدوياً
+     * =========================================================
+     */
+
+    function addNewItem() {
+
+        const name =
+            document.getElementById('itemName')
+            .value.trim();
+
+        const code =
+            document.getElementById('itemCode')
+            .value.trim();
+
+        const qty =
+            document.getElementById('itemQty')
+            .value;
+
+        const diff =
+            document.getElementById('itemDiff')
+            .value;
+
+
+        if (!name) {
+
+            alert('يرجى إدخال اسم المادة على الأقل.');
+            return;
+
+        }
+
+
+        /*
+         * منع تكرار رمز المادة
+         */
+
+        if (code) {
+
+            const exists =
+                dynamicItems.some(
+                    item =>
+                    String(item.code).trim().toLowerCase()
+                    === code.toLowerCase()
+                );
+
+            if (exists) {
+
+                alert(
+                    'هذه المادة موجودة مسبقاً بنفس الرمز.'
+                );
+
                 return;
+
             }
 
-            const newItem = {
-                id: Date.now(),
-                name: name,
-                code: code || 'غير محدد',
-                qty: qty || '0',
-                diff: diff || '0'
-            };
-
-            dynamicItems.push(newItem);
-            renderItems();
-            clearForm();
         }
 
-        function deleteItem(id) {
-            dynamicItems = dynamicItems.filter(item => item.id !== id);
-            renderItems();
+
+        const newItem = {
+
+            id: Date.now(),
+
+            name: name,
+
+            code: code || 'غير محدد',
+
+            qty: qty || '0',
+
+            diff: diff || '0'
+
+        };
+
+
+        dynamicItems.push(newItem);
+
+        saveItems();
+
+        renderItems();
+
+        clearForm();
+
+    }
+
+
+    /*
+     * =========================================================
+     * حذف مادة
+     * =========================================================
+     */
+
+    function deleteItem(id) {
+
+        if (!confirm('هل تريد حذف هذه المادة؟')) {
+            return;
         }
 
-        function renderItems() {
-            const container = document.getElementById('itemsContainer');
-            
-            if (dynamicItems.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;" id="emptyMsg">لا توجد مواد مضافة حالياً. استخدم النموذج أعلاه لإضافة المواد.</p>`;
+        dynamicItems =
+            dynamicItems.filter(
+                item => item.id !== id
+            );
+
+        saveItems();
+
+        renderItems();
+
+    }
+
+
+    /*
+     * =========================================================
+     * قراءة CSV
+     * =========================================================
+     */
+
+    function parseCSVLine(line) {
+
+        const result = [];
+
+        let current = '';
+
+        let insideQuotes = false;
+
+
+        for (let i = 0; i < line.length; i++) {
+
+            const char = line[i];
+
+            if (char === '"') {
+
+                if (
+                    insideQuotes &&
+                    line[i + 1] === '"'
+                ) {
+
+                    current += '"';
+
+                    i++;
+
+                } else {
+
+                    insideQuotes = !insideQuotes;
+
+                }
+
+            }
+
+            else if (
+                char === ',' &&
+                !insideQuotes
+            ) {
+
+                result.push(
+                    current.trim()
+                );
+
+                current = '';
+
+            }
+
+            else {
+
+                current += char;
+
+            }
+
+        }
+
+
+        result.push(
+            current.trim()
+        );
+
+        return result;
+
+    }
+
+
+    /*
+     * =========================================================
+     * استيراد المواد من الملف
+     * =========================================================
+     */
+
+    function importFile(event) {
+
+        const file =
+            event.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        const reader = new FileReader();
+
+
+        reader.onload = function(e) {
+
+            let text = e.target.result;
+
+
+            /*
+             * إزالة BOM إذا موجود
+             */
+
+            text =
+                text.replace(/^\uFEFF/, '');
+
+
+            /*
+             * توحيد نهاية الأسطر
+             */
+
+            text =
+                text.replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n');
+
+
+            const lines =
+                text.split('\n')
+                    .filter(
+                        line => line.trim() !== ''
+                    );
+
+
+            if (lines.length < 2) {
+
+                alert(
+                    'الملف فارغ أو لا يحتوي على مواد.'
+                );
+
                 return;
+
             }
 
-            let html = '';
-            dynamicItems.forEach(item => {
-                const isOverLimit = Math.abs(parseFloat(item.diff) || 0) > 3000;
-                html += `
-                    <div class="item-card ${isOverLimit ? 'diff-alert' : ''}">
-                        <div class="item-info">
-                            <strong>${item.name}</strong>
-                            <span>الرمز: ${item.code}</span>
-                        </div>
-                        <div class="item-info">
-                            <span>الكمية: ${item.qty}</span>
-                            <span>الفروقات: ${item.diff} د.ع</span>
-                        </div>
-                        <button class="btn-danger" onclick="deleteItem(${item.id})">حذف المادة</button>
+
+            let added = 0;
+
+            let duplicated = 0;
+
+            let invalid = 0;
+
+
+            /*
+             * أول سطر هو العناوين
+             */
+
+            for (
+                let i = 1;
+                i < lines.length;
+                i++
+            ) {
+
+                const columns =
+                    parseCSVLine(lines[i]);
+
+
+                /*
+                 * المطلوب:
+                 *
+                 * Code
+                 * Name
+                 * Quantity
+                 * Unit
+                 */
+
+                if (columns.length < 4) {
+
+                    invalid++;
+
+                    continue;
+
+                }
+
+
+                const code =
+                    columns[0].trim();
+
+                const name =
+                    columns[1].trim();
+
+                const qty =
+                    columns[2].trim();
+
+                const unit =
+                    columns[3].trim();
+
+
+                /*
+                 * لازم يكون عندنا كود واسم
+                 */
+
+                if (!code || !name) {
+
+                    invalid++;
+
+                    continue;
+
+                }
+
+
+                /*
+                 * فحص التكرار
+                 */
+
+                const exists =
+                    dynamicItems.some(
+                        item =>
+                        String(item.code)
+                        .trim()
+                        .toLowerCase()
+                        === code.toLowerCase()
+                    );
+
+
+                if (exists) {
+
+                    duplicated++;
+
+                    continue;
+
+                }
+
+
+                /*
+                 * إضافة المادة
+                 */
+
+                dynamicItems.push({
+
+                    id:
+                        Date.now()
+                        + i
+                        + Math.random(),
+
+                    name: name,
+
+                    code: code,
+
+                    qty: qty || '0',
+
+                    unit: unit || '',
+
+                    diff: '0'
+
+                });
+
+
+                added++;
+
+            }
+
+
+            /*
+             * حفظ البيانات
+             */
+
+            saveItems();
+
+            renderItems();
+
+
+            /*
+             * إظهار النتيجة
+             */
+
+            let message =
+                'تم استيراد الملف بنجاح.\n\n' +
+
+                'المواد الجديدة: ' +
+                added + '\n' +
+
+                'المواد المكررة: ' +
+                duplicated + '\n' +
+
+                'السطور غير الصحيحة: ' +
+                invalid;
+
+
+            alert(message);
+
+
+            /*
+             * إرجاع اختيار الملف
+             * حتى يمكن اختيار نفس الملف مرة ثانية
+             */
+
+            event.target.value = '';
+
+        };
+
+
+        reader.onerror = function() {
+
+            alert(
+                'حدث خطأ أثناء قراءة الملف.'
+            );
+
+        };
+
+
+        reader.readAsText(file, 'UTF-8');
+
+    }
+
+
+    /*
+     * =========================================================
+     * عرض المواد
+     * =========================================================
+     */
+
+    function renderItems() {
+
+        const container =
+            document.getElementById(
+                'itemsContainer'
+            );
+
+
+        if (dynamicItems.length === 0) {
+
+            container.innerHTML = `
+
+                <p style="
+                    text-align: center;
+                    color: var(--text-secondary);
+                    font-size: 0.85rem;
+                ">
+
+                    لا توجد مواد مضافة حالياً.
+                    استخدم النموذج أعلاه لإضافة المواد.
+
+                </p>
+
+            `;
+
+            return;
+
+        }
+
+
+        let html = '';
+
+
+        dynamicItems.forEach(item => {
+
+            const isOverLimit =
+                Math.abs(
+                    parseFloat(item.diff) || 0
+                ) > 3000;
+
+
+            html += `
+
+                <div class="item-card
+                    ${isOverLimit ? 'diff-alert' : ''}">
+
+                    <div class="item-info">
+
+                        <strong>
+                            ${escapeHTML(item.name)}
+                        </strong>
+
+                        <span>
+                            الرمز:
+                            ${escapeHTML(item.code)}
+                        </span>
+
                     </div>
-                `;
-            });
 
-            container.innerHTML = html;
-        }
 
-        function clearForm() {
-            document.getElementById('itemName').value = '';
-            document.getElementById('itemCode').value = '';
-            document.getElementById('itemQty').value = '';
-            document.getElementById('itemDiff').value = '';
-            document.getElementById('formAlert').style.display = 'none';
-        }
-    </script>
+                    <div class="item-info">
+
+                        <span>
+                            الكمية:
+                            ${escapeHTML(item.qty)}
+                            ${item.unit
+                                ? ' ' +
+                                  escapeHTML(item.unit)
+                                : ''}
+                        </span>
+
+                        <span>
+                            الفروقات:
+                            ${escapeHTML(item.diff)}
+                            د.ع
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        class="btn-danger"
+                        onclick="deleteItem(${item.id})">
+
+                        حذف المادة
+
+                    </button>
+
+                </div>
+
+            `;
+
+        });
+
+
+        container.innerHTML = html;
+
+    }
+
+
+    /*
+     * =========================================================
+     * حماية النصوص
+     * =========================================================
+     */
+
+    function escapeHTML(value) {
+
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+    }
+
+
+    /*
+     * =========================================================
+     * تنظيف النموذج
+     * =========================================================
+     */
+
+    function clearForm() {
+
+        document.getElementById('itemName').value = '';
+
+        document.getElementById('itemCode').value = '';
+
+        document.getElementById('itemQty').value = '';
+
+        document.getElementById('itemDiff').value = '';
+
+        document.getElementById(
+            'formAlert'
+        ).style.display = 'none';
+
+    }
+
+
+    /*
+     * =========================================================
+     * تشغيل البرنامج
+     * =========================================================
+     */
+
+    renderItems();
+
+</script>
+
 </body>
 </html>
