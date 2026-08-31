@@ -1,2152 +1,271 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f172a">
-
-<title>إدارة مواد التعبئة والتغليف</title>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
-background:#f1f5f9;
-color:#172033
-}
-
-button,input,select{font-family:inherit}
-
-button{cursor:pointer}
-
-.app{
-min-height:100vh;
-display:flex;
-flex-direction:column
-}
-
-.topbar{
-height:70px;
-background:#0f172a;
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 18px;
-position:sticky;
-top:0;
-z-index:100
-}
-
-.logo{
-font-size:19px;
-font-weight:800
-}
-
-.user-info{
-font-size:12px;
-opacity:.8
-}
-
-.menu-btn{
-background:#1e293b;
-color:white;
-border:0;
-border-radius:11px;
-width:42px;
-height:42px;
-font-size:21px
-}
-
-.layout{
-display:flex;
-flex:1
-}
-
-.sidebar{
-width:250px;
-background:#fff;
-border-left:1px solid #e2e8f0;
-padding:15px 12px;
-transition:.25s
-}
-
-.nav-title{
-font-size:11px;
-color:#94a3b8;
-font-weight:800;
-padding:10px
-}
-
-.nav{
-width:100%;
-border:0;
-background:transparent;
-padding:13px 12px;
-border-radius:12px;
-text-align:right;
-font-size:14px;
-font-weight:700;
-color:#475569;
-margin-bottom:4px
-}
-
-.nav:hover,.nav.active{
-background:#e8eef8;
-color:#0f3d56
-}
-
-.main{
-flex:1;
-padding:18px;
-max-width:1400px;
-margin:auto;
-width:100%
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.page-title{
-font-size:25px;
-font-weight:900;
-margin-bottom:4px
-}
-
-.page-sub{
-color:#64748b;
-font-size:13px;
-margin-bottom:18px
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px;
-margin-bottom:18px
-}
-
-.card{
-background:white;
-border-radius:18px;
-padding:18px;
-box-shadow:0 4px 18px rgba(15,23,42,.06)
-}
-
-.card-label{
-color:#64748b;
-font-size:12px
-}
-
-.card-number{
-font-size:27px;
-font-weight:900;
-margin-top:7px
-}
-
-.card-icon{
-font-size:25px;
-margin-bottom:8px
-}
-
-.panel{
-background:#fff;
-border-radius:18px;
-padding:17px;
-box-shadow:0 4px 18px rgba(15,23,42,.06);
-margin-bottom:15px
-}
-
-.panel-title{
-font-size:17px;
-font-weight:900;
-margin-bottom:14px
-}
-
-.toolbar{
-display:flex;
-gap:8px;
-flex-wrap:wrap
-}
-
-.search{
-flex:1;
-min-width:220px;
-padding:13px;
-border:1px solid #e2e8f0;
-border-radius:12px;
-background:#f8fafc;
-font-size:15px;
-outline:0
-}
-
-.search:focus{
-border-color:#2563eb;
-background:#fff
-}
-
-.btn{
-border:0;
-border-radius:11px;
-padding:11px 14px;
-font-size:13px;
-font-weight:800
-}
-
-.btn-primary{background:#2563eb;color:white}
-.btn-success{background:#dcfce7;color:#166534}
-.btn-warning{background:#ffedd5;color:#9a3412}
-.btn-danger{background:#fee2e2;color:#991b1b}
-.btn-dark{background:#0f172a;color:white}
-.btn-light{background:#e2e8f0;color:#334155}
-
-.tabs{
-display:flex;
-gap:7px;
-margin-top:12px;
-overflow:auto
-}
-
-.tab{
-border:0;
-background:#f1f5f9;
-padding:9px 15px;
-border-radius:20px;
-font-size:12px;
-font-weight:800;
-white-space:nowrap
-}
-
-.tab.active{
-background:#0f172a;
-color:white
-}
-
-.table-box{
-overflow:auto;
-border:1px solid #eef2f7;
-border-radius:14px
-}
-
-table{
-border-collapse:collapse;
-width:100%;
-min-width:900px
-}
-
-th{
-background:#f8fafc;
-padding:12px 10px;
-font-size:12px;
-text-align:right;
-color:#64748b;
-white-space:nowrap
-}
-
-td{
-padding:12px 10px;
-border-top:1px solid #f1f5f9;
-font-size:13px
-}
-
-.material-name{
-font-weight:800;
-max-width:360px
-}
-
-.material-code{
-font-weight:800;
-color:#64748b
-}
-
-.quantity{
-font-size:17px;
-font-weight:900
-}
-
-.badge{
-display:inline-block;
-padding:5px 9px;
-border-radius:20px;
-font-size:10px;
-font-weight:900
-}
-
-.badge-ok{
-background:#dcfce7;
-color:#166534
-}
-
-.badge-low{
-background:#fee2e2;
-color:#991b1b
-}
-
-.badge-kg{
-background:#dbeafe;
-color:#1e40af
-}
-
-.badge-pcs{
-background:#ede9fe;
-color:#5b21b6
-}
-
-.form-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px
-}
-
-.field label{
-display:block;
-font-size:12px;
-font-weight:800;
-margin-bottom:6px;
-color:#475569
-}
-
-.field input,.field select{
-width:100%;
-padding:12px;
-border:1px solid #e2e8f0;
-border-radius:11px;
-outline:0;
-background:#f8fafc
-}
-
-.user-list{
-display:grid;
-gap:10px
-}
-
-.user-row{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px;
-padding:14px;
-background:#f8fafc;
-border-radius:13px
-}
-
-.user-name{
-font-weight:900
-}
-
-.user-role{
-font-size:11px;
-color:#64748b;
-margin-top:3px
-}
-
-.setting-row{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:15px;
-padding:15px 0;
-border-bottom:1px solid #eef2f7
-}
-
-.setting-row:last-child{border-bottom:0}
-
-.setting-title{
-font-weight:800;
-font-size:14px
-}
-
-.setting-desc{
-font-size:11px;
-color:#64748b;
-margin-top:3px
-}
-
-.switch{
-position:relative;
-width:48px;
-height:27px;
-display:inline-block
-}
-
-.switch input{display:none}
-
-.slider{
-position:absolute;
-inset:0;
-background:#cbd5e1;
-border-radius:30px;
-transition:.2s
-}
-
-.slider:before{
-content:"";
-position:absolute;
-width:21px;
-height:21px;
-right:3px;
-top:3px;
-background:#fff;
-border-radius:50%;
-transition:.2s
-}
-
-.switch input:checked+.slider{
-background:#2563eb
-}
-
-.switch input:checked+.slider:before{
-transform:translateX(-21px)
-}
-
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(15,23,42,.58);
-z-index:1000;
-align-items:center;
-justify-content:center;
-padding:15px
-}
-
-.modal.show{display:flex}
-
-.modal-box{
-width:100%;
-max-width:440px;
-background:white;
-border-radius:21px;
-padding:20px;
-box-shadow:0 20px 60px rgba(0,0,0,.25)
-}
-
-.modal-title{
-font-size:19px;
-font-weight:900;
-margin-bottom:15px
-}
-
-.modal-input{
-width:100%;
-padding:13px;
-border:1px solid #e2e8f0;
-border-radius:12px;
-font-size:17px;
-margin-bottom:10px;
-outline:0
-}
-
-.modal-actions{
-display:flex;
-gap:8px
-}
-
-.modal-actions button{flex:1}
-
-.toast{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translate(-50%,120px);
-background:#0f172a;
-color:#fff;
-padding:13px 18px;
-border-radius:13px;
-z-index:3000;
-font-size:13px;
-transition:.3s;
-box-shadow:0 10px 30px rgba(0,0,0,.2)
-}
-
-.toast.show{
-transform:translate(-50%,0)
-}
-
-.empty{
-text-align:center;
-padding:45px;
-color:#94a3b8
-}
-
-.mobile-only{display:none}
-
-@media(max-width:850px){
-
-.sidebar{
-position:fixed;
-top:70px;
-right:-260px;
-height:calc(100vh - 70px);
-z-index:500;
-box-shadow:-10px 0 30px rgba(0,0,0,.1)
-}
-
-.sidebar.open{right:0}
-
-.mobile-only{display:block}
-
-.cards{
-grid-template-columns:repeat(2,1fr)
-}
-
-.form-grid{
-grid-template-columns:1fr
-}
-
-.main{
-padding:13px
-}
-
-.page-title{
-font-size:21px
-}
-}
-
-@media(min-width:851px){
-.menu-btn{display:none}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة مواد التعبئة والتغليف</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-color: #bb86fc;
+            --border-color: #2c2c2c;
+            --danger-color: #cf6679;
+            --success-color: #03dac6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-size: 1.4rem;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: #2c2c2c;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: #121212;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card.alert {
+            border-color: var(--danger-color);
+            background-color: rgba(207, 102, 121, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--accent-color);
+        }
+
+        .card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .card-body span strong {
+            color: var(--text-color);
+        }
+
+        .diff-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            width: fit-content;
+        }
+
+        .diff-ok {
+            background-color: rgba(3, 218, 198, 0.15);
+            color: var(--success-color);
+        }
+
+        .diff-alert {
+            background-color: rgba(207, 102, 121, 0.15);
+            color: var(--danger-color);
+        }
+
+        .delete-btn {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 6px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            border-radius: 6px;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="app">
+    <h2>إدارة مواد التعبئة والتغليف</h2>
 
-<header class="topbar">
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div class="form-container">
+        <div class="field-group">
+            <label>اسم المادة / المستحضر</label>
+            <input type="text" id="itemName" placeholder="أدخل اسم المادة">
+        </div>
 
-    <div>
-        <div class="logo">📦 إدارة مواد التعبئة والتغليف</div>
-        <div class="user-info" id="topUser">المستخدم: المدير</div>
+        <div class="field-group">
+            <label>الكمية الدفترية (المخططة)</label>
+            <input type="number" id="bookQty" placeholder="0">
+        </div>
+
+        <div class="field-group">
+            <label>الكمية الفعلية (المجردة)</label>
+            <input type="number" id="actualQty" placeholder="0">
+        </div>
+
+        <button onclick="addItem()">إضافة وحساب الفرق</button>
     </div>
-</header>
 
-<div class="layout">
+    <div class="cards-container" id="cardsContainer">
+        <!-- تظهر البطاقات هنا -->
+    </div>
 
-<aside class="sidebar" id="sidebar">
+    <script>
+        let items = JSON.parse(localStorage.getItem('kindi_items')) || [];
 
-    <div class="nav-title">الرئيسية</div>
+        function renderItems() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
 
-    <button class="nav active" onclick="openPage('dashboard',this)">
-        🏠 الرئيسية
-    </button>
-
-    <button class="nav" onclick="openPage('materials',this)">
-        📦 المواد والأرصدة
-    </button>
-
-    <button class="nav" onclick="openPage('movements',this)">
-        🔄 سجل الحركات
-    </button>
-
-    <div class="nav-title">الإدارة</div>
-
-    <button class="nav" onclick="openPage('users',this)">
-        👥 المستخدمين
-    </button>
-
-    <button class="nav" onclick="openPage('settings',this)">
-        ⚙️ الإعدادات
-    </button>
-
-</aside>
-
-<main class="main">
-
-<!-- DASHBOARD -->
-
-<section id="dashboard" class="page active">
-
-<div class="page-title">الرئيسية</div>
-<div class="page-sub">ملخص سريع لأرصدة مواد التعبئة والتغليف</div>
-
-<div class="cards">
-
-<div class="card">
-<div class="card-icon">📦</div>
-<div class="card-label">كل المواد</div>
-<div class="card-number" id="dashTotal">0</div>
-</div>
-
-<div class="card">
-<div class="card-icon">🔢</div>
-<div class="card-label">مواد PCS</div>
-<div class="card-number" id="dashPCS">0</div>
-</div>
-
-<div class="card">
-<div class="card-icon">⚖️</div>
-<div class="card-label">مواد KG</div>
-<div class="card-number" id="dashKG">0</div>
-</div>
-
-<div class="card">
-<div class="card-icon">⚠️</div>
-<div class="card-label">مواد تحتاج انتباه</div>
-<div class="card-number" id="dashLow">0</div>
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="panel-title">⚠️ المواد التي وصلت حد التنبيه</div>
-
-<div class="table-box">
-<table>
-<thead>
-<tr>
-<th>الكود</th>
-<th>المادة</th>
-<th>الوحدة</th>
-<th>الرصيد</th>
-<th>الحالة</th>
-</tr>
-</thead>
-<tbody id="dashboardLow"></tbody>
-</table>
-</div>
-
-</div>
-
-</section>
-
-
-<!-- MATERIALS -->
-
-<section id="materials" class="page">
-
-<div class="page-title">المواد والأرصدة</div>
-<div class="page-sub">الأرصدة هنا مأخوذة من ملف Excel ويمكن تحديثها بالسحب والإضافة</div>
-
-<div class="panel">
-
-<div class="toolbar">
-
-<input
-id="search"
-class="search"
-placeholder="🔎 ابحث بالكود أو اسم المادة أو المنتج..."
-oninput="renderMaterials()"
->
-
-<label class="btn btn-primary">
-📂 استيراد Excel
-<input
-type="file"
-id="excelFile"
-accept=".xlsx,.xls,.csv"
-style="display:none"
->
-</label>
-
-<button class="btn btn-success" onclick="quickAdd()">
-➕ إضافة
-</button>
-
-<button class="btn btn-warning" onclick="quickWithdraw()">
-➖ سحب
-</button>
-
-<button class="btn btn-dark" onclick="exportExcel()">
-📊 تصدير
-</button>
-
-</div>
-
-<div class="tabs">
-
-<button class="tab active" onclick="setFilter('ALL',this)">
-الكل
-</button>
-
-<button class="tab" onclick="setFilter('PCS',this)">
-PCS
-</button>
-
-<button class="tab" onclick="setFilter('KG',this)">
-KG
-</button>
-
-<button class="tab" onclick="setFilter('LOW',this)">
-⚠️ تنبيه
-</button>
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="table-box">
-
-<table>
-
-<thead>
-<tr>
-<th>#</th>
-<th>الكود</th>
-<th>المادة</th>
-<th>المنتج</th>
-<th>الوحدة</th>
-<th>الرصيد</th>
-<th>الحالة</th>
-<th>العمليات</th>
-</tr>
-</thead>
-
-<tbody id="materialsBody"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- MOVEMENTS -->
-
-<section id="movements" class="page">
-
-<div class="page-title">سجل الحركات</div>
-<div class="page-sub">جميع عمليات الإضافة والسحب</div>
-
-<div class="panel">
-
-<div class="table-box">
-
-<table>
-
-<thead>
-<tr>
-<th>التاريخ</th>
-<th>المستخدم</th>
-<th>الكود</th>
-<th>المادة</th>
-<th>العملية</th>
-<th>الكمية</th>
-<th>الرصيد بعد العملية</th>
-</tr>
-</thead>
-
-<tbody id="movementsBody"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- USERS -->
-
-<section id="users" class="page">
-
-<div class="page-title">إدارة المستخدمين</div>
-<div class="page-sub">إضافة المستخدمين وتحديد صلاحياتهم</div>
-
-<div class="panel">
-
-<div class="toolbar">
-
-<button class="btn btn-primary" onclick="openUserModal()">
-➕ إضافة مستخدم
-</button>
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="user-list" id="usersList"></div>
-
-</div>
-
-</section>
-
-
-<!-- SETTINGS -->
-
-<section id="settings" class="page">
-
-<div class="page-title">الإعدادات</div>
-<div class="page-sub">إعدادات البرنامج وحدود التنبيه</div>
-
-<div class="panel">
-
-<div class="panel-title">حدود التنبيه</div>
-
-<div class="form-grid">
-
-<div class="field">
-<label>حد تنبيه مواد PCS</label>
-<input id="pcsLimit" type="number" min="0" step="1">
-</div>
-
-<div class="field">
-<label>حد تنبيه مواد KG</label>
-<input id="kgLimit" type="number" min="0" step="any">
-</div>
-
-</div>
-
-<br>
-
-<button class="btn btn-primary" onclick="saveSettings()">
-💾 حفظ الإعدادات
-</button>
-
-</div>
-
-
-<div class="panel">
-
-<div class="panel-title">إعدادات البرنامج</div>
-
-<div class="setting-row">
-
-<div>
-<div class="setting-title">إظهار التنبيهات</div>
-<div class="setting-desc">إظهار المواد التي وصلت إلى حد التنبيه</div>
-</div>
-
-<label class="switch">
-<input id="notificationsEnabled" type="checkbox" onchange="saveSettings()">
-<span class="slider"></span>
-</label>
-
-</div>
-
-<div class="setting-row">
-
-<div>
-<div class="setting-title">حفظ البيانات تلقائياً</div>
-<div class="setting-desc">حفظ الأرصدة على الجهاز بعد كل عملية</div>
-</div>
-
-<label class="switch">
-<input id="autoSave" type="checkbox" onchange="saveSettings()">
-<span class="slider"></span>
-</label>
-
-</div>
-
-</div>
-
-
-<div class="panel">
-
-<div class="panel-title">البيانات</div>
-
-<div class="toolbar">
-
-<button class="btn btn-dark" onclick="exportExcel()">
-📊 تصدير المواد
-</button>
-
-<button class="btn btn-danger" onclick="clearMaterials()">
-🗑️ حذف بيانات المواد
-</button>
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-</div>
-</div>
-
-
-<!-- MATERIAL MODAL -->
-
-<div class="modal" id="actionModal">
-
-<div class="modal-box">
-
-<div class="modal-title" id="actionTitle">
-إضافة رصيد
-</div>
-
-<div id="actionMaterial"
-style="font-size:13px;color:#64748b;margin-bottom:12px">
-</div>
-
-<input
-id="actionAmount"
-class="modal-input"
-type="number"
-min="0"
-step="any"
-placeholder="أدخل الكمية"
->
-
-<div class="modal-actions">
-
-<button class="btn btn-light" onclick="closeModal('actionModal')">
-إلغاء
-</button>
-
-<button class="btn btn-primary" onclick="confirmAction()">
-تأكيد
-</button>
-
-</div>
-
-</div>
-</div>
-
-
-<!-- USER MODAL -->
-
-<div class="modal" id="userModal">
-
-<div class="modal-box">
-
-<div class="modal-title">
-إضافة مستخدم
-</div>
-
-<input
-id="newUsername"
-class="modal-input"
-placeholder="اسم المستخدم"
->
-
-<input
-id="newPassword"
-class="modal-input"
-type="password"
-placeholder="كلمة المرور"
->
-
-<select id="newRole" class="modal-input">
-<option value="user">مستخدم</option>
-<option value="manager">مشرف</option>
-<option value="admin">مدير</option>
-</select>
-
-<div class="modal-actions">
-
-<button class="btn btn-light" onclick="closeModal('userModal')">
-إلغاء
-</button>
-
-<button class="btn btn-primary" onclick="createUser()">
-إضافة
-</button>
-
-</div>
-
-</div>
-</div>
-
-
-<div class="toast" id="toast"></div>
-
-
-<script>
-
-/* =========================
-   DATA
-========================= */
-
-let materials = [];
-
-let movements = [];
-
-let users = [
-    {
-        username:"admin",
-        password:"1234",
-        role:"admin"
-    }
-];
-
-let settings = {
-    pcsLimit:20000,
-    kgLimit:50,
-    notificationsEnabled:true,
-    autoSave:true
-};
-
-let currentFilter="ALL";
-let currentAction=null;
-let currentMaterialIndex=null;
-
-
-/* =========================
-   STORAGE
-========================= */
-
-function saveAll(){
-
-    if(!settings.autoSave) return;
-
-    localStorage.setItem(
-        "packaging_materials",
-        JSON.stringify(materials)
-    );
-
-    localStorage.setItem(
-        "packaging_movements",
-        JSON.stringify(movements)
-    );
-
-    localStorage.setItem(
-        "packaging_users",
-        JSON.stringify(users)
-    );
-
-    localStorage.setItem(
-        "packaging_settings",
-        JSON.stringify(settings)
-    );
-}
-
-
-function loadAll(){
-
-    try{
-
-        const m=localStorage.getItem("packaging_materials");
-        const mv=localStorage.getItem("packaging_movements");
-        const u=localStorage.getItem("packaging_users");
-        const s=localStorage.getItem("packaging_settings");
-
-        if(m) materials=JSON.parse(m);
-        if(mv) movements=JSON.parse(mv);
-        if(u) users=JSON.parse(u);
-        if(s) settings=Object.assign(settings,JSON.parse(s));
-
-    }catch(e){
-
-        console.error(e);
-
-    }
-
-}
-
-
-/* =========================
-   NAVIGATION
-========================= */
-
-function openPage(id,button){
-
-    document.querySelectorAll(".page")
-    .forEach(p=>p.classList.remove("active"));
-
-    document.getElementById(id)
-    .classList.add("active");
-
-    document.querySelectorAll(".nav")
-    .forEach(n=>n.classList.remove("active"));
-
-    if(button) button.classList.add("active");
-
-    if(id==="dashboard") renderDashboard();
-
-    if(id==="materials") renderMaterials();
-
-    if(id==="movements") renderMovements();
-
-    if(id==="users") renderUsers();
-
-    if(id==="settings") renderSettings();
-
-    if(window.innerWidth<=850){
-        document.getElementById("sidebar").classList.remove("open");
-    }
-}
-
-
-function toggleMenu(){
-
-    document
-    .getElementById("sidebar")
-    .classList.toggle("open");
-
-}
-
-
-/* =========================
-   EXCEL IMPORT
-========================= */
-
-document.getElementById("excelFile")
-.addEventListener("change",function(e){
-
-    const file=e.target.files[0];
-
-    if(!file)return;
-
-    const reader=new FileReader();
-
-    reader.onload=function(event){
-
-        try{
-
-            const data=new Uint8Array(event.target.result);
-
-            const workbook=XLSX.read(data,{
-                type:"array"
-            });
-
-            const sheet=workbook.Sheets[
-                workbook.SheetNames[0]
-            ];
-
-            const rows=XLSX.utils.sheet_to_json(
-                sheet,
-                {defval:""}
-            );
-
-            if(!rows.length){
-
-                toast("❌ ملف Excel فارغ");
+            if (items.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">لا توجد مواد مضافة حالياً</p>';
                 return;
-
             }
 
-            materials=convertRows(rows);
+            items.forEach((item, index) => {
+                const diff = Math.abs(item.bookQty - item.actualQty);
+                const isAlert = diff > 3000;
 
-            saveAll();
+                const card = document.createElement('div');
+                card.className = `card ${isAlert ? 'alert' : ''}`;
 
-            renderAll();
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span>${item.name}</span>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">${item.date}</span>
+                    </div>
+                    <div class="card-body">
+                        <span>الدفترية: <strong>${item.bookQty}</strong></span>
+                        <span>الفعلية: <strong>${item.actualQty}</strong></span>
+                        <span>الفرق: <strong>${diff}</strong></span>
+                        <div>
+                            <span class="diff-tag ${isAlert ? 'diff-alert' : 'diff-ok'}">
+                                ${isAlert ? 'تجاوز الحد (أعلى من 3000)' : 'ضمن الحد المسموح'}
+                            </span>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteItem(${index})">حذف السجل</button>
+                `;
 
-            toast(
-                "✅ تم تحميل "+
-                materials.length+
-                " مادة مع الأرصدة"
-            );
-
-        }catch(error){
-
-            console.error(error);
-
-            toast("❌ تعذر قراءة ملف Excel");
-
+                container.appendChild(card);
+            });
         }
 
-    };
+        function addItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const bookQty = parseFloat(document.getElementById('bookQty').value);
+            const actualQty = parseFloat(document.getElementById('actualQty').value);
 
-    reader.readAsArrayBuffer(file);
-
-});
-
-
-function convertRows(rows){
-
-    return rows.map((row,index)=>{
-
-        const keys=Object.keys(row);
-
-        const codeKey=findColumn(keys,[
-            "code","كود","الكود","رقم المادة","رمز المادة"
-        ]);
-
-        const nameKey=findColumn(keys,[
-            "name","اسم","اسم المادة","المادة",
-            "description","الوصف","وصف"
-        ]);
-
-        const quantityKey=findColumn(keys,[
-            "quantity","qty","كمية","الكمية",
-            "الرصيد","الرصيد الحالي"
-        ]);
-
-        const unitKey=findColumn(keys,[
-            "unit","الوحدة","وحدة"
-        ]);
-
-        const productKey=findColumn(keys,[
-            "product","product name",
-            "اسم المنتج","المنتج","المستحضر"
-        ]);
-
-        let unit=unitKey!==null
-            ? normalizeUnit(row[unitKey])
-            : detectUnit(row);
-
-        return {
-
-            id:String(
-                row[codeKey] ||
-                "MAT-"+(index+1)
-            ),
-
-            code:String(
-                codeKey!==null
-                ? row[codeKey]
-                :""
-            ).trim(),
-
-            name:String(
-                nameKey!==null
-                ? row[nameKey]
-                :""
-            ).trim(),
-
-            product:String(
-                productKey!==null
-                ? row[productKey]
-                :""
-            ).trim(),
-
-            quantity:
-                quantityKey!==null
-                ? parseNumber(row[quantityKey])
-                :0,
-
-            unit:unit
-
-        };
-
-    });
-
-}
-
-
-function findColumn(keys,candidates){
-
-    for(const key of keys){
-
-        const k=normalizeText(key);
-
-        for(const candidate of candidates){
-
-            const c=normalizeText(candidate);
-
-            if(k===c || k.includes(c)){
-                return key;
+            if (!name || isNaN(bookQty) || isNaN(actualQty)) {
+                alert('يرجى ملء جميع الحقول بشكل صحيح');
+                return;
             }
 
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-IQ') + ' ' + now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+
+            const newItem = {
+                name,
+                bookQty,
+                actualQty,
+                date: dateStr
+            };
+
+            items.unshift(newItem);
+            localStorage.setItem('kindi_items', JSON.stringify(items));
+
+            document.getElementById('itemName').value = '';
+            document.getElementById('bookQty').value = '';
+            document.getElementById('actualQty').value = '';
+
+            renderItems();
         }
 
-    }
-
-    return null;
-}
-
-
-function normalizeText(value){
-
-    return String(value||"")
-    .trim()
-    .toLowerCase()
-    .replace(/[أإآ]/g,"ا")
-    .replace(/ة/g,"ه")
-    .replace(/\s+/g," ");
-
-}
-
-
-function parseNumber(value){
-
-    if(typeof value==="number"){
-        return isFinite(value)?value:0;
-    }
-
-    let text=String(value||"")
-    .trim()
-    .replace(/٬/g,"")
-    .replace(/,/g,"")
-    .replace(/[^\d.-]/g,"");
-
-    const n=Number(text);
-
-    return isFinite(n)?n:0;
-}
-
-
-function normalizeUnit(value){
-
-    const u=String(value||"")
-    .toUpperCase()
-    .trim();
-
-    if(
-        u.includes("KG")||
-        u.includes("KILO")||
-        u.includes("كيلو")||
-        u.includes("كغم")||
-        u.includes("كغ")
-    )return "KG";
-
-    if(
-        u.includes("PCS")||
-        u.includes("PC")||
-        u.includes("PIECE")||
-        u.includes("قطعة")||
-        u.includes("قطعه")
-    )return "PCS";
-
-    return u||"PCS";
-}
-
-
-function detectUnit(row){
-
-    const text=Object.values(row)
-    .join(" ")
-    .toUpperCase();
-
-    if(
-        text.includes("KG")||
-        text.includes("KILO")||
-        text.includes("كيلو")||
-        text.includes("كغم")
-    )return "KG";
-
-    return "PCS";
-}
-
-
-/* =========================
-   LIMITS
-========================= */
-
-function isLow(material){
-
-    if(!settings.notificationsEnabled){
-        return false;
-    }
-
-    if(material.unit==="KG"){
-        return Number(material.quantity)<=
-            Number(settings.kgLimit);
-    }
-
-    return Number(material.quantity)<=
-        Number(settings.pcsLimit);
-}
-
-
-function status(material){
-
-    if(isLow(material)){
-
-        return `
-        <span class="badge badge-low">
-        ⚠️ يحتاج طلب
-        </span>`;
-
-    }
-
-    return `
-    <span class="badge badge-ok">
-    ✓ جيد
-    </span>`;
-
-}
-
-
-/* =========================
-   MATERIALS
-========================= */
-
-function setFilter(filter,button){
-
-    currentFilter=filter;
-
-    document.querySelectorAll(".tab")
-    .forEach(t=>t.classList.remove("active"));
-
-    button.classList.add("active");
-
-    renderMaterials();
-}
-
-
-function renderMaterials(){
-
-    const body=document.getElementById("materialsBody");
-
-    const search=document
-    .getElementById("search")
-    .value
-    .trim()
-    .toLowerCase();
-
-    let list=materials.filter(m=>{
-
-        const text=(
-            m.code+" "+
-            m.name+" "+
-            m.product
-        ).toLowerCase();
-
-        let matchSearch=
-            !search||
-            text.includes(search);
-
-        let matchFilter=true;
-
-        if(currentFilter==="PCS")
-            matchFilter=m.unit==="PCS";
-
-        if(currentFilter==="KG")
-            matchFilter=m.unit==="KG";
-
-        if(currentFilter==="LOW")
-            matchFilter=isLow(m);
-
-        return matchSearch&&matchFilter;
-
-    });
-
-
-    if(!list.length){
-
-        body.innerHTML=`
-        <tr>
-        <td colspan="8">
-        <div class="empty">
-        📭 لا توجد مواد
-        </div>
-        </td>
-        </tr>`;
-
-        return;
-    }
-
-
-    body.innerHTML=list.map(m=>{
-
-        const index=materials.indexOf(m);
-
-        return `
-        <tr>
-
-        <td>${index+1}</td>
-
-        <td class="material-code">
-        ${esc(m.code)}
-        </td>
-
-        <td class="material-name">
-        ${esc(m.name)}
-        </td>
-
-        <td>
-        ${esc(m.product)}
-        </td>
-
-        <td>
-        <span class="badge ${
-            m.unit==="KG"
-            ?"badge-kg"
-            :"badge-pcs"
-        }">
-        ${m.unit}
-        </span>
-        </td>
-
-        <td class="quantity">
-        ${formatNumber(m.quantity)}
-        </td>
-
-        <td>
-        ${status(m)}
-        </td>
-
-        <td>
-
-        <button
-        class="btn btn-success"
-        onclick="openAction(${index},'add')">
-        ➕
-        </button>
-
-        <button
-        class="btn btn-warning"
-        onclick="openAction(${index},'withdraw')">
-        ➖
-        </button>
-
-        </td>
-
-        </tr>`;
-
-    }).join("");
-
-}
-
-
-/* =========================
-   QUICK ACTIONS
-========================= */
-
-function quickAdd(){
-
-    const search=document
-    .getElementById("search")
-    .value.trim();
-
-    if(!search){
-
-        toast("🔎 ابحث عن المادة أولاً");
-        return;
-
-    }
-
-    const index=findMaterial(search);
-
-    if(index===-1){
-
-        toast("❌ المادة غير موجودة");
-        return;
-
-    }
-
-    openAction(index,"add");
-}
-
-
-function quickWithdraw(){
-
-    const search=document
-    .getElementById("search")
-    .value.trim();
-
-    if(!search){
-
-        toast("🔎 ابحث عن المادة أولاً");
-        return;
-
-    }
-
-    const index=findMaterial(search);
-
-    if(index===-1){
-
-        toast("❌ المادة غير موجودة");
-        return;
-
-    }
-
-    openAction(index,"withdraw");
-}
-
-
-function findMaterial(search){
-
-    const s=search.toLowerCase();
-
-    return materials.findIndex(m=>
-        (
-            m.code+" "+
-            m.name+" "+
-            m.product
-        ).toLowerCase().includes(s)
-    );
-
-}
-
-
-/* =========================
-   ACTION
-========================= */
-
-function openAction(index,action){
-
-    currentMaterialIndex=index;
-    currentAction=action;
-
-    const m=materials[index];
-
-    document.getElementById("actionTitle")
-    .textContent=
-        action==="add"
-        ?"➕ إضافة رصيد"
-        :"➖ سحب من الرصيد";
-
-    document.getElementById("actionMaterial")
-    .textContent=
-        m.code+" — "+
-        m.name+
-        " | الرصيد الحالي: "+
-        formatNumber(m.quantity)+" "+
-        m.unit;
-
-    document.getElementById("actionAmount").value="";
-
-    document
-    .getElementById("actionModal")
-    .classList.add("show");
-
-}
-
-
-function confirmAction(){
-
-    const amount=Number(
-        document.getElementById("actionAmount").value
-    );
-
-    if(!isFinite(amount)||amount<=0){
-
-        toast("❌ أدخل كمية صحيحة");
-        return;
-
-    }
-
-    const m=materials[currentMaterialIndex];
-
-    const oldQuantity=m.quantity;
-
-    if(currentAction==="add"){
-
-        m.quantity+=amount;
-
-        addMovement(
-            m,
-            "إضافة",
-            amount,
-            m.quantity
-        );
-
-        toast(
-            "✅ تمت إضافة "+
-            formatNumber(amount)+" "+m.unit
-        );
-
-    }else{
-
-        if(amount>m.quantity){
-
-            toast(
-                "❌ الكمية أكبر من الرصيد الحالي"
-            );
-
-            return;
-
+        function deleteItem(index) {
+            items.splice(index, 1);
+            localStorage.setItem('kindi_items', JSON.stringify(items));
+            renderItems();
         }
 
-        m.quantity-=amount;
-
-        addMovement(
-            m,
-            "سحب",
-            amount,
-            m.quantity
-        );
-
-        toast(
-            "✅ تم سحب "+
-            formatNumber(amount)+" "+m.unit
-        );
-
-    }
-
-    saveAll();
-
-    closeModal("actionModal");
-
-    renderAll();
-
-}
-
-
-function addMovement(material,type,amount,after){
-
-    movements.unshift({
-
-        date:new Date().toLocaleString("ar-IQ"),
-
-        user:"المدير",
-
-        code:material.code,
-
-        name:material.name,
-
-        type:type,
-
-        amount:amount,
-
-        after:after
-
-    });
-
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
-
-function renderDashboard(){
-
-    document.getElementById("dashTotal")
-    .textContent=materials.length;
-
-    document.getElementById("dashPCS")
-    .textContent=
-        materials.filter(m=>m.unit==="PCS").length;
-
-    document.getElementById("dashKG")
-    .textContent=
-        materials.filter(m=>m.unit==="KG").length;
-
-    const low=materials.filter(isLow);
-
-    document.getElementById("dashLow")
-    .textContent=low.length;
-
-    const body=document.getElementById("dashboardLow");
-
-    if(!low.length){
-
-        body.innerHTML=`
-        <tr>
-        <td colspan="5">
-        <div class="empty">
-        ✅ لا توجد مواد وصلت إلى حد التنبيه
-        </div>
-        </td>
-        </tr>`;
-
-        return;
-    }
-
-    body.innerHTML=low.map(m=>`
-
-        <tr>
-
-        <td>${esc(m.code)}</td>
-
-        <td class="material-name">
-        ${esc(m.name)}
-        </td>
-
-        <td>${m.unit}</td>
-
-        <td class="quantity">
-        ${formatNumber(m.quantity)}
-        </td>
-
-        <td>${status(m)}</td>
-
-        </tr>
-
-    `).join("");
-
-}
-
-
-/* =========================
-   MOVEMENTS
-========================= */
-
-function renderMovements(){
-
-    const body=document.getElementById("movementsBody");
-
-    if(!movements.length){
-
-        body.innerHTML=`
-        <tr>
-        <td colspan="7">
-        <div class="empty">
-        📭 لا توجد حركات حتى الآن
-        </div>
-        </td>
-        </tr>`;
-
-        return;
-
-    }
-
-    body.innerHTML=movements.map(x=>`
-
-        <tr>
-
-        <td>${esc(x.date)}</td>
-
-        <td>${esc(x.user)}</td>
-
-        <td>${esc(x.code)}</td>
-
-        <td class="material-name">
-        ${esc(x.name)}
-        </td>
-
-        <td>
-        ${
-            x.type==="إضافة"
-            ?'<span class="badge badge-ok">➕ إضافة</span>'
-            :'<span class="badge badge-low">➖ سحب</span>'
-        }
-        </td>
-
-        <td class="quantity">
-        ${formatNumber(x.amount)}
-        </td>
-
-        <td class="quantity">
-        ${formatNumber(x.after)}
-        </td>
-
-        </tr>
-
-    `).join("");
-
-}
-
-
-/* =========================
-   USERS
-========================= */
-
-function renderUsers(){
-
-    const body=document.getElementById("usersList");
-
-    body.innerHTML=users.map((u,index)=>`
-
-    <div class="user-row">
-
-        <div>
-
-            <div class="user-name">
-            👤 ${esc(u.username)}
-            </div>
-
-            <div class="user-role">
-            الصلاحية:
-            ${roleName(u.role)}
-            </div>
-
-        </div>
-
-        ${
-            u.username!=="admin"
-            ?`
-            <button
-            class="btn btn-danger"
-            onclick="deleteUser(${index})">
-            🗑️ حذف
-            </button>
-            `
-            :`
-            <span class="badge badge-ok">
-            المدير الرئيسي
-            </span>
-            `
-        }
-
-    </div>
-
-    `).join("");
-
-}
-
-
-function roleName(role){
-
-    if(role==="admin")return "مدير";
-
-    if(role==="manager")return "مشرف";
-
-    return "مستخدم";
-
-}
-
-
-function openUserModal(){
-
-    document.getElementById("newUsername").value="";
-    document.getElementById("newPassword").value="";
-    document.getElementById("newRole").value="user";
-
-    document
-    .getElementById("userModal")
-    .classList.add("show");
-
-}
-
-
-function createUser(){
-
-    const username=document
-    .getElementById("newUsername")
-    .value.trim();
-
-    const password=document
-    .getElementById("newPassword")
-    .value;
-
-    const role=document
-    .getElementById("newRole")
-    .value;
-
-    if(!username||!password){
-
-        toast("❌ أدخل اسم المستخدم وكلمة المرور");
-        return;
-
-    }
-
-    if(users.some(u=>u.username===username)){
-
-        toast("❌ اسم المستخدم موجود مسبقاً");
-        return;
-
-    }
-
-    users.push({
-        username,
-        password,
-        role
-    });
-
-    saveAll();
-
-    closeModal("userModal");
-
-    renderUsers();
-
-    toast("✅ تمت إضافة المستخدم");
-
-}
-
-
-function deleteUser(index){
-
-    if(!confirm(
-        "هل تريد حذف المستخدم "+
-        users[index].username+"؟"
-    ))return;
-
-    users.splice(index,1);
-
-    saveAll();
-
-    renderUsers();
-
-    toast("✅ تم حذف المستخدم");
-
-}
-
-
-/* =========================
-   SETTINGS
-========================= */
-
-function renderSettings(){
-
-    document.getElementById("pcsLimit").value=
-        settings.pcsLimit;
-
-    document.getElementById("kgLimit").value=
-        settings.kgLimit;
-
-    document.getElementById("notificationsEnabled")
-    .checked=settings.notificationsEnabled;
-
-    document.getElementById("autoSave")
-    .checked=settings.autoSave;
-
-}
-
-
-function saveSettings(){
-
-    const pcs=Number(
-        document.getElementById("pcsLimit").value
-    );
-
-    const kg=Number(
-        document.getElementById("kgLimit").value
-    );
-
-    if(isFinite(pcs)&&pcs>=0)
-        settings.pcsLimit=pcs;
-
-    if(isFinite(kg)&&kg>=0)
-        settings.kgLimit=kg;
-
-    settings.notificationsEnabled=
-        document.getElementById(
-            "notificationsEnabled"
-        ).checked;
-
-    settings.autoSave=
-        document.getElementById(
-            "autoSave"
-        ).checked;
-
-    localStorage.setItem(
-        "packaging_settings",
-        JSON.stringify(settings)
-    );
-
-    renderAll();
-
-    toast("✅ تم حفظ الإعدادات");
-
-}
-
-
-/* =========================
-   EXPORT
-========================= */
-
-function exportExcel(){
-
-    if(!materials.length){
-
-        toast("⚠️ لا توجد مواد للتصدير");
-        return;
-
-    }
-
-    const data=materials.map(m=>({
-
-        Code:m.code,
-
-        Name:m.name,
-
-        Product:m.product,
-
-        Quantity:m.quantity,
-
-        Unit:m.unit
-
-    }));
-
-    const ws=XLSX.utils.json_to_sheet(data);
-
-    const wb=XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(
-        wb,
-        ws,
-        "Materials"
-    );
-
-    XLSX.writeFile(
-        wb,
-        "مواد_التعبئة_والتغليف_والارصدة.xlsx"
-    );
-
-    toast("✅ تم تصدير الأرصدة");
-
-}
-
-
-/* =========================
-   DELETE DATA
-========================= */
-
-function clearMaterials(){
-
-    if(!confirm(
-        "تحذير: سيتم حذف المواد والأرصدة المحفوظة من الجهاز. هل أنت متأكد؟"
-    ))return;
-
-    materials=[];
-
-    movements=[];
-
-    saveAll();
-
-    renderAll();
-
-    toast("🗑️ تم حذف البيانات");
-
-}
-
-
-/* =========================
-   HELPERS
-========================= */
-
-function renderAll(){
-
-    renderDashboard();
-
-    renderMaterials();
-
-    renderMovements();
-
-    renderUsers();
-
-    renderSettings();
-
-}
-
-
-function formatNumber(value){
-
-    return Number(value||0)
-    .toLocaleString("en-US",{
-        maximumFractionDigits:8
-    });
-
-}
-
-
-function esc(value){
-
-    return String(value||"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-function closeModal(id){
-
-    document
-    .getElementById(id)
-    .classList.remove("show");
-
-}
-
-
-function toast(message){
-
-    const el=document.getElementById("toast");
-
-    el.textContent=message;
-
-    el.classList.add("show");
-
-    clearTimeout(window.toastTimer);
-
-    window.toastTimer=setTimeout(()=>{
-        el.classList.remove("show");
-    },3000);
-
-}
-
-
-/* =========================
-   START
-========================= */
-
-loadAll();
-
-renderAll();
-
-</script>
-
+        renderItems();
+    </script>
 </body>
 </html>
