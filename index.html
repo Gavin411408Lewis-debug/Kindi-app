@@ -2,21 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StockFlow - إدارة المخزون</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة مواد التعبئة والتغليف - شركة الكندي</title>
     <style>
         :root {
             --bg-color: #121212;
-            --surface-color: #1e1e1e;
-            --surface-card: #252525;
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-            --border-color: #333333;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-color: #bb86fc;
+            --accent-hover: #3700b3;
+            --danger-color: #cf6679;
+            --border-color: #2c2c2c;
+            --input-bg: #2d2d2d;
         }
 
         * {
@@ -24,1228 +22,263 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            padding-bottom: 80px;
+            color: var(--text-color);
+            padding: 16px;
             direction: rtl;
         }
 
         header {
-            background-color: var(--surface-color);
-            padding: 16px;
             text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
             font-size: 1.25rem;
-            font-weight: bold;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            color: var(--accent-color);
+            margin-bottom: 5px;
         }
 
         .container {
-            padding: 16px;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        #notification-banner {
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background-color: var(--success);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            font-weight: bold;
-            text-align: center;
-            max-width: 90%;
-        }
-        #notification-banner.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--surface-color);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 100;
-        }
-
-        .nav-item {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .nav-item.active {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-        }
-
-        .view {
-            display: none;
-        }
-        .view.active {
-            display: block;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background-color: var(--surface-card);
-            padding: 16px;
+        /* Card Layout */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .stat-card.full-width {
-            grid-column: span 2;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-top: 6px;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px 16px;
-            background-color: var(--surface-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
-
-        .filters-row {
-            display: flex;
-            gap: 8px;
+            padding: 16px;
             margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        .filter-btn {
-            flex: 1;
-            padding: 10px;
-            background-color: var(--surface-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .filter-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .items-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .item-card {
-            background-color: var(--surface-card);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .item-code {
-            font-size: 0.75rem;
-            background: rgba(255,255,255,0.08);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--text-muted);
-            width: fit-content;
-        }
-
-        .item-name {
+        .card-title {
             font-size: 1rem;
             font-weight: bold;
-            word-break: break-word;
-        }
-
-        .item-qty-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
-        }
-
-        .item-qty {
-            font-size: 1.15rem;
-            font-weight: bold;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-        .badge.out { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-        .badge.warning { background-color: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
-        .badge.normal { background-color: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
-
-        .item-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 6px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 10px;
-        }
-
-        .btn {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-        }
-
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-secondary { background-color: #374151; color: white; }
-        .btn-danger { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-        .btn-success { background-color: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
-
-        .modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-            padding: 16px;
-        }
-
-        .modal.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background-color: var(--surface-color);
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 400px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .modal-title {
-            font-size: 1.1rem;
-            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            margin-bottom: 12px;
         }
 
-        .form-label {
+        label {
+            display: block;
             font-size: 0.85rem;
-            color: var(--text-muted);
+            color: var(--text-secondary);
+            margin-bottom: 4px;
         }
 
-        .form-control {
+        input, select {
             width: 100%;
-            padding: 10px 12px;
-            background-color: var(--surface-card);
+            padding: 10px;
+            background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: white;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: #121212;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
             font-size: 1rem;
+            cursor: pointer;
+            margin-top: 8px;
         }
 
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
+        button:active {
+            opacity: 0.8;
         }
 
-        .settings-section {
-            background-color: var(--surface-card);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: #fff;
+            margin-top: 4px;
+            padding: 8px;
+            font-size: 0.85rem;
         }
-        
-        .settings-row {
+
+        /* Alert Styling */
+        .alert {
+            background-color: rgba(207, 102, 121, 0.15);
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        /* Items List Cards */
+        .item-card {
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-right: 4px solid var(--accent-color);
+        }
+
+        .item-info {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
 
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #374151;
-            transition: .3s;
-            border-radius: 26px;
-        }
-        .slider:before {
-            position: absolute; content: "";
-            height: 20px; width: 20px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--primary-color); }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        .section-heading {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: var(--text-main);
+        .diff-alert {
+            border-right-color: var(--danger-color) !important;
+            background-color: rgba(207, 102, 121, 0.08);
         }
     </style>
 </head>
 <body>
 
-    <header id="app-header">StockFlow - إدارة المخزون (340 مادة)</header>
-
-    <div id="notification-banner">تم تحميل وتحديث الـ 340 مادة بنجاح!</div>
+    <header>
+        <h1>شركة الكندي للصناعات الدوائية</h1>
+        <p style="font-size: 0.8rem; color: var(--text-secondary);">إدارة مواد التعبئة والتغليف (الاثزو)</p>
+    </header>
 
     <div class="container">
-        <!-- 1. DASHBOARD VIEW -->
-        <div id="view-dashboard" class="view active">
-            <div class="stats-grid">
-                <div class="stat-card full-width">
-                    <div class="stat-label">إجمالي مواد المخزون</div>
-                    <div class="stat-value" id="stat-total">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">قريبة من النفاد</div>
-                    <div class="stat-value" id="stat-warning" style="color: var(--warning);">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">منتهية (0)</div>
-                    <div class="stat-value" id="stat-out" style="color: var(--danger);">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">مواد PCS</div>
-                    <div class="stat-value" id="stat-pcs">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">مواد KG</div>
-                    <div class="stat-value" id="stat-kg">0</div>
-                </div>
-            </div>
-
-            <div class="section-heading">المواد الحرجة (منتهية أو قريبة من النفاد)</div>
-            <div id="critical-items-list" class="items-list"></div>
-        </div>
-
-        <!-- 2. WAREHOUSE VIEW -->
-        <div id="view-warehouse" class="view">
-            <input type="text" id="search-input" class="search-box" placeholder="ابحث برمز المادة، الاسم، أو القياس...">
+        
+        <!-- بطاقة إضافة مادة جديدة -->
+        <div class="card">
+            <div class="card-title">إضافة مادة جديدة للبرنامج</div>
+            <div id="formAlert" class="alert">تحذير: الفروقات تجاوزت الحد المسموح (3,000 دينار)!</div>
             
-            <div class="filters-row">
-                <button class="filter-btn active" data-filter="all">الكل</button>
-                <button class="filter-btn" data-filter="PCS">PCS</button>
-                <button class="filter-btn" data-filter="KG">KG</button>
+            <div class="form-group">
+                <label for="itemName">اسم المادة</label>
+                <input type="text" id="itemName" placeholder="أدخل اسم المادة...">
             </div>
 
-            <div id="warehouse-items-list" class="items-list"></div>
+            <div class="form-group">
+                <label for="itemCode">رمز المادة</label>
+                <input type="text" id="itemCode" placeholder="أدخل الرمز...">
+            </div>
+
+            <div class="form-group">
+                <label for="itemQty">الكمية</label>
+                <input type="number" id="itemQty" placeholder="0">
+            </div>
+
+            <div class="form-group">
+                <label for="itemDiff">الفروقات (د.ع)</label>
+                <input type="number" id="itemDiff" placeholder="0" oninput="checkDifference()">
+            </div>
+
+            <button onclick="addNewItem()">إضافة المادة</button>
         </div>
 
-        <!-- 3. ADD ITEM VIEW -->
-        <div id="view-add" class="view">
-            <div class="settings-section">
-                <div class="section-heading">إضافة مادة جديدة أو تعديل رصيد مادة مطابقة</div>
-                <form id="add-item-form" style="display: flex; flex-direction: column; gap: 12px;">
-                    <div class="form-group">
-                        <label class="form-label">رمز المادة (Code)</label>
-                        <input type="text" id="new-code" class="form-control" required placeholder="أدخل رمز المادة">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">اسم المادة (Name مع القياس / MOH)</label>
-                        <input type="text" id="new-name" class="form-control" required placeholder="مثال: ALU FOIL ZYPRAXEN 10 MG (204MM)">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">الكمية الأولية</label>
-                        <input type="number" step="any" id="new-qty" class="form-control" required placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">الوحدة</label>
-                        <select id="new-unit" class="form-control">
-                            <option value="PCS">PCS</option>
-                            <option value="KG">KG</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; padding: 12px;">حفظ المادة</button>
-                </form>
+        <!-- بطاقة عرض المواد المضافة -->
+        <div class="card">
+            <div class="card-title">قائمة المواد المضافة</div>
+            <div id="itemsContainer">
+                <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;" id="emptyMsg">لا توجد مواد مضافة حالياً. استخدم النموذج أعلاه لإضافة المواد.</p>
             </div>
         </div>
 
-        <!-- 4. SETTINGS VIEW -->
-        <div id="view-settings" class="view">
-            <div class="settings-section">
-                <div class="section-heading">إعدادات التنبيهات</div>
-                <div class="settings-row">
-                    <span>حد التنبيه الافتراضي</span>
-                    <input type="number" id="setting-threshold" class="form-control" style="width: 100px; text-align: center;" value="1000">
-                </div>
-                <div class="settings-row" style="margin-top: 10px;">
-                    <span>الإشعارات الفورية</span>
-                    <label class="switch">
-                        <input type="checkbox" id="setting-notifications" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <div class="section-heading">إدارة البيانات</div>
-                <button class="btn btn-primary" id="btn-export" style="margin-bottom: 10px; padding: 12px;">تصدير البيانات (Excel / CSV)</button>
-                <button class="btn btn-secondary" id="btn-restore-original" style="margin-bottom: 10px; padding: 12px;">إعادة تحميل الـ 340 مادة يدوياً</button>
-                <button class="btn btn-danger" id="btn-clear-local" style="padding: 12px;">حذف البيانات المحلية بالكامل</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM NAVIGATION -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" data-target="dashboard">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            الرئيسية
-        </button>
-        <button class="nav-item" data-target="warehouse">
-            <svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
-            المخزن
-        </button>
-        <button class="nav-item" data-target="add">
-            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            إضافة
-        </button>
-        <button class="nav-item" data-target="settings">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-            الإعدادات
-        </button>
-    </nav>
-
-    <!-- MODAL FOR QUANTITY UPDATE (ADD / WITHDRAW) -->
-    <div id="qty-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title" id="modal-item-title">تعديل كمية</div>
-            <div id="modal-current-info" style="font-size: 0.85rem; color: var(--text-muted);"></div>
-            <div class="form-group">
-                <label class="form-label" id="modal-input-label">الكمية المراد إضافتها</label>
-                <input type="number" step="any" id="modal-qty-input" class="form-control" placeholder="0">
-            </div>
-            <div class="form-actions">
-                <button class="btn btn-secondary" id="modal-cancel">إلغاء</button>
-                <button class="btn btn-primary" id="modal-confirm">تأكيد</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL FOR EDITING ITEM DETAILS -->
-    <div id="edit-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">تعديل بيانات المادة</div>
-            <input type="hidden" id="edit-index">
-            <div class="form-group">
-                <label class="form-label">رمز المادة (Code)</label>
-                <input type="text" id="edit-code" class="form-control">
-            </div>
-            <div class="form-group">
-                <label class="form-label">اسم المادة (Name)</label>
-                <input type="text" id="edit-name" class="form-control">
-            </div>
-            <div class="form-group">
-                <label class="form-label">الكمية</label>
-                <input type="number" step="any" id="edit-qty" class="form-control">
-            </div>
-            <div class="form-group">
-                <label class="form-label">الوحدة</label>
-                <select id="edit-unit" class="form-control">
-                    <option value="PCS">PCS</option>
-                    <option value="KG">KG</option>
-                </select>
-            </div>
-            <div class="form-actions">
-                <button class="btn btn-secondary" id="edit-cancel">إلغاء</button>
-                <button class="btn btn-primary" id="edit-save">حفظ التعديلات</button>
-            </div>
-        </div>
     </div>
 
     <script>
-        const initialRawData = [
-            ["PACKET KIN-EXDIL ORAL SOLUTION 100ML", 4500, "PCS"],
-            ["PACKET KIN-AMOXICILLIN 500MG CAPS", 8200, "PCS"],
-            ["PACKET KIN-PARACETAMOL 500MG TAB", 12500, "PCS"],
-            ["PACKET KIN-IBUPROFEN 400MG TAB", 9400, "PCS"],
-            ["PACKET KIN-CEFALEXIN 500MG", 6100, "PCS"],
-            ["PACKET KIN-OMEPRAZOLE 20MG", 11000, "PCS"],
-            ["PACKET KIN-DICLOFENAC 50MG", 7300, "PCS"],
-            ["PACKET KIN-METFORMIN 850MG", 15000, "PCS"],
-            ["PACKET KIN-ASPIRIN 100MG", 20000, "PCS"],
-            ["PACKET KIN-CETIRIZINE 10MG", 8900, "PCS"],
-            ["LEAFLET KIN-EXDIL ORAL SOLUTION", 5000, "PCS"],
-            ["LEAFLET KIN-AMOXICILLIN 500MG", 9000, "PCS"],
-            ["LEAFLET KIN-PARACETAMOL 500MG", 14000, "PCS"],
-            ["LEAFLET KIN-IBUPROFEN 400MG", 10000, "PCS"],
-            ["LEAFLET KIN-CEFALEXIN 500MG", 7000, "PCS"],
-            ["LEAFLET KIN-OMEPRAZOLE 20MG", 12000, "PCS"],
-            ["LEAFLET KIN-DICLOFENAC 50MG", 8000, "PCS"],
-            ["LEAFLET KIN-METFORMIN 850MG", 16000, "PCS"],
-            ["LEAFLET KIN-ASPIRIN 100MG", 22000, "PCS"],
-            ["LEAFLET KIN-CETIRIZINE 10MG", 9500, "PCS"],
-            ["LABEL KIN-EXDIL 100ML", 4800, "PCS"],
-            ["LABEL KIN-COUGH SYRUP 120ML", 6500, "PCS"],
-            ["LABEL KIN-MULTIVITAMIN SYRUP", 7200, "PCS"],
-            ["LABEL KIN-ANTACID SUSPENSION", 5300, "PCS"],
-            ["LABEL KIN-EYE DROPS 15ML", 3900, "PCS"],
-            ["ALU FOIL ZYPRAXEN 10 MG (204MM)", 1250, "KG"],
-            ["ALU FOIL ZYPRAXEN 10 MG (204MM) MOH", 850, "KG"],
-            ["ALU FOIL KINDIPRIM TAB (243 MM)", 920, "KG"],
-            ["ALU FOIL KINDIPRIM TAB (243 MM) MOH", 1100, "KG"],
-            ["ALU FOIL PARACETAMOL 500MG (250MM)", 2400, "KG"],
-            ["ALU FOIL AMOXICILLIN 500MG (220MM)", 1800, "KG"],
-            ["ALU FOIL IBUPROFEN 400MG (230MM)", 1450, "KG"],
-            ["ALU FOIL METFORMIN 850MG (260MM)", 3100, "KG"],
-            ["TUBE KIN-DERM CREAM 30G", 3500, "PCS"],
-            ["TUBE KIN-FUNGICIDAL OINTMENT 20G", 2800, "PCS"],
-            ["TUBE KIN-ANTIBIOTIC GEL 15G", 4100, "PCS"],
-            ["TUBE KIN-PAIN RELIEF GEL 50G", 1950, "PCS"],
-            ["CARTON KIN-AMOXICILLIN 500MG", 2200, "PCS"],
-            ["CARTON KIN-PARACETAMOL 500MG", 4500, "PCS"],
-            ["CARTON KIN-IBUPROFEN 400MG", 3100, "PCS"],
-            ["CARTON KIN-OMEPRAZOLE 20MG", 3800, "PCS"],
-            ["CARTON KIN-CEFALEXIN 500MG", 1900, "PCS"],
-            ["P.V.C KIN-PARACETAMOL 500MG", 2100, "KG"],
-            ["P.V.C KIN-IBUPROFEN 400MG", 1850, "KG"],
-            ["P.V.C KIN-AMOXICILLIN 500MG", 2600, "KG"],
-            ["P.V.C KIN-DICLOFENAC 50MG", 1400, "KG"],
-            ["BOTTLE SYRUP 100ML AMBER", 3200, "PCS"],
-            ["BOTTLE SYRUP 120ML CLEAR", 2700, "PCS"],
-            ["BOTTLE DROPS 15ML", 4100, "PCS"],
-            ["BOTTLE SYRUP 250ML AMBER", 1500, "PCS"],
-            ["GELATIN CAPSULES SIZE 0", 25000, "PCS"],
-            ["GELATIN CAPSULES SIZE 1", 18000, "PCS"],
-            ["GELATIN CAPSULES SIZE 2", 12000, "PCS"],
-            ["ALU ALU FOIL OMEPRAZOLE 20MG", 1650, "KG"],
-            ["ALU ALU FOIL DICLOFENAC 75MG", 1200, "KG"],
-            ["ALU ALU FOIL CEFIXIME 400MG", 980, "KG"],
-            ["PACKET KIN-PHARMA ITEM CODE-1057", 5000, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1058", 6000, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1059", 4500, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1060", 1200, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1061", 3000, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1062", 2500, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1063", 1500, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1064", 3500, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1065", 1100, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1066", 2000, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1067", 4000, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1068", 5500, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1069", 4200, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1070", 1300, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1071", 3100, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1072", 2600, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1073", 1600, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1074", 3600, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1075", 1150, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1076", 2100, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1077", 4800, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1078", 5200, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1079", 4300, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1080", 1250, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1081", 3200, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1082", 2700, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1083", 1450, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1084", 3400, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1085", 1050, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1086", 2200, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1087", 4100, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1088", 5800, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1089", 4600, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1090", 1350, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1091", 2900, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1092", 2400, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1093", 1550, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1094", 3700, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1095", 1200, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1096", 1900, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1097", 4300, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1098", 5100, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1099", 4400, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1100", 1400, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1101", 3300, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1102", 2800, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1103", 1650, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1104", 3800, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1105", 1250, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1106", 2300, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1107", 4600, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1108", 5300, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1109", 4100, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1110", 1150, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1111", 3050, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1112", 2550, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1113", 1500, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1114", 3550, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1115", 1100, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1116", 2050, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1117", 4200, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1118", 5600, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1119", 4700, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1120", 1300, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1121", 3150, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1122", 2650, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1123", 1600, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1124", 3650, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1125", 1150, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1126", 2150, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1127", 4700, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1128", 5400, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1129", 4800, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1130", 1250, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1131", 3250, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1132", 2750, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1133", 1450, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1134", 3450, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1135", 1050, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1136", 2250, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1137", 4150, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1138", 5900, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1139", 4900, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1140", 1350, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1141", 2950, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1142", 2450, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1143", 1550, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1144", 3750, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1145", 1200, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1146", 1950, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1147", 4350, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1148", 5150, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1149", 4450, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1150", 1400, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1151", 3350, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1152", 2850, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1153", 1650, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1154", 3850, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1155", 1250, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1156", 2350, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1157", 4650, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1158", 5350, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1159", 4150, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1160", 1150, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1161", 3050, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1162", 2550, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1163", 1500, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1164", 3550, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1165", 1100, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1166", 2050, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1167", 4250, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1168", 5650, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1169", 4750, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1170", 1300, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1171", 3150, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1172", 2650, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1173", 1600, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1174", 3650, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1175", 1150, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1176", 2150, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1177", 4750, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1178", 5450, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1179", 4850, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1180", 1250, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1181", 3250, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1182", 2750, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1183", 1450, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1184", 3450, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1185", 1050, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1186", 2250, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1187", 4150, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1188", 5950, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1189", 4950, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1190", 1350, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1191", 2950, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1192", 2450, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1193", 1550, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1194", 3750, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1195", 1200, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1196", 1950, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1197", 4350, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1198", 5150, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1199", 4450, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1200", 1400, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1201", 3350, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1202", 2850, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1203", 1650, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1204", 3850, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1205", 1250, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1206", 2350, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1207", 4650, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1208", 5350, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1209", 4150, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1210", 1150, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1211", 3050, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1212", 2550, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1213", 1500, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1214", 3550, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1215", 1100, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1216", 2050, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1217", 4250, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1218", 5650, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1219", 4750, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1220", 1300, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1221", 3150, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1222", 2650, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1223", 1600, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1224", 3650, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1225", 1150, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1226", 2150, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1227", 4750, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1228", 5450, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1229", 4850, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1230", 1250, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1231", 3250, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1232", 2750, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1233", 1450, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1234", 3450, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1235", 1050, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1236", 2250, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1237", 4150, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1238", 5950, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1239", 4950, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1240", 1350, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1241", 2950, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1242", 2450, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1243", 1550, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1244", 3750, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1245", 1200, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1246", 1950, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1247", 4350, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1248", 5150, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1249", 4450, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1250", 1400, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1251", 3350, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1252", 2850, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1253", 1650, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1254", 3850, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1255", 1250, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1256", 2350, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1257", 4650, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1258", 5350, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1259", 4150, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1260", 1150, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1261", 3050, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1262", 2550, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1263", 1500, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1264", 3550, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1265", 1100, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1266", 2050, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1267", 4250, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1268", 5650, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1269", 4750, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1270", 1300, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1271", 3150, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1272", 2650, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1273", 1600, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1274", 3650, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1275", 1150, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1276", 2150, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1277", 4750, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1278", 5450, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1279", 4850, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1280", 1250, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1281", 3250, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1282", 2750, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1283", 1450, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1284", 3450, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1285", 1050, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1286", 2250, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1287", 4150, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1288", 5950, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1289", 4950, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1290", 1350, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1291", 2950, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1292", 2450, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1293", 1550, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1294", 3750, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1295", 1200, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1296", 1950, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1297", 4350, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1298", 5150, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1299", 4450, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1300", 1400, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1301", 3350, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1302", 2850, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1303", 1650, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1304", 3850, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1305", 1250, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1306", 2350, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1307", 4650, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1308", 5350, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1309", 4150, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1310", 1150, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1311", 3050, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1312", 2550, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1313", 1500, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1314", 3550, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1315", 1100, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1316", 2050, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1317", 4250, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1318", 5650, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1319", 4750, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1320", 1300, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1321", 3150, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1322", 2650, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1323", 1600, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1324", 3650, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1325", 1150, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1326", 2150, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1327", 4750, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1328", 5450, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1329", 4850, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1330", 1250, "KG"],
-            ["TUBE KIN-PHARMA ITEM CODE-1331", 3250, "PCS"],
-            ["CARTON KIN-PHARMA ITEM CODE-1332", 2750, "PCS"],
-            ["P.V.C KIN-PHARMA ITEM CODE-1333", 1450, "KG"],
-            ["BOTTLE KIN-PHARMA ITEM CODE-1334", 3450, "PCS"],
-            ["BLISTER FOIL KIN-PHARMA ITEM CODE-1335", 1050, "KG"],
-            ["BOX KIN-PHARMA ITEM CODE-1336", 2250, "PCS"],
-            ["PACKET KIN-PHARMA ITEM CODE-1337", 4150, "PCS"],
-            ["LEAFLET KIN-PHARMA ITEM CODE-1338", 5950, "PCS"],
-            ["LABEL KIN-PHARMA ITEM CODE-1339", 4950, "PCS"],
-            ["ALU FOIL KIN-PHARMA ITEM CODE-1340", 1350, "KG"]
-        ];
+        // مصفوفة تخزين المواد المضافة ديناميكياً
+        let dynamicItems = [];
 
-        let inventory = [];
-        let settings = {
-            threshold: 1000,
-            notificationsEnabled: true
-        };
-
-        let currentFilter = 'all';
-        let activeModalAction = null;
-
-        // مفتاح تخزين جديد كلياً مع أمر مسح إجباري لبيانات السافاري القديمة
-        const STORAGE_KEY = 'stockflow_v6_data';
-        const SETTINGS_KEY = 'stockflow_v6_settings';
-
-        function initApp() {
-            // مسح أي بيانات قديمة مخزنة في متصفح الآيفون لضمان عدم حدوث تعارض
-            localStorage.clear();
-            loadOriginalData(false);
-            loadSettings();
-            setupEventListeners();
-            renderAll();
-        }
-
-        function loadData() {
-            loadOriginalData(false);
-        }
-
-        function saveData() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
-            renderAll();
-        }
-
-        function loadSettings() {
-            try {
-                const stored = localStorage.getItem(SETTINGS_KEY);
-                if (stored) {
-                    settings = JSON.parse(stored);
-                }
-            } catch(e) {}
-            document.getElementById('setting-threshold').value = settings.threshold;
-            document.getElementById('setting-notifications').checked = settings.notificationsEnabled;
-        }
-
-        function saveSettings() {
-            settings.threshold = parseFloat(document.getElementById('setting-threshold').value) || 1000;
-            settings.notificationsEnabled = document.getElementById('setting-notifications').checked;
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-            renderAll();
-        }
-
-        function loadOriginalData(showAlert = true) {
-            inventory = initialRawData.map((item, index) => {
-                return {
-                    code: `KINDI-${1000 + index}`,
-                    name: item[0],
-                    quantity: item[1],
-                    unit: item[2]
-                };
-            });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
-            if (showAlert) showNotification("تم تحميل الـ 340 مادة بنجاح");
-        }
-
-        function setupEventListeners() {
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-                    
-                    btn.classList.add('active');
-                    const target = btn.getAttribute('data-target');
-                    document.getElementById(`view-${target}`).classList.add('active');
-                });
-            });
-
-            document.getElementById('search-input').addEventListener('input', renderWarehouse);
-
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.getAttribute('data-filter');
-                    renderWarehouse();
-                });
-            });
-
-            document.getElementById('add-item-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const code = document.getElementById('new-code').value.trim();
-                const name = document.getElementById('new-name').value.trim();
-                const qty = parseFloat(document.getElementById('new-qty').value) || 0;
-                const unit = document.getElementById('new-unit').value;
-
-                const existingIndex = inventory.findIndex(item => 
-                    item.code.toLowerCase() === code.toLowerCase() &&
-                    item.name.toLowerCase() === name.toLowerCase() &&
-                    item.unit === unit
-                );
-
-                if (existingIndex !== -1) {
-                    inventory[existingIndex].quantity += qty;
-                    showNotification(`تم زيادة كمية المادة المطابقة بنجاح`);
-                } else {
-                    inventory.push({ code, name, quantity: qty, unit });
-                    showNotification(`تم إضافة مادة جديدة بنجاح`);
-                }
-
-                saveData();
-                document.getElementById('add-item-form').reset();
-                document.querySelector('[data-target="warehouse"]').click();
-            });
-
-            document.getElementById('modal-cancel').addEventListener('click', closeModal);
-            document.getElementById('modal-confirm').addEventListener('click', handleModalConfirm);
-
-            document.getElementById('edit-cancel').addEventListener('click', closeEditModal);
-            document.getElementById('edit-save').addEventListener('click', handleEditSave);
-
-            document.getElementById('setting-threshold').addEventListener('input', saveSettings);
-            document.getElementById('setting-notifications').addEventListener('change', saveSettings);
-            document.getElementById('btn-export').addEventListener('click', exportCSV);
-            document.getElementById('btn-restore-original').addEventListener('click', () => {
-                loadOriginalData(true);
-                renderAll();
-            });
-            document.getElementById('btn-clear-local').addEventListener('click', () => {
-                if(confirm("تحذير: هل تريد مسح المخزن بالكامل؟")) {
-                    inventory = [];
-                    saveData();
-                    showNotification("تم تفريغ المخزن");
-                }
-            });
-        }
-
-        function renderAll() {
-            renderDashboard();
-            renderWarehouse();
-        }
-
-        function renderDashboard() {
-            const total = inventory.length;
-            const outCount = inventory.filter(i => i.quantity <= 0).length;
-            const warningCount = inventory.filter(i => i.quantity > 0 && i.quantity <= settings.threshold).length;
-            const pcsCount = inventory.filter(i => i.unit === 'PCS').length;
-            const kgCount = inventory.filter(i => i.unit === 'KG').length;
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-out').textContent = outCount;
-            document.getElementById('stat-warning').textContent = warningCount;
-            document.getElementById('stat-pcs').textContent = pcsCount;
-            document.getElementById('stat-kg').textContent = kgCount;
-
-            const criticalList = document.getElementById('critical-items-list');
-            const criticalItems = inventory.map((item, index) => ({...item, originalIndex: index}))
-                                          .filter(i => i.quantity <= settings.threshold);
-
-            if (criticalItems.length === 0) {
-                criticalList.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px;">لا توجد مواد حرجة حالياً ممتاز!</div>`;
-                return;
-            }
-
-            criticalList.innerHTML = criticalItems.slice(0, 20).map(item => createItemCardHTML(item, item.originalIndex)).join('');
-            attachCardEvents(criticalList);
-        }
-
-        function renderWarehouse() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            const listContainer = document.getElementById('warehouse-items-list');
-
-            let filtered = inventory.map((item, index) => ({...item, originalIndex: index}));
-
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(i => i.unit === currentFilter);
-            }
-
-            if (query) {
-                filtered = filtered.filter(item => {
-                    const nameMatch = item.name.toLowerCase().includes(query);
-                    const codeMatch = item.code.toLowerCase().includes(query);
-                    const cleanQuery = query.replace(/\s+/g, '');
-                    const cleanName = item.name.toLowerCase().replace(/\s+/g, '');
-                    const measureMatch = cleanName.includes(cleanQuery);
-                    
-                    return nameMatch || codeMatch || measureMatch;
-                });
-            }
-
-            if (filtered.length === 0) {
-                listContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">لا توجد مواد مطابقة للبحث</div>`;
-                return;
-            }
-
-            const displayList = query ? filtered : filtered.slice(0, 50);
+        function checkDifference() {
+            const diffVal = parseFloat(document.getElementById('itemDiff').value) || 0;
+            const alertBox = document.getElementById('formAlert');
             
-            let htmlContent = displayList.map(item => createItemCardHTML(item, item.originalIndex)).join('');
-            if (!query && filtered.length > 50) {
-                htmlContent += `<div style="text-align: center; color: var(--text-muted); padding: 15px; font-size: 0.85rem;">يتم عرض أول 50 مادة من أصل ${filtered.length}. استخدم البحث للعثور على باقي المواد بدقة.</div>`;
-            }
-
-            listContainer.innerHTML = htmlContent;
-            attachCardEvents(listContainer);
-        }
-
-        function createItemCardHTML(item, index) {
-            let badgeHTML = '';
-            if (item.quantity <= 0) {
-                badgeHTML = `<span class="badge out">نفدت</span>`;
-            } else if (item.quantity <= settings.threshold) {
-                badgeHTML = `<span class="badge warning">قريبة من النفاد</span>`;
+            // قاعدة الفروقات: إذا تجاوزت 3,000 دينار يظهر تنبيه أحمر
+            if (Math.abs(diffVal) > 3000) {
+                alertBox.style.display = 'block';
             } else {
-                badgeHTML = `<span class="badge normal">متوفر</span>`;
+                alertBox.style.display = 'none';
             }
-
-            return `
-                <div class="item-card">
-                    <div class="item-header">
-                        <span class="item-code">${item.code}</span>
-                        ${badgeHTML}
-                    </div>
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-qty-row">
-                        <span class="item-qty">${item.quantity} ${item.unit}</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn btn-success action-add" data-index="${index}">+ إضافة</button>
-                        <button class="btn btn-danger action-withdraw" data-index="${index}">- سحب</button>
-                        <button class="btn btn-secondary action-edit" data-index="${index}">تعديل</button>
-                        <button class="btn btn-danger action-delete" data-index="${index}">حذف</button>
-                    </div>
-                </div>
-            `;
         }
 
-        function attachCardEvents(container) {
-            container.querySelectorAll('.action-add').forEach(btn => {
-                btn.addEventListener('click', () => openModal(parseInt(btn.dataset.index), 'add'));
-            });
-            container.querySelectorAll('.action-withdraw').forEach(btn => {
-                btn.addEventListener('click', () => openModal(parseInt(btn.dataset.index), 'withdraw'));
-            });
-            container.querySelectorAll('.action-edit').forEach(btn => {
-                btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.index)));
-            });
-            container.querySelectorAll('.action-delete').forEach(btn => {
-                btn.addEventListener('click', () => deleteItem(parseInt(btn.dataset.index)));
-            });
-        }
+        function addNewItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const code = document.getElementById('itemCode').value.trim();
+            const qty = document.getElementById('itemQty').value;
+            const diff = document.getElementById('itemDiff').value;
 
-        function openModal(index, type) {
-            activeModalAction = { index, type };
-            const item = inventory[index];
-            const modal = document.getElementById('qty-modal');
-            
-            document.getElementById('modal-item-title').textContent = type === 'add' ? 'إضافة كمية للمادة' : 'سحب كمية من المادة';
-            document.getElementById('modal-current-info').textContent = `المادة: ${item.name} | الرصيد الحالي: ${item.quantity} ${item.unit}`;
-            document.getElementById('modal-input-label').textContent = type === 'add' ? 'الكمية المراد إضافتها' : 'الكمية المراد سحبها';
-            document.getElementById('modal-qty-input').value = '';
-            
-            modal.classList.add('open');
-            document.getElementById('modal-qty-input').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('qty-modal').classList.remove('open');
-            activeModalAction = null;
-        }
-
-        function handleModalConfirm() {
-            if (!activeModalAction) return;
-            const inputVal = parseFloat(document.getElementById('modal-qty-input').value);
-            if (isNaN(inputVal) || inputVal <= 0) {
-                alert("يرجى إدخال كمية صحيحة أكبر من الصفر");
+            if (!name) {
+                alert('يرجى إدخال اسم المادة على الأقل.');
                 return;
             }
 
-            const { index, type } = activeModalAction;
-            const item = inventory[index];
+            const newItem = {
+                id: Date.now(),
+                name: name,
+                code: code || 'غير محدد',
+                qty: qty || '0',
+                diff: diff || '0'
+            };
 
-            if (type === 'add') {
-                item.quantity += inputVal;
-                showNotification(`تمت إضافة ${inputVal} ${item.unit} بنجاح`);
-            } else if (type === 'withdraw') {
-                if (inputVal > item.quantity) {
-                    alert("لا يمكن سحب كمية أكبر من الرصيد الحالي");
-                    return;
-                }
-                item.quantity -= inputVal;
-                showNotification(`تم سحب ${inputVal} ${item.unit} بنجاح`);
+            dynamicItems.push(newItem);
+            renderItems();
+            clearForm();
+        }
+
+        function deleteItem(id) {
+            dynamicItems = dynamicItems.filter(item => item.id !== id);
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            
+            if (dynamicItems.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;" id="emptyMsg">لا توجد مواد مضافة حالياً. استخدم النموذج أعلاه لإضافة المواد.</p>`;
+                return;
             }
 
-            saveData();
-            closeModal();
-        }
-
-        function deleteItem(index) {
-            const item = inventory[index];
-            if (confirm(`هل أنت متأكد من حذف المادة نهائياً؟\n${item.name}`)) {
-                inventory.splice(index, 1);
-                saveData();
-                showNotification("تم حذف المادة بنجاح");
-            }
-        }
-
-        function openEditModal(index) {
-            const item = inventory[index];
-            document.getElementById('edit-index').value = index;
-            document.getElementById('edit-code').value = item.code;
-            document.getElementById('edit-name').value = item.name;
-            document.getElementById('edit-qty').value = item.quantity;
-            document.getElementById('edit-unit').value = item.unit;
-
-            document.getElementById('edit-modal').classList.add('open');
-        }
-
-        function closeEditModal() {
-            document.getElementById('edit-modal').classList.remove('open');
-        }
-
-        function handleEditSave() {
-            const index = parseInt(document.getElementById('edit-index').value);
-            const code = document.getElementById('edit-code').value.trim();
-            const name = document.getElementById('edit-name').value.trim();
-            const quantity = parseFloat(document.getElementById('edit-qty').value) || 0;
-            const unit = document.getElementById('edit-unit').value;
-
-            inventory[index] = { code, name, quantity, unit };
-            saveData();
-            closeEditModal();
-            showNotification("تم تعديل بيانات المادة بنجاح");
-        }
-
-        function showNotification(text) {
-            const banner = document.getElementById('notification-banner');
-            banner.textContent = text;
-            banner.classList.add('show');
-            setTimeout(() => {
-                banner.classList.remove('show');
-            }, 3500);
-        }
-
-        function exportCSV() {
-            let csv = '\uFEFFCode,Name,Quantity,Unit\n';
-            inventory.forEach(i => {
-                csv += `"${i.code}","${i.name}",${i.quantity},"${i.unit}"\n`;
+            let html = '';
+            dynamicItems.forEach(item => {
+                const isOverLimit = Math.abs(parseFloat(item.diff) || 0) > 3000;
+                html += `
+                    <div class="item-card ${isOverLimit ? 'diff-alert' : ''}">
+                        <div class="item-info">
+                            <strong>${item.name}</strong>
+                            <span>الرمز: ${item.code}</span>
+                        </div>
+                        <div class="item-info">
+                            <span>الكمية: ${item.qty}</span>
+                            <span>الفروقات: ${item.diff} د.ع</span>
+                        </div>
+                        <button class="btn-danger" onclick="deleteItem(${item.id})">حذف المادة</button>
+                    </div>
+                `;
             });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'StockFlow_340_Items.csv';
-            a.click();
-            URL.revokeObjectURL(url);
+
+            container.innerHTML = html;
         }
 
-        window.addEventListener('DOMContentLoaded', initApp);
+        function clearForm() {
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemCode').value = '';
+            document.getElementById('itemQty').value = '';
+            document.getElementById('itemDiff').value = '';
+            document.getElementById('formAlert').style.display = 'none';
+        }
     </script>
 </body>
 </html>
