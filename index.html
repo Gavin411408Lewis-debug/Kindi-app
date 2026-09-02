@@ -2,10 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="K">
+
 <meta name="theme-color" content="#0f172a">
+
+<!-- أيقونة البرنامج: K -->
+<link rel="apple-touch-icon" sizes="180x180"
+href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAH5klEQVR42u3deUzTZxzH8aKIHEJbqKUc">
+
+<link rel="icon" type="image/svg+xml"
+href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='38' fill='%230f766e'/%3E%3Ctext x='90' y='128' text-anchor='middle' font-family='Arial,sans-serif' font-size='110' font-weight='bold' fill='white'%3EK%3C/text%3E%3C/svg%3E">
 
 <title>إدارة مواد التعبئة والتغليف</title>
 
@@ -579,179 +590,468 @@ main{
 <main>
 
 <section class="page active" id="home">
+
  <div class="section-title">نظرة عامة</div>
+
  <div class="dashboard">
-  <div class="stat"><small>كل المواد</small><strong id="sTotal">0</strong></div>
-  <div class="stat"><small>مواد PCS</small><strong id="sPCS">0</strong></div>
-  <div class="stat"><small>مواد KG</small><strong id="sKG">0</strong></div>
-  <div class="stat"><small>تحتاج انتباه</small><strong id="sLow">0</strong></div>
+  <div class="stat">
+   <small>كل المواد</small>
+   <strong id="sTotal">0</strong>
+  </div>
+
+  <div class="stat">
+   <small>مواد PCS</small>
+   <strong id="sPCS">0</strong>
+  </div>
+
+  <div class="stat">
+   <small>مواد KG</small>
+   <strong id="sKG">0</strong>
+  </div>
+
+  <div class="stat">
+   <small>تحتاج انتباه</small>
+   <strong id="sLow">0</strong>
+  </div>
  </div>
 
  <div class="section-title">الأقسام</div>
+
  <div class="menu-grid">
-  <button class="menu" onclick="go('stock')"><div class="ico">📦</div><b>المخزون</b><small>عرض كل المواد</small></button>
-  <button class="menu" onclick="go('withdraw')"><div class="ico">📤</div><b>إخراج مواد</b><small>سحب من الرصيد</small></button>
-  <button class="menu" onclick="go('add')"><div class="ico">📥</div><b>إضافة مواد</b><small>زيادة الرصيد</small></button>
-  <button class="menu" onclick="go('reports')"><div class="ico">📊</div><b>التقارير</b><small>تقارير المخزون</small></button>
-  <button class="menu" onclick="go('excel')"><div class="ico">📁</div><b>ملف Excel / Sheets</b><small>ربط ومزامنة</small></button>
-  <button class="menu" onclick="go('settings')"><div class="ico">⚙️</div><b>الإعدادات</b><small>تحكم بالبرنامج</small></button>
+
+  <button class="menu" onclick="go('stock')">
+   <div class="ico">📦</div>
+   <b>المخزون</b>
+   <small>عرض كل المواد</small>
+  </button>
+
+  <button class="menu" onclick="go('withdraw')">
+   <div class="ico">📤</div>
+   <b>إخراج مواد</b>
+   <small>سحب من الرصيد</small>
+  </button>
+
+  <button class="menu" onclick="go('add')">
+   <div class="ico">📥</div>
+   <b>إضافة مواد</b>
+   <small>زيادة الرصيد</small>
+  </button>
+
+  <button class="menu" onclick="go('reports')">
+   <div class="ico">📊</div>
+   <b>التقارير</b>
+   <small>تقارير المخزون</small>
+  </button>
+
+  <button class="menu" onclick="go('excel')">
+   <div class="ico">📁</div>
+   <b>ملف Excel / Sheets</b>
+   <small>ربط ومزامنة</small>
+  </button>
+
+  <button class="menu" onclick="go('settings')">
+   <div class="ico">⚙️</div>
+   <b>الإعدادات</b>
+   <small>تحكم بالبرنامج</small>
+  </button>
+
  </div>
 
  <div class="section-title">آخر الحركات</div>
+
  <div id="homeHistory"></div>
+
 </section>
 
 <section class="page" id="stock">
+
  <div class="section-title">المخزون المشترك</div>
+
  <div class="search">
-  <input id="search" placeholder="🔎 ابحث بالكود أو اسم المادة أو المستحضر..." oninput="renderStock()">
+  <input
+   id="search"
+   placeholder="🔎 ابحث بالكود أو اسم المادة أو المستحضر..."
+   oninput="renderStock()">
  </div>
+
  <div class="filters">
-  <button class="filter active" onclick="setFilter('ALL',this)">الكل</button>
-  <button class="filter" onclick="setFilter('PCS',this)">PCS</button>
-  <button class="filter" onclick="setFilter('KG',this)">KG</button>
-  <button class="filter" onclick="setFilter('LOW',this)">⚠️ تحتاج انتباه</button>
+
+  <button class="filter active" onclick="setFilter('ALL',this)">
+   الكل
+  </button>
+
+  <button class="filter" onclick="setFilter('PCS',this)">
+   PCS
+  </button>
+
+  <button class="filter" onclick="setFilter('KG',this)">
+   KG
+  </button>
+
+  <button class="filter" onclick="setFilter('LOW',this)">
+   ⚠️ تحتاج انتباه
+  </button>
+
  </div>
+
  <div id="stockList"></div>
+
 </section>
 
 <section class="page" id="withdraw">
+
  <div class="section-title">📤 إخراج مواد</div>
+
  <div class="form-card">
+
   <div class="field">
    <label>ابحث عن المادة</label>
-   <input id="withdrawSearch" oninput="searchAction('withdraw')" placeholder="اكتب اسم المادة أو الكود...">
+
+   <input
+    id="withdrawSearch"
+    oninput="searchAction('withdraw')"
+    placeholder="اكتب اسم المادة أو الكود...">
+
   </div>
+
   <div id="withdrawResults"></div>
+
  </div>
+
 </section>
 
 <section class="page" id="add">
+
  <div class="section-title">📥 إضافة مواد</div>
+
  <div class="form-card">
+
   <div class="field">
    <label>ابحث عن المادة</label>
-   <input id="addSearch" oninput="searchAction('add')" placeholder="اكتب اسم المادة أو الكود...">
+
+   <input
+    id="addSearch"
+    oninput="searchAction('add')"
+    placeholder="اكتب اسم المادة أو الكود...">
+
   </div>
+
   <div id="addResults"></div>
+
  </div>
+
 </section>
 
 <section class="page" id="reports">
+
  <div class="section-title">📊 التقارير</div>
+
  <div class="menu-grid">
-  <button class="menu" onclick="report('ALL')">📦<b>كل المواد</b></button>
-  <button class="menu" onclick="report('PCS')">🔵<b>مواد PCS</b></button>
-  <button class="menu" onclick="report('KG')">🟡<b>مواد KG</b></button>
-  <button class="menu" onclick="report('LOW')">⚠️<b>تحتاج انتباه</b></button>
+
+  <button class="menu" onclick="report('ALL')">
+   📦
+   <b>كل المواد</b>
+  </button>
+
+  <button class="menu" onclick="report('PCS')">
+   🔵
+   <b>مواد PCS</b>
+  </button>
+
+  <button class="menu" onclick="report('KG')">
+   🟡
+   <b>مواد KG</b>
+  </button>
+
+  <button class="menu" onclick="report('LOW')">
+   ⚠️
+   <b>تحتاج انتباه</b>
+  </button>
+
  </div>
+
  <div class="section-title">النتيجة</div>
+
  <div id="reportResult"></div>
+
 </section>
 
 <section class="page" id="excel">
+
  <div class="section-title">📁 مزامنة الملف المشترك</div>
+
  <div class="form-card">
+
   <div class="info">
-   تم ربط البرنامج تلقائياً بملف Google Sheets المشترك الخاص بك.<br>
+   تم ربط البرنامج تلقائياً بملف Google Sheets المشترك الخاص بك.
+   <br>
    يمكنك جلب أحدث الأرصدة المحدثة من قبل أصدقائك أو تصدير البيانات.
   </div>
-  <button class="btn primary" style="width:100%;margin-top:12px" onclick="fetchFromGoogleSheets()">🔄 جلب التحديثات من Google Sheets</button>
-  <button class="btn dark" style="width:100%;margin-top:8px" onclick="exportExcel()">📤 تصدير إلى Excel</button>
-  <button class="btn light" style="width:100%;margin-top:8px" onclick="backup()">💾 نسخ احتياطي</button>
+
+  <button
+   class="btn primary"
+   style="width:100%;margin-top:12px"
+   onclick="fetchFromGoogleSheets()">
+   🔄 جلب التحديثات من Google Sheets
+  </button>
+
+  <button
+   class="btn dark"
+   style="width:100%;margin-top:8px"
+   onclick="exportExcel()">
+   📤 تصدير إلى Excel
+  </button>
+
+  <button
+   class="btn light"
+   style="width:100%;margin-top:8px"
+   onclick="backup()">
+   💾 نسخ احتياطي
+  </button>
+
  </div>
+
 </section>
 
 <section class="page" id="settings">
+
  <div class="section-title">⚙️ الإعدادات</div>
+
  <div class="form-card">
-  <div class="field"><label>اسم البرنامج</label><input id="setAppTitle"></div>
-  <div class="field"><label>اسم الشركة / القسم</label><input id="setCompany"></div>
-  <div class="setting">
-   <div><b>🔔 إشعارات الحركات</b><br><small>تنبيه عند الإضافة أو الإخراج</small></div>
-   <button class="switch on" id="switchNotify" onclick="toggleSetting('notify')"><i></i></button>
+
+  <div class="field">
+   <label>اسم البرنامج</label>
+   <input id="setAppTitle">
   </div>
-  <div class="setting">
-   <div><b>حد تنبيه PCS</b></div>
-   <input id="setPCS" type="number" style="width:110px;padding:9px">
+
+  <div class="field">
+   <label>اسم الشركة / القسم</label>
+   <input id="setCompany">
   </div>
+
   <div class="setting">
-   <div><b>حد تنبيه KG</b></div>
-   <input id="setKG" type="number" step="0.01" style="width:110px;padding:9px">
+
+   <div>
+    <b>🔔 إشعارات الحركات</b>
+    <br>
+    <small>تنبيه عند الإضافة أو الإخراج</small>
+   </div>
+
+   <button
+    class="switch on"
+    id="switchNotify"
+    onclick="toggleSetting('notify')">
+    <i></i>
+   </button>
+
   </div>
-  <button class="btn primary" style="width:100%;margin-top:12px" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+
+  <div class="setting">
+
+   <div>
+    <b>حد تنبيه PCS</b>
+   </div>
+
+   <input
+    id="setPCS"
+    type="number"
+    style="width:110px;padding:9px">
+
+  </div>
+
+  <div class="setting">
+
+   <div>
+    <b>حد تنبيه KG</b>
+   </div>
+
+   <input
+    id="setKG"
+    type="number"
+    step="0.01"
+    style="width:110px;padding:9px">
+
+  </div>
+
+  <button
+   class="btn primary"
+   style="width:100%;margin-top:12px"
+   onclick="saveSettings()">
+   💾 حفظ الإعدادات
+  </button>
+
  </div>
+
 </section>
 
 </main>
 
 <nav class="bottom">
+
  <div class="bottom-inner">
-  <button class="nav active" onclick="go('home')"><span>🏠</span>الرئيسية</button>
-  <button class="nav" onclick="go('stock')"><span>📦</span>المخزون</button>
-  <button class="nav" onclick="go('withdraw')"><span>📤</span>إخراج</button>
-  <button class="nav" onclick="go('add')"><span>📥</span>إضافة</button>
-  <button class="nav" onclick="go('settings')"><span>⚙️</span>المزيد</button>
+
+  <button class="nav active" onclick="go('home')">
+   <span>🏠</span>
+   الرئيسية
+  </button>
+
+  <button class="nav" onclick="go('stock')">
+   <span>📦</span>
+   المخزون
+  </button>
+
+  <button class="nav" onclick="go('withdraw')">
+   <span>📤</span>
+   إخراج
+  </button>
+
+  <button class="nav" onclick="go('add')">
+   <span>📥</span>
+   إضافة
+  </button>
+
+  <button class="nav" onclick="go('settings')">
+   <span>⚙️</span>
+   المزيد
+  </button>
+
  </div>
+
 </nav>
 
-<!-- حركة -->
 <div class="modal" id="moveModal">
+
  <div class="modal-box">
-  <button class="close" onclick="closeModal('moveModal')">×</button>
+
+  <button class="close" onclick="closeModal('moveModal')">
+   ×
+  </button>
+
   <div class="modal-title" id="moveTitle"></div>
+
   <div id="moveInfo" class="info"></div>
+
   <div class="field" style="margin-top:13px">
+
    <label>الكمية</label>
-   <input id="moveQty" type="number" min="0" step="0.0001">
+
+   <input
+    id="moveQty"
+    type="number"
+    min="0"
+    step="0.0001">
+
   </div>
+
   <div class="field">
+
    <label>ملاحظة</label>
-   <input id="moveNote" placeholder="اختياري">
+
+   <input
+    id="moveNote"
+    placeholder="اختياري">
+
   </div>
-  <button class="btn primary" style="width:100%" onclick="saveMove()">تنفيذ العملية وتحديث السحابي</button>
+
+  <button
+   class="btn primary"
+   style="width:100%"
+   onclick="saveMove()">
+   تنفيذ العملية وتحديث السحابي
+  </button>
+
  </div>
+
 </div>
 
-<!-- تعديل الاسم -->
 <div class="modal" id="editModal">
+
  <div class="modal-box">
-  <button class="close" onclick="closeModal('editModal')">×</button>
-  <div class="modal-title">✏️ تعديل اسم المادة</div>
-  <div id="editInfo" class="info"></div>
-  <div class="field" style="margin-top:13px">
-   <label>اسم المادة الجديد</label>
-   <input id="editName" type="text" placeholder="اكتب اسم المادة">
+
+  <button class="close" onclick="closeModal('editModal')">
+   ×
+  </button>
+
+  <div class="modal-title">
+   ✏️ تعديل اسم المادة
   </div>
-  <button class="btn primary" style="width:100%" onclick="saveMaterialName()">💾 حفظ الاسم</button>
+
+  <div id="editInfo" class="info"></div>
+
+  <div class="field" style="margin-top:13px">
+
+   <label>اسم المادة الجديد</label>
+
+   <input
+    id="editName"
+    type="text"
+    placeholder="اكتب اسم المادة">
+
+  </div>
+
+  <button
+   class="btn primary"
+   style="width:100%"
+   onclick="saveMaterialName()">
+   💾 حفظ الاسم
+  </button>
+
  </div>
+
 </div>
 
-<!-- الإشعارات -->
 <div class="modal" id="notifyModal">
+
  <div class="modal-box">
-  <button class="close" onclick="closeModal('notifyModal')">×</button>
-  <div class="modal-title">🔔 الإشعارات</div>
+
+  <button class="close" onclick="closeModal('notifyModal')">
+   ×
+  </button>
+
+  <div class="modal-title">
+   🔔 الإشعارات
+  </div>
+
   <div id="notificationsList"></div>
-  <button class="btn light" style="width:100%;margin-top:10px" onclick="readNotifications()">تحديد الكل كمقروء</button>
+
+  <button
+   class="btn light"
+   style="width:100%;margin-top:10px"
+   onclick="readNotifications()">
+   تحديد الكل كمقروء
+  </button>
+
  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const SHEET_ID = "1-AIuLXxNvLpfNfesHLYmbdCf2QToel_c0GrAx_u4qpY";
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+const SHEET_ID =
+"1-AIuLXxNvLpfNfesHLYmbdCf2QToel_c0GrAx_u4qpY";
+
+const SHEET_URL =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const MATERIALS_KEY="KINDI_FINAL_MATERIALS";
 const HISTORY_KEY="KINDI_FINAL_HISTORY";
 const NOTIFY_KEY="KINDI_FINAL_NOTIFICATIONS";
 const SETTINGS_KEY="KINDI_FINAL_SETTINGS";
 
-let materials=JSON.parse(localStorage.getItem(MATERIALS_KEY)||"[]");
-let history=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");
-let notifications=JSON.parse(localStorage.getItem(NOTIFY_KEY)||"[]");
-let settings=JSON.parse(localStorage.getItem(SETTINGS_KEY)||"null")||{
+let materials=
+JSON.parse(localStorage.getItem(MATERIALS_KEY)||"[]");
+
+let history=
+JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");
+
+let notifications=
+JSON.parse(localStorage.getItem(NOTIFY_KEY)||"[]");
+
+let settings=
+JSON.parse(localStorage.getItem(SETTINGS_KEY)||"null")||
+{
  title:"إدارة مواد التعبئة والتغليف",
  company:"شركة الكندي للصناعات الدوائية",
  notify:true,
@@ -764,311 +1064,961 @@ let moveIndex=-1;
 let moveType="";
 let editIndex=-1;
 
-// جلب البيانات تلقائياً من Google Sheets المشترك
 async function fetchFromGoogleSheets(){
+
  try{
+
   showToast("جاري جلب البيانات من الملف المشترك...");
-  let res = await fetch(SHEET_URL);
-  let textData = await res.text();
-  let json = JSON.parse(textData.substring(47).slice(0, -2));
-  let rows = json.table.rows;
-  
-  let fetchedMaterials = [];
-  rows.forEach(r => {
-   let c = r.c;
+
+  let res=await fetch(SHEET_URL);
+
+  let textData=await res.text();
+
+  let json=
+  JSON.parse(
+   textData.substring(47).slice(0,-2)
+  );
+
+  let rows=json.table.rows;
+
+  let fetchedMaterials=[];
+
+  rows.forEach(r=>{
+
+   let c=r.c;
+
    if(c && (c[0] || c[1])){
+
     fetchedMaterials.push({
-     code: c[0] ? String(c[0].v || "") : "",
-     name: c[1] ? String(c[1].v || "") : "",
-     product: c[2] ? String(c[2].v || "") : "",
-     balance: c[3] ? Number(c[3].v || 0) : 0,
-     splitQty: c[4] ? Number(c[4].v || 0) : 0,
-     unit: c[5] ? String(c[5].v || "PCS") : "PCS"
+
+     code:c[0]?
+      String(c[0].v||""):"",
+
+     name:c[1]?
+      String(c[1].v||""):"",
+
+     product:c[2]?
+      String(c[2].v||""):"",
+
+     balance:c[3]?
+      Number(c[3].v||0):0,
+
+     splitQty:c[4]?
+      Number(c[4].v||0):0,
+
+     unit:c[5]?
+      String(c[5].v||"PCS"):"PCS"
+
     });
+
    }
+
   });
 
-  if(fetchedMaterials.length > 0){
-   materials = fetchedMaterials;
+  if(fetchedMaterials.length>0){
+
+   materials=fetchedMaterials;
+
    saveAll();
+
    renderHome();
    renderStock();
-   showToast("تم تحديث الأرصدة والمواد بنجاح من الملف المشترك");
+
+   showToast(
+    "تم تحديث الأرصدة والمواد بنجاح من الملف المشترك"
+   );
+
   }
+
  }catch(e){
+
   console.error(e);
-  showToast("تم الاعتماد على النسخة المحلية الحالية");
+
+  showToast(
+   "تم الاعتماد على النسخة المحلية الحالية"
+  );
+
  }
+
 }
 
 function saveAll(){
- localStorage.setItem(MATERIALS_KEY, JSON.stringify(materials));
- localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
- localStorage.setItem(NOTIFY_KEY, JSON.stringify(notifications));
- localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+
+ localStorage.setItem(
+  MATERIALS_KEY,
+  JSON.stringify(materials)
+ );
+
+ localStorage.setItem(
+  HISTORY_KEY,
+  JSON.stringify(history)
+ );
+
+ localStorage.setItem(
+  NOTIFY_KEY,
+  JSON.stringify(notifications)
+ );
+
+ localStorage.setItem(
+  SETTINGS_KEY,
+  JSON.stringify(settings)
+ );
+
 }
 
 function esc(x){
- return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+ return String(x??"")
+ .replace(/&/g,"&amp;")
+ .replace(/</g,"&lt;")
+ .replace(/>/g,"&gt;")
+ .replace(/"/g,"&quot;");
+
 }
 
 function num(x){
- if(x===null || x===undefined || x==="") return 0;
- let s=String(x).trim().replace(/٬/g,"").replace(/،/g,"").replace(/,/g,"").replace(/[^\d.-]/g,"");
+
+ if(x===null || x===undefined || x==="")
+  return 0;
+
+ let s=String(x)
+ .trim()
+ .replace(/٬/g,"")
+ .replace(/،/g,"")
+ .replace(/,/g,"")
+ .replace(/[^\d.-]/g,"");
+
  return parseFloat(s)||0;
+
 }
 
 function text(x){
- return x===null || x===undefined ? "" : String(x).trim();
+
+ return x===null ||
+ x===undefined ? "" : String(x).trim();
+
 }
 
 function fmt(x){
+
  let n=Number(x)||0;
- return n.toLocaleString("en-US",{maximumFractionDigits:4});
+
+ return n.toLocaleString(
+  "en-US",
+  {maximumFractionDigits:4}
+ );
+
 }
 
 function showToast(message){
+
  let t=document.getElementById("toast");
+
  t.textContent=message;
+
  t.classList.add("show");
+
  clearTimeout(window.toastTimer);
- window.toastTimer=setTimeout(()=>t.classList.remove("show"),2200);
+
+ window.toastTimer=setTimeout(
+  ()=>t.classList.remove("show"),
+  2200
+ );
+
 }
 
 function low(m){
- return m.unit==="KG" ? Number(m.balance)<=Number(settings.kgLimit) : Number(m.balance)<=Number(settings.pcsLimit);
+
+ return m.unit==="KG"
+ ?
+ Number(m.balance)<=Number(settings.kgLimit)
+ :
+ Number(m.balance)<=Number(settings.pcsLimit);
+
 }
 
 function go(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- let page=document.getElementById(id);
- if(!page)return;
- page.classList.add("active");
- document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
- const map={home:0,stock:1,withdraw:2,add:3,settings:4};
- if(map[id]!==undefined) document.querySelectorAll(".nav")[map[id]].classList.add("active");
 
- if(id==="stock") renderStock();
- if(id==="home") renderHome();
- if(id==="settings") loadSettings();
- if(id==="withdraw") searchAction("withdraw");
- if(id==="add") searchAction("add");
- window.scrollTo({top:0,behavior:"smooth"});
+ document.querySelectorAll(".page")
+ .forEach(p=>p.classList.remove("active"));
+
+ let page=document.getElementById(id);
+
+ if(!page)return;
+
+ page.classList.add("active");
+
+ document.querySelectorAll(".nav")
+ .forEach(n=>n.classList.remove("active"));
+
+ const map={
+  home:0,
+  stock:1,
+  withdraw:2,
+  add:3,
+  settings:4
+ };
+
+ if(map[id]!==undefined){
+
+  document
+  .querySelectorAll(".nav")[map[id]]
+  .classList.add("active");
+
+ }
+
+ if(id==="stock")
+  renderStock();
+
+ if(id==="home")
+  renderHome();
+
+ if(id==="settings")
+  loadSettings();
+
+ if(id==="withdraw")
+  searchAction("withdraw");
+
+ if(id==="add")
+  searchAction("add");
+
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
+
 }
 
 function renderHome(){
- document.getElementById("sTotal").textContent=materials.length;
- document.getElementById("sPCS").textContent=materials.filter(x=>x.unit==="PCS").length;
- document.getElementById("sKG").textContent=materials.filter(x=>x.unit==="KG").length;
- document.getElementById("sLow").textContent=materials.filter(low).length;
+
+ document.getElementById("sTotal")
+ .textContent=materials.length;
+
+ document.getElementById("sPCS")
+ .textContent=
+ materials.filter(x=>x.unit==="PCS").length;
+
+ document.getElementById("sKG")
+ .textContent=
+ materials.filter(x=>x.unit==="KG").length;
+
+ document.getElementById("sLow")
+ .textContent=
+ materials.filter(low).length;
 
  let h=history.slice(0,5);
- document.getElementById("homeHistory").innerHTML=h.length?h.map(x=>`
+
+ document.getElementById("homeHistory")
+ .innerHTML=
+ h.length
+ ?
+ h.map(x=>`
+
   <div class="list-row">
-   <b>${esc(x.action)} — ${esc(x.name)}</b>
-   <small>${esc(x.code||"")} | ${x.amount>0?"+":""}${fmt(x.amount)} ${esc(x.unit||"")} | ${esc(x.date||"")}</small>
+
+   <b>
+    ${esc(x.action)}
+    —
+    ${esc(x.name)}
+   </b>
+
+   <small>
+    ${esc(x.code||"")}
+    |
+    ${x.amount>0?"+":""}${fmt(x.amount)}
+    ${esc(x.unit||"")}
+    |
+    ${esc(x.date||"")}
+   </small>
+
   </div>
- `).join(""):`<div class="empty">لا توجد حركات بعد</div>`;
+
+ `).join("")
+ :
+ `<div class="empty">لا توجد حركات بعد</div>`;
+
 }
 
 function setFilter(f,el){
+
  filter=f;
- document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+
+ document
+ .querySelectorAll(".filter")
+ .forEach(x=>x.classList.remove("active"));
+
  el.classList.add("active");
+
  renderStock();
+
 }
 
 function renderStock(){
- let q=(document.getElementById("search")?.value||"").toLowerCase();
- let list=materials.filter(m=>{
-  let match=text(m.code).toLowerCase().includes(q)||text(m.name).toLowerCase().includes(q)||text(m.product).toLowerCase().includes(q);
+
+ let q=
+ (
+  document.getElementById("search")?.value||""
+ )
+ .toLowerCase();
+
+ let list=
+ materials.filter(m=>{
+
+  let match=
+   text(m.code).toLowerCase().includes(q)
+   ||
+   text(m.name).toLowerCase().includes(q)
+   ||
+   text(m.product).toLowerCase().includes(q);
+
   if(!match)return false;
-  if(filter==="PCS") return m.unit==="PCS";
-  if(filter==="KG") return m.unit==="KG";
-  if(filter==="LOW") return low(m);
+
+  if(filter==="PCS")
+   return m.unit==="PCS";
+
+  if(filter==="KG")
+   return m.unit==="KG";
+
+  if(filter==="LOW")
+   return low(m);
+
   return true;
+
  });
 
- document.getElementById("stockList").innerHTML=list.length?list.map(m=>materialCard(m)).join(""):`<div class="empty">لا توجد مواد مطابقة</div>`;
+ document.getElementById("stockList")
+ .innerHTML=
+ list.length
+ ?
+ list.map(m=>materialCard(m)).join("")
+ :
+ `<div class="empty">لا توجد مواد مطابقة</div>`;
+
 }
 
 function materialCard(m){
+
  let i=materials.indexOf(m);
+
  let isLow=low(m);
+
  return `
+
  <div class="material ${isLow?"low":""}">
+
   <div class="mat-head">
+
    <div>
-    <div class="mat-name">${esc(m.name||"بدون اسم")}</div>
-    <div class="code">${esc(m.code||"بدون كود")}</div>
-    ${m.product?`<div class="product">${esc(m.product)}</div>`:""}
+
+    <div class="mat-name">
+     ${esc(m.name||"بدون اسم")}
+    </div>
+
+    <div class="code">
+     ${esc(m.code||"بدون كود")}
+    </div>
+
+    ${
+     m.product
+     ?
+     `<div class="product">
+      ${esc(m.product)}
+     </div>`
+     :""
+    }
+
    </div>
-   <span class="unit ${m.unit==="KG"?"kg":"pcs"}">${m.unit}</span>
+
+   <span class="unit ${m.unit==="KG"?"kg":"pcs"}">
+    ${m.unit}
+   </span>
+
   </div>
+
   <div class="balance">
-   <div class="balance-box"><span>الرصيد الحالي</span><strong class="${isLow?"warn":""}">${fmt(m.balance)} ${m.unit}</strong></div>
-   <div class="balance-box"><span>وحدة المفرق</span><strong>${fmt(m.splitQty)} ${m.unit}</strong></div>
+
+   <div class="balance-box">
+
+    <span>الرصيد الحالي</span>
+
+    <strong class="${isLow?"warn":""}">
+     ${fmt(m.balance)} ${m.unit}
+    </strong>
+
+   </div>
+
+   <div class="balance-box">
+
+    <span>وحدة المفرق</span>
+
+    <strong>
+     ${fmt(m.splitQty)} ${m.unit}
+    </strong>
+
+   </div>
+
   </div>
-  <div class="status ${isLow?"warn":"good"}">${m.balance<=0?"🔴 منتهية":isLow?"⚠️ وصلت حد التنبيه":"🟢 متوفرة"}</div>
+
+  <div class="status ${isLow?"warn":"good"}">
+
+   ${
+    m.balance<=0
+    ?
+    "🔴 منتهية"
+    :
+    isLow
+    ?
+    "⚠️ وصلت حد التنبيه"
+    :
+    "🟢 متوفرة"
+   }
+
+  </div>
+
   <div class="actions">
-   <button class="btn primary" onclick="openMove(${i},'ADD')">➕ إضافة</button>
-   <button class="btn blue" onclick="openMove(${i},'WITHDRAW')">📤 إخراج</button>
+
+   <button
+    class="btn primary"
+    onclick="openMove(${i},'ADD')">
+    ➕ إضافة
+   </button>
+
+   <button
+    class="btn blue"
+    onclick="openMove(${i},'WITHDRAW')">
+    📤 إخراج
+   </button>
+
   </div>
+
   <div class="actions">
-   <button class="btn orange" onclick="openEdit(${i})">✏️ تعديل الاسم</button>
+
+   <button
+    class="btn orange"
+    onclick="openEdit(${i})">
+    ✏️ تعديل الاسم
+   </button>
+
   </div>
- </div>`;
+
+ </div>
+
+ `;
+
 }
 
 function openEdit(index){
+
  let m=materials[index];
+
  if(!m)return;
+
  editIndex=index;
- document.getElementById("editInfo").innerHTML=`<b>المادة:</b> ${esc(m.name)}<br><small>الكود: ${esc(m.code)}</small>`;
- document.getElementById("editName").value=m.name||"";
- document.getElementById("editModal").classList.add("show");
+
+ document.getElementById("editInfo")
+ .innerHTML=
+ `
+ <b>المادة:</b>
+ ${esc(m.name)}
+ <br>
+ <small>الكود: ${esc(m.code)}</small>
+ `;
+
+ document.getElementById("editName")
+ .value=m.name||"";
+
+ document
+ .getElementById("editModal")
+ .classList.add("show");
+
 }
 
 function saveMaterialName(){
+
  if(editIndex<0)return;
+
  let m=materials[editIndex];
- let newName=text(document.getElementById("editName").value);
- if(!newName){alert("اكتب اسم المادة الجديد.");return;}
+
+ let newName=
+ text(
+  document.getElementById("editName").value
+ );
+
+ if(!newName){
+
+  alert("اكتب اسم المادة الجديد.");
+
+  return;
+
+ }
+
  m.name=newName;
+
  saveAll();
+
  closeModal("editModal");
+
  renderHome();
  renderStock();
+
  showToast("تم تعديل الاسم محلياً");
+
  editIndex=-1;
+
 }
 
 function searchAction(type){
- let input=document.getElementById(type==="add"?"addSearch":"withdrawSearch");
- let box=document.getElementById(type==="add"?"addResults":"withdrawResults");
- let q=(input.value||"").toLowerCase();
- let list=materials.filter(m=>text(m.code).toLowerCase().includes(q)||text(m.name).toLowerCase().includes(q)||text(m.product).toLowerCase().includes(q)).slice(0,20);
- if(!list.length){box.innerHTML=`<div class="empty">لم يتم العثور على المادة</div>`;return;}
- box.innerHTML=list.map(m=>{
+
+ let input=
+ document.getElementById(
+  type==="add"
+  ?"addSearch"
+  :"withdrawSearch"
+ );
+
+ let box=
+ document.getElementById(
+  type==="add"
+  ?"addResults"
+  :"withdrawResults"
+ );
+
+ let q=
+ (input.value||"").toLowerCase();
+
+ let list=
+ materials
+ .filter(m=>
+  text(m.code).toLowerCase().includes(q)
+  ||
+  text(m.name).toLowerCase().includes(q)
+  ||
+  text(m.product).toLowerCase().includes(q)
+ )
+ .slice(0,20);
+
+ if(!list.length){
+
+  box.innerHTML=
+  `<div class="empty">
+   لم يتم العثور على المادة
+  </div>`;
+
+  return;
+
+ }
+
+ box.innerHTML=
+ list.map(m=>{
+
   let i=materials.indexOf(m);
+
   return `
+
    <div class="list-row">
+
     <b>${esc(m.name)}</b>
-    <small>${esc(m.code)} | الرصيد: ${fmt(m.balance)} ${m.unit}</small>
-    <button class="btn ${type==="add"?"primary":"blue"}" style="width:100%;margin-top:9px" onclick="openMove(${i},'${type==="add"?"ADD":"WITHDRAW"}')">${type==="add"?"➕ إضافة":"📤 إخراج"}</button>
-   </div>`;
+
+    <small>
+     ${esc(m.code)}
+     |
+     الرصيد:
+     ${fmt(m.balance)}
+     ${m.unit}
+    </small>
+
+    <button
+     class="btn ${type==="add"?"primary":"blue"}"
+     style="width:100%;margin-top:9px"
+     onclick="openMove(
+      ${i},
+      '${type==="add"?"ADD":"WITHDRAW"}'
+     )">
+
+     ${type==="add"?"➕ إضافة":"📤 إخراج"}
+
+    </button>
+
+   </div>
+
+  `;
+
  }).join("");
+
 }
 
 function openMove(index,type){
+
  moveIndex=index;
+
  moveType=type;
+
  let m=materials[index];
+
  if(!m)return;
- document.getElementById("moveTitle").textContent=type==="ADD"?"📥 إضافة مواد":"📤 إخراج مواد";
- document.getElementById("moveInfo").innerHTML=`<b>${esc(m.name)}</b><br>الكود: ${esc(m.code)}<br>الرصيد الحالي: <b>${fmt(m.balance)} ${m.unit}</b>`;
+
+ document.getElementById("moveTitle")
+ .textContent=
+ type==="ADD"
+ ?
+ "📥 إضافة مواد"
+ :
+ "📤 إخراج مواد";
+
+ document.getElementById("moveInfo")
+ .innerHTML=
+ `
+ <b>${esc(m.name)}</b>
+ <br>
+ الكود: ${esc(m.code)}
+ <br>
+ الرصيد الحالي:
+ <b>${fmt(m.balance)} ${m.unit}</b>
+ `;
+
  document.getElementById("moveQty").value="";
+
  document.getElementById("moveNote").value="";
- document.getElementById("moveModal").classList.add("show");
+
+ document
+ .getElementById("moveModal")
+ .classList.add("show");
+
 }
 
 function saveMove(){
+
  if(moveIndex<0)return;
+
  let m=materials[moveIndex];
- let q=num(document.getElementById("moveQty").value);
- let note=text(document.getElementById("moveNote").value);
- if(q<=0){alert("أدخل كمية صحيحة");return;}
- if(moveType==="WITHDRAW" && q>Number(m.balance)){alert("لا يمكن السحب، الكمية أكبر من الرصيد المتوفر.");return;}
- 
+
+ let q=
+ num(
+  document.getElementById("moveQty").value
+ );
+
+ let note=
+ text(
+  document.getElementById("moveNote").value
+ );
+
+ if(q<=0){
+
+  alert("أدخل كمية صحيحة");
+
+  return;
+
+ }
+
+ if(
+  moveType==="WITHDRAW"
+  &&
+  q>Number(m.balance)
+ ){
+
+  alert(
+   "لا يمكن السحب، الكمية أكبر من الرصيد المتوفر."
+  );
+
+  return;
+
+ }
+
  let before=Number(m.balance);
- if(moveType==="ADD") m.balance+=q;
- else m.balance-=q;
- 
- history.unshift({date:new Date().toLocaleString("ar-IQ"),code:m.code,name:m.name,action:moveType==="ADD"?"إضافة مواد":"إخراج مواد",amount:moveType==="ADD"?q:-q,unit:m.unit});
+
+ if(moveType==="ADD")
+  m.balance+=q;
+
+ else
+  m.balance-=q;
+
+ history.unshift({
+
+  date:new Date().toLocaleString("ar-IQ"),
+
+  code:m.code,
+
+  name:m.name,
+
+  action:
+   moveType==="ADD"
+   ?
+   "إضافة مواد"
+   :
+   "إخراج مواد",
+
+  amount:
+   moveType==="ADD"
+   ?
+   q
+   :
+   -q,
+
+  unit:m.unit
+
+ });
+
  saveAll();
+
  closeModal("moveModal");
+
  renderHome();
  renderStock();
+
  searchAction("add");
  searchAction("withdraw");
- showToast("تم تحديث الرصيد بنجاح (يرجى تحديث الجدول المشترك)");
+
+ showToast(
+  "تم تحديث الرصيد بنجاح (يرجى تحديث الجدول المشترك)"
+ );
+
 }
 
 function exportExcel(){
- if(!materials.length){alert("لا توجد مواد للتصدير.");return;}
- let rows=materials.map(m=>({"Code":m.code,"Name":m.name,"Product":m.product,"Balance":m.balance,"Split Quantity":m.splitQty,"Unit":m.unit}));
+
+ if(!materials.length){
+
+  alert("لا توجد مواد للتصدير.");
+
+  return;
+
+ }
+
+ let rows=
+ materials.map(m=>({
+
+  "Code":m.code,
+  "Name":m.name,
+  "Product":m.product,
+  "Balance":m.balance,
+  "Split Quantity":m.splitQty,
+  "Unit":m.unit
+
+ }));
+
  let ws=XLSX.utils.json_to_sheet(rows);
+
  let wb=XLSX.utils.book_new();
- XLSX.utils.book_append_sheet(wb,ws,"Materials");
- XLSX.writeFile(wb,"مخزون_الكندي_المشترك.xlsx");
+
+ XLSX.utils.book_append_sheet(
+  wb,
+  ws,
+  "Materials"
+ );
+
+ XLSX.writeFile(
+  wb,
+  "مخزون_الكندي_المشترك.xlsx"
+ );
+
 }
 
 function backup(){
- let data={materials,history,notifications,settings,date:new Date().toISOString()};
- let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+
+ let data={
+  materials,
+  history,
+  notifications,
+  settings,
+  date:new Date().toISOString()
+ };
+
+ let blob=
+ new Blob(
+  [JSON.stringify(data,null,2)],
+  {type:"application/json"}
+ );
+
  let a=document.createElement("a");
- a.href=URL.createObjectURL(blob);
+
+ a.href=
+ URL.createObjectURL(blob);
+
  a.download="KINDI_Backup.json";
+
  a.click();
+
 }
 
 function loadSettings(){
- document.getElementById("setAppTitle").value=settings.title;
- document.getElementById("setCompany").value=settings.company;
- document.getElementById("setPCS").value=settings.pcsLimit;
- document.getElementById("setKG").value=settings.kgLimit;
- document.getElementById("switchNotify").classList.toggle("on",settings.notify);
+
+ document.getElementById("setAppTitle")
+ .value=settings.title;
+
+ document.getElementById("setCompany")
+ .value=settings.company;
+
+ document.getElementById("setPCS")
+ .value=settings.pcsLimit;
+
+ document.getElementById("setKG")
+ .value=settings.kgLimit;
+
+ document.getElementById("switchNotify")
+ .classList.toggle(
+  "on",
+  settings.notify
+ );
+
 }
 
 function saveSettings(){
- settings.title=text(document.getElementById("setAppTitle").value)||"إدارة مواد التعبئة والتغليف";
- settings.company=text(document.getElementById("setCompany").value)||"شركة الكندي للصناعات الدوائية";
- settings.pcsLimit=num(document.getElementById("setPCS").value);
- settings.kgLimit=num(document.getElementById("setKG").value);
+
+ settings.title=
+ text(
+  document.getElementById("setAppTitle").value
+ )
+ ||
+ "إدارة مواد التعبئة والتغليف";
+
+ settings.company=
+ text(
+  document.getElementById("setCompany").value
+ )
+ ||
+ "شركة الكندي للصناعات الدوائية";
+
+ settings.pcsLimit=
+ num(
+  document.getElementById("setPCS").value
+ );
+
+ settings.kgLimit=
+ num(
+  document.getElementById("setKG").value
+ );
+
+ document.getElementById("appTitle")
+ .textContent=settings.title;
+
+ document.getElementById("companyTitle")
+ .textContent=settings.company;
+
  saveAll();
+
  alert("تم حفظ الإعدادات.");
+
 }
 
 function toggleSetting(type){
- if(type==="notify") settings.notify=!settings.notify;
- document.getElementById("switchNotify").classList.toggle("on",settings.notify);
+
+ if(type==="notify")
+  settings.notify=!settings.notify;
+
+ document.getElementById("switchNotify")
+ .classList.toggle(
+  "on",
+  settings.notify
+ );
+
  saveAll();
+
 }
 
 function closeModal(id){
- document.getElementById(id)?.classList.remove("show");
+
+ document
+ .getElementById(id)
+ ?.classList.remove("show");
+
 }
 
 function updateBell(){
- let n=notifications.filter(x=>!x.read).length;
- let b=document.getElementById("bellBadge");
- b.textContent=n>99?"99+":n;
- b.style.display=n?"flex":"none";
+
+ let n=
+ notifications.filter(
+  x=>!x.read
+ ).length;
+
+ let b=
+ document.getElementById("bellBadge");
+
+ b.textContent=
+ n>99
+ ?
+ "99+"
+ :
+ n;
+
+ b.style.display=
+ n
+ ?
+ "flex"
+ :
+ "none";
+
 }
 
 function openNotifications(){
- document.getElementById("notificationsList").innerHTML=notifications.length?notifications.map(n=>`
-  <div class="history-item"><b>${esc(n.action)}</b><div>${esc(n.name)}</div><small>${esc(n.date)}</small></div>
- `).join(""):`<div class="empty">لا توجد إشعارات</div>`;
- document.getElementById("notifyModal").classList.add("show");
+
+ document.getElementById("notificationsList")
+ .innerHTML=
+ notifications.length
+ ?
+ notifications.map(n=>`
+
+  <div class="history-item">
+
+   <b>${esc(n.action)}</b>
+
+   <div>${esc(n.name)}</div>
+
+   <small>${esc(n.date)}</small>
+
+  </div>
+
+ `).join("")
+ :
+ `<div class="empty">
+  لا توجد إشعارات
+ </div>`;
+
+ document
+ .getElementById("notifyModal")
+ .classList.add("show");
+
 }
 
 function readNotifications(){
- notifications.forEach(x=>x.read=true);
+
+ notifications.forEach(
+  x=>x.read=true
+ );
+
  saveAll();
+
  updateBell();
+
  openNotifications();
+
 }
 
-document.querySelectorAll(".modal").forEach(m=>{
- m.addEventListener("click",e=>{if(e.target===m) m.classList.remove("show");});
-});
+document
+ .querySelectorAll(".modal")
+ .forEach(m=>{
 
-// تشغيل اولي وجلب البيانات السحابية المشتركة تلقائياً
-fetchFromGoogleSheets();
+  m.addEventListener(
+   "click",
+   e=>{
+    if(e.target===m)
+     m.classList.remove("show");
+   }
+  );
+
+ });
+
+/* تشغيل البرنامج */
+
+loadSettings();
+
 updateBell();
+
 renderHome();
+
 renderStock();
+
+fetchFromGoogleSheets();
+
 </script>
 
 </body>
